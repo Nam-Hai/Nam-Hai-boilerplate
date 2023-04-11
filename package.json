@@ -11,5 +11,9 @@
   "devDependencies": {
     "@types/node": "^18.15.11",
     "nuxt": "^3.3.3"
+  },
+  "dependencies": {
+    "@studio-freight/lenis": "^1.0.6",
+    "sass": "^1.61.0"
   }
 }
