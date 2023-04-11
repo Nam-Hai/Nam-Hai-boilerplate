@@ -8,7 +8,13 @@
 
 const { $RafR, $Raf } = useNuxtApp()
 
-onMounted(()=>{
-  console.log($Raf, $RafR);
+// onMounted(()=>{
+//   const raf = new $RafR(()=>{
+//     console.log('objectt');
+//   })
+//   raf.run()
+// })
+const raf = useRaf(()=>{
+  console.log('object2');
 })
 </script>

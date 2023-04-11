@@ -1,16 +1,18 @@
-import { rafCbType } from "../plugins/core/raf";
+import { RafR, rafCbType } from "../plugins/core/raf";
 
-export const useRaf = (cb: (e:rafCbType) => {})=>{
+export const useRaf = (cb: (e:rafCbType) => void)=>{
     const { $RafR } = useNuxtApp()
 
-    const raf = new $RafR(cb)
+    // const raf = new $RafR(cb)
+    const raf = ref() as Ref<RafR>
 
     onMounted(()=>{
-        raf.run()
+        raf.value = new $RafR(cb)
+        raf.value.run()
     })
 
     onBeforeUnmount(()=>{
-        raf.stop()
+        raf.value.stop()
     })
 
     return {
