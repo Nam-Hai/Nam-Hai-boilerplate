@@ -4,8 +4,8 @@ export default defineNuxtConfig({
     ],
     ssr: true,
     css: [
-        '@/styles/shared.sass',
-        '@/styles/core.sass',
-        '@/styles/app/index.sass'
+        // '@/styles/shared.scss',
+        '@/styles/core.scss',
+        '@/styles/app/index.scss'
     ],
 })

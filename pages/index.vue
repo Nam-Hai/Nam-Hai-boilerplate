@@ -2,12 +2,15 @@
     <div class="wrapper">
         <div></div>
         <div ref="pinRef"></div>
+
+        <TestComponent />
         <div v-for="i in 20">
             22
         </div>
         <div ref="testRef" >
             test
         </div>
+
         <div></div>
         <div></div>
         <div></div>
@@ -37,7 +40,6 @@ useScrollEvent({
     el: testRef,
     vStart: 80,
     eStart: 100,
-    end: 0,
     onEnter: ()=>{
         console.log('onenter');
        let tl = new $TL() 
@@ -50,11 +52,29 @@ useScrollEvent({
         e: 'io3'
        }).play()
     },
-
-    onProgress: (t)=>{
-        console.log(t);
-    }
 })
+// useScrollProgression({
+//     el: testRef,
+//     vStart: 80,
+//     eStart: 100,
+//     end: 0,
+//     onEnter: ()=>{
+//         console.log('onenter');
+//        let tl = new $TL() 
+//        tl.from({
+//         el: testRef.value,
+//         p: {
+//             x: [-100, 0]
+//         },
+//         d: 2000,
+//         e: 'io3'
+//        }).play()
+//     },
+
+//     onProgress: (t)=>{
+//         console.log(t);
+//     }
+// })
 
 </script>
 
@@ -62,7 +82,7 @@ useScrollEvent({
 .wrapper {
     color: white;
     font-size: 10rem;
-    > div {
+     div {
         display: flex;
         align-items: center;
         height: 20rem;

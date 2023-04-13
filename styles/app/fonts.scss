@@ -1,0 +1,79 @@
+
+// http://dev.w3.org/csswg/css-fonts/#font-weight-numeric-values
+// 100	Thin (Hairline)
+// 200	Extra Light (Ultra Light)
+// 300	Light
+// 400	Normal (Regular)
+// 500	Medium
+// 600	Semi Bold (Demi Bold)
+// 700	Bold
+// 800	Extra Bold (Ultra Bold)
+// 900	Black (Heavy)
+// 950	Extra Black (Ultra Black)
+
+// https://bigelowandholmes.typepad.com/bigelow-holmes/2015/07/on-font-weight.html
+// 100	UltraThin
+// 150	ExtraThin
+// 200	Thin
+// 250	ExtraLite
+// 300	Lite
+// 350	Book
+// 375	Text
+// 400	Normal
+// 425	Thick
+// 450	ExtraThick
+// 500	Dark
+// 550	ExtraDark
+// 600	Bold
+// 650	ExtraBold
+// 700	UltraBold
+// 800	Black
+// 900	ExtraBlack
+// 999	UltraBlack
+
+// *************************************************************************************
+//
+// Helvetica Neue
+//
+// *************************************************************************************
+@font-face {
+  font-family: "HelveticaNeue";
+  src: url("/fonts/HelveticaNeue/HelveticaNeue-Ultralight.otf") format("opentype");
+  font-weight: 100;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HelveticaNeue";
+  src: url("/fonts/HelveticaNeue/HelveticaNeue-Thin.otf") format("opentype");
+  font-weight: 200;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HelveticaNeue";
+  src: url("/fonts/HelveticaNeue/HelveticaNeue-Light.otf") format("opentype");
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HelveticaNeue";
+  src: url("/fonts/HelveticaNeue/HelveticaNeue-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HelveticaNeue";
+  src: url("/fonts/HelveticaNeue/HelveticaNeue-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HelveticaNeue";
+  src: url("/fonts/HelveticaNeue/HelveticaNeue-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-display: swap;
+};
