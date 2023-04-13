@@ -24,6 +24,7 @@ export const useScrollEvent = ({
 
 
     onMounted(()=>{
+        resize()
     })
     const resize = ()=>{
         bounds.value = el.value.getBoundingClientRect()
@@ -33,7 +34,7 @@ export const useScrollEvent = ({
     const { vh } = useResize(resize)
 
     useRaf(()=>{
-        const dist = window.scrollY - bounds.value.top + vh.value * vStart /100 -  bounds.value.height * eStart / 100
+        const dist = window.scrollY - bounds.value.y + vh.value * vStart /100 -  bounds.value.height * eStart / 100
         const t = N.iLerp(N.Clamp( dist, 0, vh.value * (vStart - end) / 100) / vh.value, 0, (vStart - end )/ 100)
         if(t > 0 && !hasEnter.value) {
             hasEnter.value = true
