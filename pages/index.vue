@@ -46,8 +46,8 @@ useScrollEvent({
         e: 'io3'
        }).play()
     },
+
     onProgress: (t)=>{
-        console.log(t);
     }
 })
 

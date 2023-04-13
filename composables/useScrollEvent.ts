@@ -31,13 +31,12 @@ export const useScrollEvent = ({
     useRaf(()=>{
         const dist = window.scrollY - bounds.value.top + wSize.value.height * vStart /100 -  bounds.value.height * eStart / 100
         const t = N.iLerp(N.Clamp( dist, 0, wSize.value.height * (vStart - end) / 100) / wSize.value.height, 0, (vStart - end )/ 100)
-        if(t > 0) hasEnter.value =  true
+        if(t > 0 && !hasEnter.value) {
+            hasEnter.value = true
+            onEnter && onEnter()
+        }
 
         onProgress && onProgress(t)
-    })
-
-    watch(hasEnter, (enter)=>{
-        enter && onEnter && onEnter()
     })
 
 }
