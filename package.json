@@ -10,7 +10,9 @@
   },
   "devDependencies": {
     "@types/node": "^18.15.11",
-    "nuxt": "^3.3.3"
+    "eslint": "^8.34.0",
+    "nuxt": "^3.3.3",
+    "prettier": "^2.8.4"
   },
   "dependencies": {
     "@studio-freight/lenis": "^1.0.6",

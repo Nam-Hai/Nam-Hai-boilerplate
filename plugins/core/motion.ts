@@ -316,8 +316,8 @@ class Motion {
             r = Has(t, 'r') ? props[t.r].name + `(${props[t.r].curr}deg)` : 0,
             s = Has(t, 's') ? props[t.s].name + `(${props[t.s].curr})` : 0;
         const transform = !translate && !r && !s ? 0 : [translate, r, s].filter(t => !!t).join(" "),
-            o = Has(t, "o") ? props[t.o].curr : -1,
-            g = Has(t, 'g') ? `greyscale(${props[t.g]})` : -1;
+            o = Has(t, "o") ? props[t.o].curr : -1
+            // g = Has(t, 'g') ? `greyscale(${props[t.g]})` : -1;
 
 
         for (const element of Object.values(this.v.el as HTMLElement[])) {
@@ -326,7 +326,7 @@ class Motion {
                 element.style.transform = transform
             }
             if (o >= 0) element.style.opacity = "" + o
-            if (g >= 0) element.style.filter = "" + g
+            // if (g >= 0) element.style.filter = "" + g
         }
 
     }
@@ -372,6 +372,8 @@ const TL = class {
         t.delay = this.delay
         let m = new Motion(t)
         this.arr.push(m)
+
+        return this
     }
     play() {
         this.run("play")
