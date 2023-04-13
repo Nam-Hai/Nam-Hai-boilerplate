@@ -13,7 +13,7 @@ export default function useResize(callback?: () => void) {
     window.addEventListener('resize', onResizeHandler);
   });
 
-  onUnmounted(() => {
+  onBeforeUnmount(() => {
     window.removeEventListener('resize', onResizeHandler);
   });
 
