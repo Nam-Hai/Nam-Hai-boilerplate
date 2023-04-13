@@ -17,6 +17,7 @@ export const usePin = ({
     const hasEnter = ref(false)
     const bounds = ref() as Ref<DOMRect>
     const offset = ref(0)
+
     onMounted(()=>{
         bounds.value = el.value.getBoundingClientRect()
     })

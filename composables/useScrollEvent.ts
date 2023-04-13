@@ -22,15 +22,19 @@ export const useScrollEvent = ({
     const hasEnter = ref(false)
     const bounds = ref() as Ref<DOMRect>
 
-    const wSize = ref({width: 0, height: 0}) 
+
     onMounted(()=>{
-        wSize.value = {width: innerWidth, height: innerHeight}
-        bounds.value = el.value.getBoundingClientRect()
     })
+    const resize = ()=>{
+        bounds.value = el.value.getBoundingClientRect()
+        bounds.value.y = bounds.value.top + window.scrollY
+    }
+
+    const { vh } = useResize(resize)
 
     useRaf(()=>{
-        const dist = window.scrollY - bounds.value.top + wSize.value.height * vStart /100 -  bounds.value.height * eStart / 100
-        const t = N.iLerp(N.Clamp( dist, 0, wSize.value.height * (vStart - end) / 100) / wSize.value.height, 0, (vStart - end )/ 100)
+        const dist = window.scrollY - bounds.value.top + vh.value * vStart /100 -  bounds.value.height * eStart / 100
+        const t = N.iLerp(N.Clamp( dist, 0, vh.value * (vStart - end) / 100) / vh.value, 0, (vStart - end )/ 100)
         if(t > 0 && !hasEnter.value) {
             hasEnter.value = true
             onEnter && onEnter()

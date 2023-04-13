@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <div></div>
-        <div></div>
+        <div ref="pinRef"></div>
         <div v-for="i in 20">
             22
         </div>
@@ -28,7 +28,11 @@
 
 const {$TL} = useNuxtApp()
 const testRef = ref() as Ref<HTMLElement>
+const pinRef = ref() as Ref<HTMLElement>
 
+// usePin({
+//     el:pinRef
+// })
 useScrollEvent({
     el: testRef,
     vStart: 80,
@@ -48,6 +52,7 @@ useScrollEvent({
     },
 
     onProgress: (t)=>{
+        console.log(t);
     }
 })
 
