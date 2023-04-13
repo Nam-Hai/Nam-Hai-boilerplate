@@ -21,7 +21,6 @@ export const useScrollEvent = ({
     }: useScrollEventOption)=>{
     const hasEnter = ref(false)
     const bounds = ref() as Ref<DOMRect>
-    const offset = ref(0)
 
     const wSize = ref({width: 0, height: 0}) 
     onMounted(()=>{
