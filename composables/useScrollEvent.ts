@@ -1,8 +1,7 @@
 
 import { N } from "~/helpers/namhai-utils"
 
-// vStart === viewportStart
-type useScrollEventOption = {
+type useScrollProgressionOption = {
     el: Ref<HTMLElement>,
     vStart?: number,
     eStart?: number,
@@ -11,21 +10,17 @@ type useScrollEventOption = {
     onProgress?: (t:number)=>void
 }
 
-export const useScrollEvent = ({
+export const useScrollProgression = ({
     el,
     vStart = 0,
     eStart = 0,
     end = 0,
     onEnter,
     onProgress
-    }: useScrollEventOption)=>{
+    }: useScrollProgressionOption)=>{
     const hasEnter = ref(false)
     const bounds = ref() as Ref<DOMRect>
 
-
-    onMounted(()=>{
-        resize()
-    })
     const resize = ()=>{
         bounds.value = el.value.getBoundingClientRect()
         bounds.value.y = bounds.value.top + window.scrollY
@@ -33,7 +28,7 @@ export const useScrollEvent = ({
 
     const { vh } = useResize(resize)
 
-    useRaf(()=>{
+    const { raf } = useRaf(()=>{
         const dist = window.scrollY - bounds.value.y + vh.value * vStart /100 -  bounds.value.height * eStart / 100
         const t = N.iLerp(N.Clamp( dist, 0, vh.value * (vStart - end) / 100) / vh.value, 0, (vStart - end )/ 100)
         if(t > 0 && !hasEnter.value) {
@@ -44,22 +39,67 @@ export const useScrollEvent = ({
         onProgress && onProgress(t)
     })
 
+    const intersectionObserver = ref() as Ref<IntersectionObserver>
+
+    onMounted(()=>{
+        resize()
+
+        intersectionObserver.value = new IntersectionObserver((entries)=>{
+            entries.forEach((entry)=>{
+                entry.isIntersecting ? raf.value.run() : raf.value.stop()
+            })
+        })
+        intersectionObserver.value.observe(el.value)
+    })
+
+    onBeforeUnmount(()=>{
+        intersectionObserver.value.disconnect()
+    })
 }
 
-// useScrollEvent({
-//     el: testRef,
-//     vStart: 80,
-//     eStart: 100,
-//     onEnter: ()=>{
-//         console.log('onenter');
-//        let tl = new $TL() 
-//        tl.from({
-//         el: testRef.value,
-//         p: {
-//             x: [-100, 0]
-//         },
-//         d: 2000,
-//         e: 'io3'
-//        }).play()
-//     }
-// })
+type useScrollEventOption = {
+    el: Ref<HTMLElement>,
+    vStart?: number,
+    eStart?: number,
+    end?: number,
+    onEnter: ()=>void,
+}
+//lightweight version to only trigger once the event
+export const useScrollEvent = ({
+    el,
+    vStart = 0,
+    eStart = 0,
+    end = 0,
+    onEnter,
+    }: useScrollEventOption)=>{
+    const bounds = ref() as Ref<DOMRect>
+
+    const resize = ()=>{
+        bounds.value = el.value.getBoundingClientRect()
+        bounds.value.y = bounds.value.top + window.scrollY
+    }
+    const { vh } = useResize(resize)
+    const { raf } = useRaf(()=>{
+        const dist = window.scrollY - bounds.value.y + vh.value * vStart /100 -  bounds.value.height * eStart / 100
+        const t = N.iLerp(N.Clamp( dist, 0, vh.value * (vStart - end) / 100) / vh.value, 0, (vStart - end )/ 100)
+        if(t > 0 ) {
+            onEnter && onEnter()
+            raf.value.stop()
+            intersectionObserver.value.disconnect()
+        }
+    })
+    const intersectionObserver = ref() as Ref<IntersectionObserver>
+    onMounted(()=>{
+        resize()
+        intersectionObserver.value = new IntersectionObserver((entries)=>{
+            entries.forEach((entry)=>{
+                entry.isIntersecting ? raf.value.run() : raf.value.stop()
+            })
+        })
+        intersectionObserver.value.observe(el.value)
+    })
+
+    onBeforeUnmount(()=>{
+        intersectionObserver.value.disconnect()
+    })
+}
