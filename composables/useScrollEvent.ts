@@ -8,15 +8,16 @@ type useScrollEventOption = {
     eStart?: number,
     end?: number,
     onEnter?: ()=>void,
-    onEnterOnce?: boolean
+    onProgress?: (t:number)=>void
 }
 
 export const useScrollEvent = ({
     el,
     vStart = 0,
     eStart = 0,
-    end = Infinity,
+    end = 0,
     onEnter,
+    onProgress
     }: useScrollEventOption)=>{
     const hasEnter = ref(false)
     const bounds = ref() as Ref<DOMRect>
@@ -29,10 +30,11 @@ export const useScrollEvent = ({
     })
 
     useRaf(()=>{
-        offset.value = N.Clamp(window.scrollY - bounds.value.top + wSize.value.height * vStart /100 - bounds.value.height * eStart / 100, 0, end)
-        if(offset.value > 0) hasEnter.value =  true
+        const dist = window.scrollY - bounds.value.top + wSize.value.height * vStart /100 -  bounds.value.height * eStart / 100
+        const t = N.iLerp(N.Clamp( dist, 0, wSize.value.height * (vStart - end) / 100) / wSize.value.height, 0, (vStart - end )/ 100)
+        if(t > 0) hasEnter.value =  true
 
-        // N.T(el.value,0,offset.value, 'px')
+        onProgress && onProgress(t)
     })
 
     watch(hasEnter, (enter)=>{
@@ -40,3 +42,21 @@ export const useScrollEvent = ({
     })
 
 }
+
+// useScrollEvent({
+//     el: testRef,
+//     vStart: 80,
+//     eStart: 100,
+//     onEnter: ()=>{
+//         console.log('onenter');
+//        let tl = new $TL() 
+//        tl.from({
+//         el: testRef.value,
+//         p: {
+//             x: [-100, 0]
+//         },
+//         d: 2000,
+//         e: 'io3'
+//        }).play()
+//     }
+// })

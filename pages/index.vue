@@ -12,6 +12,15 @@
         <div></div>
         <div></div>
         <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
     </div>
 </template>
 
@@ -24,6 +33,7 @@ useScrollEvent({
     el: testRef,
     vStart: 80,
     eStart: 100,
+    end: 0,
     onEnter: ()=>{
         console.log('onenter');
        let tl = new $TL() 
@@ -35,6 +45,9 @@ useScrollEvent({
         d: 2000,
         e: 'io3'
        }).play()
+    },
+    onProgress: (t)=>{
+        console.log(t);
     }
 })
 
