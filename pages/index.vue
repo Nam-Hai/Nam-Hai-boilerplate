@@ -25,6 +25,7 @@ useScrollEvent({
     vStart: 80,
     eStart: 100,
     onEnter: ()=>{
+        console.log('onenter');
        let tl = new $TL() 
        tl.from({
         el: testRef.value,

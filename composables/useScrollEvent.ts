@@ -17,7 +17,6 @@ export const useScrollEvent = ({
     eStart = 0,
     end = Infinity,
     onEnter,
-    onEnterOnce = true
     }: useScrollEventOption)=>{
     const hasEnter = ref(false)
     const bounds = ref() as Ref<DOMRect>
@@ -31,13 +30,13 @@ export const useScrollEvent = ({
 
     useRaf(()=>{
         offset.value = N.Clamp(window.scrollY - bounds.value.top + wSize.value.height * vStart /100 - bounds.value.height * eStart / 100, 0, end)
-        if(offset.value > 0) hasEnter.value = true
+        if(offset.value > 0) hasEnter.value =  true
 
         // N.T(el.value,0,offset.value, 'px')
     })
 
-    watch(hasEnter, ()=>{
-        onEnter && onEnter()
+    watch(hasEnter, (enter)=>{
+        enter && onEnter && onEnter()
     })
 
 }
