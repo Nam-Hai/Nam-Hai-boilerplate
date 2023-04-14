@@ -28,18 +28,17 @@
 </template>
 
 <script lang="ts" setup>
+import { N } from '~/helpers/namhai-utils';
+
 
 const {$TL} = useNuxtApp()
 const testRef = ref() as Ref<HTMLElement>
 const pinRef = ref() as Ref<HTMLElement>
 
-// usePin({
-//     el:pinRef
-// })
-useScrollEvent({
+useScrollProgression({
     el: testRef,
     vStart: 80,
-    eStart: 100,
+    eStart: 0,
     onEnter: ()=>{
         console.log('onenter');
        let tl = new $TL() 
@@ -52,29 +51,10 @@ useScrollEvent({
         e: 'io3'
        }).play()
     },
+    onProgress: (t)=>{
+        testRef.value.innerText = N.Round(t * 100, 0) + '%'
+    }
 })
-// useScrollProgression({
-//     el: testRef,
-//     vStart: 80,
-//     eStart: 100,
-//     end: 0,
-//     onEnter: ()=>{
-//         console.log('onenter');
-//        let tl = new $TL() 
-//        tl.from({
-//         el: testRef.value,
-//         p: {
-//             x: [-100, 0]
-//         },
-//         d: 2000,
-//         e: 'io3'
-//        }).play()
-//     },
-
-//     onProgress: (t)=>{
-//         console.log(t);
-//     }
-// })
 
 </script>
 
