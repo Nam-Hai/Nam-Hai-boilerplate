@@ -86,17 +86,28 @@ export const useScrollEvent = ({
     const resize = ()=>{
         bounds.value = el.value.getBoundingClientRect()
         bounds.value.y = bounds.value.top + window.scrollY
+
+        intersectionObserver.value.disconnect()
+        lenis.run()
+        lenis.emit()
+        intersectionInit()
     }
 
     const intersectionObserver = ref() as Ref<IntersectionObserver>
-    onMounted(()=>{
-        resize()
+    const intersectionInit = ()=>{
         intersectionObserver.value = new IntersectionObserver((entries)=>{
             entries.forEach((entry)=>{
                 entry.isIntersecting ? lenis.run() : lenis.stop()
             })
         })
         intersectionObserver.value.observe(el.value)
+    }
+
+    onMounted(()=>{
+        bounds.value = el.value.getBoundingClientRect()
+        bounds.value.y = bounds.value.top + window.scrollY
+
+        intersectionInit()
     })
 
     const { vh } = useResize(resize)
