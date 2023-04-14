@@ -1,5 +1,7 @@
+import Lenis from '@studio-freight/lenis'
 import { Motion, TL } from './core/motion'
 import { Raf, RafR,  Delay} from './core/raf'
+
 
 export default defineNuxtPlugin(nuxtApp =>{
   const N = {
@@ -11,7 +13,7 @@ export default defineNuxtPlugin(nuxtApp =>{
 
   return {
     provide: {
-      ...N
+      ...N,
     }
   }
 
