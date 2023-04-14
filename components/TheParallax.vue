@@ -24,7 +24,6 @@ useScrollProgression({
     vStart: 100,
     end: 0,
     onProgress: (t)=>{
-    //   console.log(t)
       N.T(rootRef.value, 0, (1 - props.amount) * (t - 0.5) * 100, 'vh')
     }
   })
