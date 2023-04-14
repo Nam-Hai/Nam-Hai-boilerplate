@@ -28,7 +28,17 @@ export const useScrollProgression = ({
 
     const { vh } = useResize(resize)
 
-    const { raf } = useRaf(()=>{
+    onMounted(()=>{
+        resize()
+        intersectionObserver.value = new IntersectionObserver((entries)=>{
+            entries.forEach((entry)=>{
+                entry.isIntersecting ? lenis.on() : lenis.off()
+            })
+        })
+        intersectionObserver.value.observe(el.value)
+    })
+
+    const {lenis} =useLenisScroll((e: any)=>{
         const dist = window.scrollY - bounds.value.y + vh.value * vStart /100 -  bounds.value.height * eStart / 100
         const t = N.iLerp(N.Clamp( dist, 0, vh.value * (vStart - end) / 100) / vh.value, 0, (vStart - end )/ 100)
         if(t > 0 && !hasEnter.value) {
@@ -37,20 +47,11 @@ export const useScrollProgression = ({
         }
 
         onProgress && onProgress(t)
-    })
+    }
+)
 
     const intersectionObserver = ref() as Ref<IntersectionObserver>
 
-    onMounted(()=>{
-        resize()
-
-        intersectionObserver.value = new IntersectionObserver((entries)=>{
-            entries.forEach((entry)=>{
-                entry.isIntersecting ? raf.value.run() : raf.value.stop()
-            })
-        })
-        intersectionObserver.value.observe(el.value)
-    })
 
     onBeforeUnmount(()=>{
         intersectionObserver.value.disconnect()
@@ -78,26 +79,29 @@ export const useScrollEvent = ({
         bounds.value = el.value.getBoundingClientRect()
         bounds.value.y = bounds.value.top + window.scrollY
     }
-    const { vh } = useResize(resize)
-    const { raf } = useRaf(()=>{
-        const dist = window.scrollY - bounds.value.y + vh.value * vStart /100 -  bounds.value.height * eStart / 100
-        const t = N.iLerp(N.Clamp( dist, 0, vh.value * (vStart - end) / 100) / vh.value, 0, (vStart - end )/ 100)
-        if(t > 0 ) {
-            onEnter && onEnter()
-            raf.value.stop()
-            intersectionObserver.value.disconnect()
-        }
-    })
+
     const intersectionObserver = ref() as Ref<IntersectionObserver>
     onMounted(()=>{
         resize()
         intersectionObserver.value = new IntersectionObserver((entries)=>{
             entries.forEach((entry)=>{
-                entry.isIntersecting ? raf.value.run() : raf.value.stop()
+                entry.isIntersecting ? lenis.run() : lenis.stop()
             })
         })
         intersectionObserver.value.observe(el.value)
     })
+
+    const { vh } = useResize(resize)
+    const { lenis } = useLenisScroll((e)=>{
+        const dist = window.scrollY - bounds.value.y + vh.value * vStart /100 -  bounds.value.height * eStart / 100
+        const t = N.iLerp(N.Clamp( dist, 0, vh.value * (vStart - end) / 100) / vh.value, 0, (vStart - end )/ 100)
+        if(t > 0 ) {
+            onEnter && onEnter()
+            lenis.stop()
+            intersectionObserver.value.disconnect()
+        }
+    }
+)
 
     onBeforeUnmount(()=>{
         intersectionObserver.value.disconnect()
