@@ -1,22 +1,28 @@
 export const useLenisScroll = (callback: (e:any)=>void)=>{
     const { $lenis } = useNuxtApp()
+
+    const onScrollSubscription = ref()
     onMounted(()=>{
-        $lenis.on('scroll', callback)
+        onScrollSubscription.value = $lenis.on('scroll', callback)
         $lenis.emit()
     })
     onBeforeUnmount(()=>{
-        $lenis.off('scroll', callback)
+        onScrollSubscription.value()
+        // $lenis.off('scroll', callback)
     })
 
-    const on = ()=>$lenis.on('scroll', callback)
-    const off = ()=>$lenis.off('scroll', callback)
+    const on = ()=> {
+        onScrollSubscription.value()
+        onScrollSubscription.value = $lenis.on('scroll', callback)
+    }
+    const off = ()=> onScrollSubscription.value()
 
     return { lenis: {
         run: on,
         stop: off,
         on,
         off,
-        // emit: $lenis.emit,
-        c: $lenis
+        emit: ()=>$lenis.emit(),
+        onScrollSubscription
     } }
 }

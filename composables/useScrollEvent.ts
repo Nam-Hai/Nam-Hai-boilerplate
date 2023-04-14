@@ -24,18 +24,18 @@ export const useScrollProgression = ({
     const resize = ()=>{
         bounds.value = el.value.getBoundingClientRect()
         bounds.value.y = bounds.value.top + window.scrollY
+        intersectionObserver.value.disconnect()
+        lenis.run()
+        lenis.emit()
+        intersectionInit()
     }
 
     const { vh } = useResize(resize)
 
     onMounted(()=>{
-        resize()
-        intersectionObserver.value = new IntersectionObserver((entries)=>{
-            entries.forEach((entry)=>{
-                entry.isIntersecting ? lenis.on() : lenis.off()
-            })
-        })
-        intersectionObserver.value.observe(el.value)
+        intersectionInit()
+        bounds.value = el.value.getBoundingClientRect()
+        bounds.value.y = bounds.value.top + window.scrollY
     })
 
     const {lenis} =useLenisScroll((e: any)=>{
@@ -51,6 +51,14 @@ export const useScrollProgression = ({
 )
 
     const intersectionObserver = ref() as Ref<IntersectionObserver>
+    const intersectionInit = ()=>{
+        intersectionObserver.value = new IntersectionObserver((entries)=>{
+            entries.forEach((entry)=>{
+                entry.isIntersecting ? lenis.run() : lenis.stop()
+            })
+        })
+        intersectionObserver.value.observe(el.value)
+    }
 
 
     onBeforeUnmount(()=>{

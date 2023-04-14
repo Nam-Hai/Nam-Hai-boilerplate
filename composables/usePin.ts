@@ -19,22 +19,21 @@ export const usePin = ({
     const offset = ref(0)
 
     const resize = ()=>{
-        bounds.value = el.value.getBoundingClientRect()
-        bounds.value.y = bounds.value.top + window.scrollY - offset.value
-        console.log(bounds.value, bounds.value.y, bounds.value.top, scrollY);
-        lenis.c.emit()
-    }
-    const { vh } = useResize(resize)
 
-    const intersectionObserver = ref() as Ref<IntersectionObserver>
-    onMounted(()=>{
+        N.T(el.value,0, 0, 'px')
         bounds.value = el.value.getBoundingClientRect()
-        intersectionObserver.value = new IntersectionObserver((entries)=>{
-            entries.forEach((entry)=>{
-                entry.isIntersecting ? lenis.run() : lenis.stop()
-            })
-        })
-        intersectionObserver.value.observe(el.value)
+        bounds.value.y = bounds.value.top + window.scrollY 
+
+        intersectionObserver.value.disconnect()
+        lenis.run()
+        lenis.emit()
+        intersectionInit()
+    }
+
+    onMounted(()=>{
+        intersectionInit()
+        bounds.value = el.value.getBoundingClientRect()
+        bounds.value.y = bounds.value.top + window.scrollY 
     })
 
     const { lenis } = useLenisScroll((e)=>{
@@ -43,6 +42,20 @@ export const usePin = ({
 
         N.T(el.value,0,offset.value, 'px')
     })
+
+    const { vh } = useResize(resize)
+
+    const intersectionObserver = ref() as Ref<IntersectionObserver>
+    const intersectionInit = ()=>{
+        intersectionObserver.value = new IntersectionObserver((entries)=>{
+            entries.forEach((entry)=>{
+                entry.isIntersecting ? lenis.run() : lenis.stop()
+            })
+        })
+        intersectionObserver.value.observe(el.value)
+    }
+
+
 
     onBeforeUnmount(()=>{
         intersectionObserver.value.disconnect()
