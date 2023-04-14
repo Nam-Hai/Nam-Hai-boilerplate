@@ -4,14 +4,18 @@ type usePinOptions = {
   el: Ref<HTMLElement>,
   start?: number,
   end?: number,
-  onEnter?: () => void
+  eStart?: number,
+  onEnter?: () => void,
+  onProgress?: (t: number) => void
 }
 
 export const usePin = ({
   el,
   start = 0,
   end = Infinity,
-  onEnter
+  eStart = 0,
+  onEnter = () => { },
+  onProgress = () => { }
 }: usePinOptions) => {
 
   const hasEnter = ref(false)
@@ -37,10 +41,12 @@ export const usePin = ({
   })
 
   const { lenis } = useLenisScroll((e) => {
-    offset.value = N.Clamp(window.scrollY - bounds.value.y + start * vh.value / 100, 0, end)
+    const dist = window.scrollY - bounds.value.y + start * vh.value / 100 - bounds.value.height * eStart / 100
+    offset.value = N.Clamp(dist, 0, end)
     if (offset.value > 0) hasEnter.value = true
-
     N.T(el.value, 0, offset.value, 'px')
+
+    onProgress(N.iLerp(offset.value, 0, end))
   })
 
   const { vh } = useResize(resize)
@@ -62,7 +68,7 @@ export const usePin = ({
   })
 
   watch(hasEnter, () => {
-    onEnter && onEnter()
+    onEnter()
   })
 
 }

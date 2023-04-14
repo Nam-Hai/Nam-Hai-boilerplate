@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 
-useScrollProgression({
+useScrollEvent({
     el: rootRef,
     vStart: 100,
     end: 0,

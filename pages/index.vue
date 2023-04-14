@@ -35,7 +35,7 @@ const {$TL} = useNuxtApp()
 const testRef = ref() as Ref<HTMLElement>
 const pinRef = ref() as Ref<HTMLElement>
 
-useScrollProgression({
+useScrollEvent({
     el: testRef,
     vStart: 80,
     eStart: 0,

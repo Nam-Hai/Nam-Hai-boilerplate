@@ -313,11 +313,10 @@ class Motion {
         const x = Has(t, "x") ? props[t.x].curr + props[t.x].unit : 0,
             y = Has(t, 'y') ? props[t.y].curr + props[t.y].unit : 0;
         const translate = !x && !y ? 0 : `translate3d(${x},${y},0)`,
-            r = Has(t, 'r') ? props[t.r].name + `(${props[t.r].curr}deg)` : 0,
-            s = Has(t, 's') ? props[t.s].name + `(${props[t.s].curr})` : 0;
+            r = Has(t, 'r') ? `rotate(${props[t.r].curr}deg)` : 0,
+            s = Has(t, 's') ? `scale(${props[t.s].curr})` : 0;
         const transform = !translate && !r && !s ? 0 : [translate, r, s].filter(t => !!t).join(" "),
             o = Has(t, "o") ? props[t.o].curr : -1
-            // g = Has(t, 'g') ? `greyscale(${props[t.g]})` : -1;
 
 
         for (const element of Object.values(this.v.el as HTMLElement[])) {
@@ -326,9 +325,7 @@ class Motion {
                 element.style.transform = transform
             }
             if (o >= 0) element.style.opacity = "" + o
-            // if (g >= 0) element.style.filter = "" + g
         }
-
     }
     uLine() {
         if (!this.v.el) throw "el not specified for line motion"
