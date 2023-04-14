@@ -24,10 +24,11 @@ export const useScrollProgression = ({
     const resize = ()=>{
         bounds.value = el.value.getBoundingClientRect()
         bounds.value.y = bounds.value.top + window.scrollY
-        intersectionObserver.value.disconnect()
-        lenis.run()
-        lenis.emit()
-        intersectionInit()
+
+        // intersectionObserver.value.disconnect()
+        // lenis.run()
+        // lenis.emit()
+        // intersectionInit()
     }
 
     const { vh } = useResize(resize)
