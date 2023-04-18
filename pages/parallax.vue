@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { N } from '~/helpers/namhai-utils';
-const {$TL} = useNuxtApp()
+const { $TL } = useNuxtApp()
 
 
 const pinRef = ref()
@@ -34,7 +34,7 @@ usePin({
   start: 50,
   end: 300,
   eStart: 50,
-  onProgress: (t)=> {
+  onProgress: (t) => {
     N.O(layerRef.value, t)
     textRef.value.innerText = N.Round(t * 100, 0) + '%'
   },
@@ -44,9 +44,8 @@ useScrollEvent({
   el: rotateRef,
   vStart: 50,
   eStart: 50,
-  onEnter: ()=>{
-    console.log('onEnter')
-    let tl = new $TL()
+  onEnter: () => {
+    let tl = new $TL();
     tl.from({
       el: rotateRef.value,
       p: {
@@ -62,20 +61,21 @@ useScrollEvent({
 </script>
 
 <style lang="scss" scoped>
-.layer-blue{
+.layer-blue {
   width: 100%;
   height: 100%;
   background: pink;
   position: absolute;
 }
-.mire{
+
+.mire {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
 
-  &::after{
+  &::after {
     content: '';
     height: 2px;
     width: 100%;
@@ -83,9 +83,10 @@ useScrollEvent({
     top: 50%;
     transform: translateY(-50%);
     background-color: black;
-    
+
   }
 }
+
 .wrapper {
   position: relative;
   display: flex;

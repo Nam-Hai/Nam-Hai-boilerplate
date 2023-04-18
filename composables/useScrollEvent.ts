@@ -15,8 +15,8 @@ export const useScrollEvent = ({
   vStart = 0,
   eStart = 0,
   end = 0,
-  onEnter = () => { },
-  onProgress = () => { }
+  onEnter = undefined,
+  onProgress = undefined
 }: useScrollEventOptions) => {
   const hasEnter = ref(false)
   const bounds = ref() as Ref<DOMRect>
@@ -46,9 +46,14 @@ export const useScrollEvent = ({
     const t = N.iLerp(offset / vh.value, 0, (vStart - end) / 100)
     if (t > 0 && !hasEnter.value) {
       hasEnter.value = true
-      onEnter()
+      onEnter && onEnter()
+
+      if (!onProgress) {
+        intersectionObserver.value.disconnect()
+        lenis.stop()
+      }
     }
-    onProgress(t)
+    onProgress && onProgress(t)
   })
 
   const intersectionObserver = ref() as Ref<IntersectionObserver>
