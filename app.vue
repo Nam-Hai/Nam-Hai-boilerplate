@@ -7,17 +7,18 @@
 </template>
 
 <script setup lang="ts">
-import  parallax  from '@/pages/parallax.vue';
-import { createApp } from 'vue'
 import { FlowProvider, provideFlowProvider } from './util/FlowProvider';
 
+import index from '@/pages/index.vue';
+import parallax from '@/pages/parallax.vue';
 
-const app = createApp({})
 
-app.component('parallax', parallax)
+const route = useRoute()
+const flowProvider = new FlowProvider(route)
 
-const flowProvider = new FlowProvider()
 provideFlowProvider(flowProvider)
+flowProvider.registerPage('/', index)
+flowProvider.registerPage('/parallax', parallax)
 
 
 
