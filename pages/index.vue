@@ -66,7 +66,7 @@ usePageTransition({
     wrapperRef
   },
   transitionOutMap: IndexTransitionOutMap,
-  // crossfade: true
+  enableCrossfade: true
 })
 
 

@@ -27,6 +27,9 @@
 import { N } from '~/helpers/namhai-utils';
 const { $TL } = useNuxtApp()
 
+onMounted(()=>{
+  console.log('parallax')  
+})
 
 const pinRef = ref()
 const layerRef = ref()
