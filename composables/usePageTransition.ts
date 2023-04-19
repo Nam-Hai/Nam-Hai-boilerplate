@@ -1,41 +1,35 @@
+import Canvas from "~/scene/canvas";
 import { useFlowProvider } from "~/util/FlowProvider";
-import { Timeline } from "~/plugins/core/motion";
 
-interface PageTranstionOptions {
-  transitionOut?: Timeline,
-  guardTransitionOut?: (resolve: () => void) => void
+export type transtionFunction<T> = T & {
+  resolve: () => void
 }
 
-export default function usePageTransition({
-  transitionOut,
-  guardTransitionOut
-}: PageTranstionOptions = {}) {
+type PageTranstionOptions<T> = {
+  props: T,
+  transitionMap: Map<string, (props: T, resolve: () => void, canvas: Ref<Canvas>) => void>,
+}
+
+
+export default function usePageTransition<T>({
+  props,
+  transitionMap
+}: PageTranstionOptions<T>) {
   const provider = useFlowProvider();
 
 
   onBeforeRouteLeave((to, from, next) => {
     provider.setLeaveToRoute(to);
     provider.setLeaveFromRoute(from);
+    const canvas = provider.canvas
 
-    
-    console.log('provider, canvas', provider.canvas?.value)
-    guard(()=>{provider.unMountBufferPage(); next()},guardTransitionOut)
+    let transition = transitionMap?.get(from.name?.toString() + ' => ' + to.name?.toString()) || transitionMap?.get('default') || null
 
+    const resolve = () => {
+      provider.unMountBufferPage()
+      next()
+    }
+
+    transition && transition(props, resolve, canvas!)
   })
 }
-
-export type GuardFunction = (release: () => void) => void;
-// Helper method to guard functions to allow the flow to be hijacked and released when the
-// user allows it.
-export function guard(
-  action: () => void,
-  // eslint-disable-next-line no-shadow
-  guard?: GuardFunction,
-): ((release: () => void) => void) | void {
-  if (guard) {
-    guard(() => action());
-  } else {
-    action();
-  }
-}
-

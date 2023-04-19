@@ -32,9 +32,7 @@
 
 <script lang="ts" setup>
 import { N } from '~/helpers/namhai-utils';
-import { useFlowProvider } from '~/util/FlowProvider';
-
-
+import { IndexTransitionProps, IndexTransitionMap} from '@/pages/index.transitions';
 
 const { $TL } = useNuxtApp()
 const testRef = ref() as Ref<HTMLElement>
@@ -63,28 +61,11 @@ useScrollEvent({
   }
 });
 
-const flowProvider = useFlowProvider();
-
-let guardTransition = (resolve: ()=> void) => {
-  console.log('GUARD')
-  let tl = new $TL()
-  tl.from({
-    el: wrapperRef.value,
-    d: 1000,
-    e: 'io2',
-    p: {
-      x: [0, -100]
-    },
-    cb: () => {
-      console.log('RESOLVE')
-      resolve()
-    }
-  })
-  tl.play()
-}
-
-usePageTransition({
-  guardTransitionOut: guardTransition
+usePageTransition<IndexTransitionProps>({
+  props: {
+    wrapperRef
+  },
+  transitionMap: IndexTransitionMap
 })
 
 
