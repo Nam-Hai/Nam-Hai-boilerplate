@@ -1,16 +1,15 @@
 <template>
   <div class="buffer-page__wrapper">
-    <component :is="routePage" />
+    <component :is="bufferRouteState" />
   </div>
 </template>
 
 <script setup lang='ts'>
 import { useFlowProvider } from '~/util/FlowProvider';
 
-const routePage = shallowRef()
-
+const bufferRouteState = shallowRef()
 const provider = useFlowProvider()
-provider.connectBuffer(routePage)
+provider.connectBuffer(bufferRouteState)
 
 
 </script>

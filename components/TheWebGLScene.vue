@@ -6,7 +6,6 @@
 
 <script lang='ts' setup>
 import  Canvas  from '@/scene/canvas.js';
-import { createContext } from 'vm';
 import { useFlowProvider } from '~/util/FlowProvider';
 
 
@@ -16,7 +15,7 @@ const sceneRef = ref()
 onMounted(()=>{
   sceneRef.value = new Canvas({canvas: canvasRef.value})
   const flowProvider = useFlowProvider()
-  flowProvider.canvas = sceneRef
+  flowProvider.addProps('canvas', sceneRef)
 })
 
 onUnmounted(()=>{
@@ -28,6 +27,11 @@ onUnmounted(()=>{
 </script>
 
 <style lang="scss" scoped>
+.wrapper-scene {
+  position: relative;
+  z-index: 3;
+  pointer-events: none;
+}
 canvas {
   position: fixed;
   top: 0;

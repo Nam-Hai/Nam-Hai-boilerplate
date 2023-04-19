@@ -1,14 +1,14 @@
-import { transtionFunction } from "~/composables/usePageTransition"
-import Canvas from '@/scene/canvas.js';
+import { transitionFunction } from "~/composables/usePageTransition"
+import { useFlowProvider } from "~/util/FlowProvider"
 
+// const flow = useFlowProvider()
+// console.log(flow)
 export type IndexTransitionProps = {
   wrapperRef: Ref<HTMLElement>,
 }
 
-const transitionIndexOutDefault: transtionFunction<IndexTransitionProps> = ({ wrapperRef }: IndexTransitionProps, resolve: () => void, canvas?: Ref<Canvas>) => {
-
+const transitionIndexOutDefault: transitionFunction<IndexTransitionProps> = ({ wrapperRef }, { canvas }, resolve) => {
   const { $TL } = useNuxtApp()
-
   let tl = new $TL()
   tl.from({
     el: wrapperRef.value,
@@ -18,7 +18,6 @@ const transitionIndexOutDefault: transtionFunction<IndexTransitionProps> = ({ wr
       x: [0, -100]
     },
     cb: () => {
-      console.log('RESOLVE')
       resolve()
     }
   }).from({
@@ -35,4 +34,25 @@ const transitionIndexOutDefault: transtionFunction<IndexTransitionProps> = ({ wr
 
 export const IndexTransitionOutMap = new Map([
   ['default', transitionIndexOutDefault]
+])
+
+const transitionIndexCrossfadeInDefault: transitionFunction<IndexTransitionProps> = ({ wrapperRef }, { canvas }, resolve) => {
+  const { $TL } = useNuxtApp()
+  let tl = new $TL()
+  console.log(wrapperRef.value)
+  tl.from({
+    el: wrapperRef.value,
+    d: 1000,
+    e: 'io2',
+    p: {
+      x: [100, 0]
+    },
+    cb: () => {
+      resolve()
+    }
+  }).play()
+}
+
+export const IndexTransitionCrossfadeMap = new Map([
+  ['default', transitionIndexCrossfadeInDefault]
 ])

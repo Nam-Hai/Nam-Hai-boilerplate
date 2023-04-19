@@ -1,11 +1,11 @@
 <template>
-  <NuxtLink to='./'>
-    <div class="home">
+  <NuxtLink to='/'>
+    <div class="home" ref="buttonRef">
     </div>
   </NuxtLink>
 
   <div class="mire"></div>
-  <div class="wrapper">
+  <div ref="wrapperRef" class="wrapper">
     <TheParallax :amount="1.2">
       <div></div>
     </TheParallax>
@@ -24,17 +24,24 @@
 </template>
 
 <script setup lang="ts">
+import { resolve } from 'path';
 import { N } from '~/helpers/namhai-utils';
+import { useFlowProvider } from '~/util/FlowProvider';
 const { $TL } = useNuxtApp()
 
-onMounted(()=>{
-  console.log('parallax')  
+const buttonRef = ref()
+
+const wrapperRef = ref()
+
+
+onMounted(() => {
 })
 
 const pinRef = ref()
 const layerRef = ref()
 const textRef = ref()
 const rotateRef = ref()
+
 
 
 usePin({
@@ -66,6 +73,66 @@ useScrollEvent({
     tl.play()
   }
 })
+
+
+usePageTransition({
+  props: {
+    buttonRef,
+    wrapperRef
+  },
+  enableCrossfade: true,
+  transitionOut: ({ }, { canvas }, resolve) => {
+    let tl = new $TL()
+    tl.from({
+      d: 1000,
+      e: 'io2',
+      update: (e) => {
+        if (!canvas) return
+        let s = N.Lerp(1, 0.7, e.progE)
+        s *= 2
+        canvas.value.mesh.scale.set(s, s, s)
+      },
+      cb: () => {
+        resolve()
+      }
+    }).play()
+  },
+  transitionInCrossfade: ({ buttonRef }, { }, resolve) => {
+    let tl = new $TL()
+    tl.from({
+      el: buttonRef.value,
+      d: 1000,
+      e: 'io2',
+      p: {
+        x: [100, 0]
+      },
+      cb: () => {
+        resolve()
+      }
+    }).play()
+  },
+  transitionIn: ({ buttonRef }, { }, resolve) => {
+    let tl = new $TL()
+    tl.from({
+      el: buttonRef.value,
+      d: 1000,
+      e: 'io2',
+      p: {
+        r: [0, 180]
+      },
+      cb: () => {
+        resolve()
+      }
+    }).from({
+      el: wrapperRef.value,
+      d: 250,
+      p: {
+        o: [0, 1],
+      },
+    }).play()
+  }
+})
+
 </script>
 
 <style lang="scss" scoped>
