@@ -117,7 +117,6 @@ const Raf = new class {
 
 let RafId = 0;
 
-console.log(Raf, 'raf');
 class RafR {
     cb;
     on;

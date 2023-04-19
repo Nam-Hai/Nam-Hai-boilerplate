@@ -1,4 +1,6 @@
 <template>
+    <TheWebGLScene />
+    <TheBufferPage />
     <slot />
 </template>
 

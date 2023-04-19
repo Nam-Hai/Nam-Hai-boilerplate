@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@studio-freight/lenis": "^1.0.6",
+    "ogl": "^0.0.116",
     "sass": "^1.61.0"
   }
 }
