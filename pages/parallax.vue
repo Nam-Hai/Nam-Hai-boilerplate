@@ -1,4 +1,9 @@
 <template>
+  <NuxtLink to='./'>
+    <div class="home">
+    </div>
+  </NuxtLink>
+
   <div class="mire"></div>
   <div class="wrapper">
     <TheParallax :amount="1.2">
@@ -61,6 +66,16 @@ useScrollEvent({
 </script>
 
 <style lang="scss" scoped>
+.home {
+  position: fixed;
+  right: 4rem;
+  top: 4rem;
+  width: 7rem;
+  height: 4rem;
+  background: red;
+  z-index: 2;
+}
+
 .layer-blue {
   width: 100%;
   height: 100%;
