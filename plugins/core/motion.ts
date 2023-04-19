@@ -356,7 +356,7 @@ class Motion {
     }
 }
 
-const TL = class {
+export class Timeline {
     arr: Array<Motion>;
     delay;
     constructor() {
@@ -369,7 +369,6 @@ const TL = class {
         t.delay = this.delay
         let m = new Motion(t)
         this.arr.push(m)
-
         return this
     }
     play() {
@@ -386,4 +385,6 @@ const TL = class {
     }
 
 }
+const TL = Timeline
+
 export { Motion, TL }
