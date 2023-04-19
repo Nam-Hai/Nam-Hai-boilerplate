@@ -10,7 +10,10 @@ export class FlowProvider {
   private flowHijackResolver?: () => void;
   private routeTo!: RouteLocationNormalized;
   private routeFrom!: RouteLocationNormalized;
+
   bufferRouteState?: ShallowRef;
+  bufferTopZState?: ShallowRef;
+
   props: FlowProps = {}
   flowIsHijacked: boolean = false;
 
@@ -25,11 +28,11 @@ export class FlowProvider {
 
   registerPage(path: string, pageComponent: DefineComponent<{}, {}, any>) {
     this.routerMap.set(path, pageComponent)
-    console.log(this.routerMap)
   }
 
   // connect the BufferPage in the Layout for crossfade animations
-  public connectBuffer(bufferRouteState: ShallowRef) {
+  public connectBuffer(bufferRouteState: ShallowRef, bufferTopZState: ShallowRef) {
+    this.bufferTopZState = bufferTopZState
     this.bufferRouteState = bufferRouteState
   }
 
@@ -42,6 +45,7 @@ export class FlowProvider {
 
   public unMountBufferPage() {
     this.bufferRouteState && (this.bufferRouteState.value = undefined)
+    this.bufferTopZState && (this.bufferTopZState.value = false)
   }
 
   public onChangeRoute(routeTo: RouteLocationNormalized) {
@@ -49,9 +53,15 @@ export class FlowProvider {
     this.routeTo = routeTo
   }
 
-  public triggerCrossfade() {
+  public triggerCrossfade(crossfadeMode: boolean | 'TOP' | 'UNDER' | 'BOTTOM') {
     this.bufferRouteState && (this.bufferRouteState.value = this.routerMap.get(this.routeTo.path));
-    return !!this.bufferRouteState?.value
+    if (!!this.bufferRouteState?.value) {
+      this.bufferTopZState && (this.bufferTopZState.value = crossfadeMode == 'TOP')
+    }
+
+    let a =  !(crossfadeMode == false) && !!this.bufferRouteState?.value
+    console.log(a)
+    return a
   }
 
   public getRouteFrom(): RouteLocationNormalized {

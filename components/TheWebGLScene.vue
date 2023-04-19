@@ -29,7 +29,7 @@ onUnmounted(()=>{
 <style lang="scss" scoped>
 .wrapper-scene {
   position: relative;
-  z-index: 3;
+  z-index: 4;
   pointer-events: none;
 }
 canvas {

@@ -1,3 +1,4 @@
+import { N } from "~/helpers/namhai-utils";
 import { FlowProps, FlowProvider, useFlowProvider } from "~/util/FlowProvider";
 
 export type transitionFunction<T> = (props: T, flowProps: FlowProps, resolve: () => void) => void
@@ -10,7 +11,12 @@ type PageTranstionOptions<T> = {
   transitionInMap?: Map<string, transitionFunction<T>>,
   transitionInCrossfade?: transitionFunction<T>,
   transitionInCrossfadeMap?: Map<string, transitionFunction<T>>,
-  enableCrossfade?: false | true | 'top' | 'bottom'
+
+  // should probably not use this yet, if you click on a link in the buffer things break
+  disablePointerEvent?: boolean,
+
+  // true && 'BOTTOM' && 'UNDER' are the same
+  enableCrossfade?: false | true | 'TOP' | 'BOTTOM' | 'UNDER'
 }
 
 
@@ -22,8 +28,10 @@ export default function usePageTransition<T>({
   transitionInMap,
   transitionInCrossfade,
   transitionInCrossfadeMap,
-  enableCrossfade = false
+  enableCrossfade = false,
+  disablePointerEvent = true
 }: PageTranstionOptions<T>) {
+  const { $lenis } = useNuxtApp()
   const provider = useFlowProvider();
   let crossfade = enableCrossfade;
 
@@ -44,21 +52,29 @@ export default function usePageTransition<T>({
 
   if (provider.flowIsHijacked) return
   onBeforeRouteLeave(async (to, from, next) => {
+    disablePointerEvent && N.PE.none(document.body)
+    $lenis.stop()
+
     const resolve = async () => {
       next()
-      // await nextTick()
       provider.unMountBufferPage()
     }
 
     provider.onChangeRoute(to)
-    let crossfadeExist = true
-    crossfade && (crossfadeExist = provider.triggerCrossfade())
+
+    let crossfadeExist = false
+    crossfade && (crossfadeExist = provider.triggerCrossfade(crossfade))
+    console.log({crossfadeExist})
 
     let promiseOut = createFlow<T>(provider, transitionOutMap, transitionOut, props, flowProps)
 
     let flowPromise = crossfadeExist ? provider.hijackFlow() : null
     await Promise.all([promiseOut, flowPromise])
+
+    $lenis.start()
+    $lenis.scrollTo('top', { immediate: true })
     resolve()
+    disablePointerEvent && N.PE.all(document.body)
   })
 }
 

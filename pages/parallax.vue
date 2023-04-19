@@ -24,9 +24,8 @@
 </template>
 
 <script setup lang="ts">
-import { resolve } from 'path';
 import { N } from '~/helpers/namhai-utils';
-import { useFlowProvider } from '~/util/FlowProvider';
+
 const { $TL } = useNuxtApp()
 
 const buttonRef = ref()
@@ -80,7 +79,7 @@ usePageTransition({
     buttonRef,
     wrapperRef
   },
-  enableCrossfade: true,
+  enableCrossfade: 'TOP',
   transitionOut: ({ }, { canvas }, resolve) => {
     let tl = new $TL()
     tl.from({

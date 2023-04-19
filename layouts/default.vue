@@ -1,17 +1,28 @@
 <template>
-    <TheWebGLScene />
-    <TheBufferPage />
+  <TheWebGLScene />
+  <TheBufferPage />
+
+  <div id="app_DOM">
     <slot />
+  </div>
 </template>
 
 <script setup lang="ts">
+import { useFlowProvider } from '~/util/FlowProvider';
+
 // configure lenis in @/plugins/lenis.client.ts
 const { $lenis } = useNuxtApp()
 
-useRaf((e)=>{
-    $lenis.raf(e.elapsed)
+const flowProvider = useFlowProvider()
+useRaf((e) => {
+  !flowProvider.flowIsHijacked && $lenis.raf(e.elapsed)
 })
+
 </script>
 
 <style lang="scss" scoped>
+#app_DOM {
+  position: relative;
+  z-index: 2;
+}
 </style>
