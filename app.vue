@@ -7,6 +7,18 @@
 </template>
 
 <script setup lang="ts">
-const { $RafR, $Raf } = useNuxtApp()
+import  parallax  from '@/pages/parallax.vue';
+import { createApp } from 'vue'
+import { FlowProvider, provideFlowProvider } from './util/FlowProvider';
+
+
+const app = createApp({})
+
+app.component('parallax', parallax)
+
+const flowProvider = new FlowProvider()
+provideFlowProvider(flowProvider)
+
+
 
 </script>

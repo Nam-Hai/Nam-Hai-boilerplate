@@ -1,6 +1,8 @@
 <template>
-  <div class="wrapper">
-    <div></div>
+  <div ref="wrapperRef" class="wrapper">
+    <NuxtLink to='/parallax'>
+      <div></div>
+    </NuxtLink>
     <div ref="pinRef"></div>
 
     <TestComponent />
@@ -24,23 +26,28 @@
     <div></div>
     <div></div>
     <div></div>
+
   </div>
 </template>
 
 <script lang="ts" setup>
 import { N } from '~/helpers/namhai-utils';
+import { useFlowProvider } from '~/util/FlowProvider';
+
 
 
 const { $TL } = useNuxtApp()
 const testRef = ref() as Ref<HTMLElement>
 const pinRef = ref() as Ref<HTMLElement>
 
+const wrapperRef = ref()
+
+
 useScrollEvent({
   el: testRef,
   vStart: 80,
   eStart: 0,
   onEnter: () => {
-    console.log('onenter');
     let tl = new $TL()
     tl.from({
       el: testRef.value,
@@ -54,14 +61,41 @@ useScrollEvent({
   onProgress: (t) => {
     testRef.value.innerText = N.Round(t * 100, 0) + '%'
   }
+});
+
+const flowProvider = useFlowProvider();
+
+let guardTransition = (resolve: ()=> void) => {
+  console.log('GUARD')
+  let tl = new $TL()
+  tl.from({
+    el: wrapperRef.value,
+    d: 1000,
+    e: 'io2',
+    p: {
+      x: [0, -100]
+    },
+    cb: () => {
+      console.log('RESOLVE')
+      resolve()
+    }
+  })
+  tl.play()
+}
+
+usePageTransition({
+  guardTransitionOut: guardTransition
 })
+
 
 </script>
 
 <style lang="scss" scoped>
 .wrapper {
+  position: relative;
   color: white;
   font-size: 10rem;
+  z-index: 2;
 
   div {
     display: flex;
@@ -85,4 +119,5 @@ useScrollEvent({
   div:nth-child(4n + 2) {
     background-color: black;
   }
-}</style>
+}
+</style>
