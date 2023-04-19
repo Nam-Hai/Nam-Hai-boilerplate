@@ -23,9 +23,9 @@ export class FlowProvider {
     this.routePage.value = undefined
   }
 
-  public setLeaveToRoute(route: RouteLocationNormalized): void {
+  public setLeaveToRoute(route: RouteLocationNormalized, crossfade: boolean = false): void {
     this.leaveToRoute = route;
-    this.routePage.value = routes.get(route.path);
+    this.routePage.value = crossfade ? routes.get(route.path) : undefined;
   }
 
   public getLeaveToRoute(): RouteLocationNormalized {

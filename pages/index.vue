@@ -32,7 +32,7 @@
 
 <script lang="ts" setup>
 import { N } from '~/helpers/namhai-utils';
-import { IndexTransitionProps, IndexTransitionMap} from '@/pages/index.transitions';
+import { IndexTransitionProps, IndexTransitionOutMap} from '@/pages/index.transitions';
 
 const { $TL } = useNuxtApp()
 const testRef = ref() as Ref<HTMLElement>
@@ -61,11 +61,12 @@ useScrollEvent({
   }
 });
 
-usePageTransition<IndexTransitionProps>({
+usePageTransition({
   props: {
     wrapperRef
   },
-  transitionMap: IndexTransitionMap
+  transitionOutMap: IndexTransitionOutMap,
+  // crossfade: true
 })
 
 

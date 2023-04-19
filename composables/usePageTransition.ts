@@ -1,35 +1,44 @@
 import Canvas from "~/scene/canvas";
 import { useFlowProvider } from "~/util/FlowProvider";
 
-export type transtionFunction<T> = T & {
-  resolve: () => void
-}
+export type transtionFunction<T> = (props: T, resolve: () => void, canvas?: Ref<Canvas>) => void
 
 type PageTranstionOptions<T> = {
   props: T,
-  transitionMap: Map<string, (props: T, resolve: () => void, canvas: Ref<Canvas>) => void>,
+  transitionOutMap?: Map<string, transtionFunction<T>>,
+  transitionOut?: transtionFunction<T>,
+  crossfade?: boolean
 }
 
 
 export default function usePageTransition<T>({
   props,
-  transitionMap
+  transitionOutMap,
+  transitionOut,
+  crossfade = false
 }: PageTranstionOptions<T>) {
   const provider = useFlowProvider();
 
 
-  onBeforeRouteLeave((to, from, next) => {
-    provider.setLeaveToRoute(to);
+  onBeforeRouteLeave(async (to, from, next) => {
+    provider.setLeaveToRoute(to, crossfade);
     provider.setLeaveFromRoute(from);
     const canvas = provider.canvas
 
-    let transition = transitionMap?.get(from.name?.toString() + ' => ' + to.name?.toString()) || transitionMap?.get('default') || null
+    let transition = transitionOutMap?.get(from.name?.toString() + ' => ' + to.name?.toString()) || transitionOutMap?.get('default') || transitionOut || undefined
 
     const resolve = () => {
       provider.unMountBufferPage()
       next()
     }
 
-    transition && transition(props, resolve, canvas!)
+    if (transition) {
+      await new Promise<void>(cb => {
+        transition && transition(props, cb, canvas!)
+      })
+      resolve()
+    } else {
+      resolve()
+    }
   })
 }

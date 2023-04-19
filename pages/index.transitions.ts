@@ -5,7 +5,8 @@ export type IndexTransitionProps = {
   wrapperRef: Ref<HTMLElement>,
 }
 
-const transitionIndexOutDefault = ({ wrapperRef }: IndexTransitionProps, resolve: () => void, canvas: Ref<Canvas>) => {
+const transitionIndexOutDefault: transtionFunction<IndexTransitionProps> = ({ wrapperRef }: IndexTransitionProps, resolve: () => void, canvas?: Ref<Canvas>) => {
+
   const { $TL } = useNuxtApp()
 
   let tl = new $TL()
@@ -24,13 +25,14 @@ const transitionIndexOutDefault = ({ wrapperRef }: IndexTransitionProps, resolve
     d: 2000,
     e: 'io4',
     update: (e) => {
-      canvas.value.mesh.rotation.z = e.progE * Math.PI 
+      if (!canvas) return
+      canvas.value.mesh.rotation.z = e.progE * Math.PI
       canvas.value.mesh.rotation.y = e.progE * Math.PI / 4
     }
   }).play()
 }
 
 
-export const IndexTransitionMap = new Map([
+export const IndexTransitionOutMap = new Map([
   ['default', transitionIndexOutDefault]
 ])
