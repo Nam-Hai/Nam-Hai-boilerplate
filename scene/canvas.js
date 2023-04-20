@@ -35,7 +35,7 @@ export default class Canvas {
     const { $RafR } = useNuxtApp()
     this.raf = new $RafR(this.update);
 
-    this.mesh = this.createMedia("2.jpg", 500);
+    this.mesh = this.createMedia("2.jpg", 300);
     this.mesh.setParent(this.scene);
 
     this.init();

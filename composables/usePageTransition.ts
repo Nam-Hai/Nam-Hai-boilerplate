@@ -4,11 +4,10 @@ import { FlowProps, FlowProvider, useFlowProvider } from "~/util/FlowProvider";
 export type transitionFunction<T> = (props: T, flowProps: FlowProps, resolve: () => void) => void
 
 type PageTranstionOptions<T> = {
+  wrapperRef: Ref<HTMLElement>,
   props: T,
   transitionOutMap?: Map<string, transitionFunction<T>>,
   transitionOut?: transitionFunction<T>,
-  transitionIn?: transitionFunction<T>,
-  transitionInMap?: Map<string, transitionFunction<T>>,
   transitionInCrossfade?: transitionFunction<T>,
   transitionInCrossfadeMap?: Map<string, transitionFunction<T>>,
 
@@ -21,11 +20,10 @@ type PageTranstionOptions<T> = {
 
 
 export default function usePageTransition<T>({
+  wrapperRef,
   props,
   transitionOutMap,
   transitionOut,
-  transitionIn,
-  transitionInMap,
   transitionInCrossfade,
   transitionInCrossfadeMap,
   enableCrossfade = false,
@@ -42,7 +40,7 @@ export default function usePageTransition<T>({
   })
 
   const flowIn = async () => {
-    await createFlow<T>(provider, transitionInMap, transitionIn, props, flowProps)
+    provider.unMountBufferPage()
   }
 
   const flowCrossfade = async () => {
@@ -57,14 +55,13 @@ export default function usePageTransition<T>({
 
     const resolve = async () => {
       next()
-      provider.unMountBufferPage()
     }
 
     provider.onChangeRoute(to)
 
     let crossfadeExist = false
     crossfade && (crossfadeExist = provider.triggerCrossfade(crossfade))
-    console.log({crossfadeExist})
+    console.log({ crossfadeExist })
 
     let promiseOut = createFlow<T>(provider, transitionOutMap, transitionOut, props, flowProps)
 

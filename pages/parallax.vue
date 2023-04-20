@@ -1,11 +1,12 @@
 <template>
+  <div ref="wrapperRef">
   <NuxtLink to='/'>
     <div class="home" ref="buttonRef">
     </div>
   </NuxtLink>
 
   <div class="mire"></div>
-  <div ref="wrapperRef" class="wrapper">
+  <div class="wrapper">
     <TheParallax :amount="1.2">
       <div></div>
     </TheParallax>
@@ -20,6 +21,7 @@
       <span ref="textRef" style="position: relative;">test</span>
     </div>
     <div ref="rotateRef"></div>
+  </div>
   </div>
 </template>
 
@@ -75,22 +77,21 @@ useScrollEvent({
 
 
 usePageTransition({
+  wrapperRef,
   props: {
     buttonRef,
     wrapperRef
   },
-  enableCrossfade: 'TOP',
+  // enableCrossfade: 'TOP',
   transitionOut: ({ }, { canvas }, resolve) => {
     let cubePosScale = canvas.value.mesh.scale
-    let scaleTo = (Math.random() + 0.3 )* 2
-    console.log(cubePosScale)
+    let scaleTo = (Math.random() + 0.3) * 1.2
     let tl = new $TL()
     tl.from({
       d: 1000,
       e: 'io2',
       update: (e) => {
         if (!canvas) return
-        console.log(cubePosScale)
         let s = N.Lerp(cubePosScale[0], scaleTo, e.progE)
         canvas.value.mesh.scale.set(s, s, s)
       },
@@ -113,26 +114,26 @@ usePageTransition({
       }
     }).play()
   },
-  transitionIn: ({ buttonRef }, { }, resolve) => {
-    let tl = new $TL()
-    tl.from({
-      el: buttonRef.value,
-      d: 1000,
-      e: 'io2',
-      p: {
-        r: [0, 180]
-      },
-      cb: () => {
-        resolve()
-      }
-    }).from({
-      el: wrapperRef.value,
-      d: 250,
-      p: {
-        o: [0, 1],
-      },
-    }).play()
-  }
+  // transitionIn: ({ buttonRef }, { }, resolve) => {
+  //   let tl = new $TL()
+  //   tl.from({
+  //     el: buttonRef.value,
+  //     d: 1000,
+  //     e: 'io2',
+  //     p: {
+  //       r: [0, 180]
+  //     },
+  //     cb: () => {
+  //       resolve()
+  //     }
+  //   }).from({
+  //     el: wrapperRef.value,
+  //     d: 250,
+  //     p: {
+  //       o: [0, 1],
+  //     },
+  //   }).play()
+  // }
 })
 
 </script>
