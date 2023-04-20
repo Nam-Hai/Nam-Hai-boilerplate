@@ -9,13 +9,21 @@
 
 <script setup lang="ts">
 import { useFlowProvider } from '~/util/FlowProvider';
-
 // configure lenis in @/plugins/lenis.client.ts
 const { $lenis } = useNuxtApp()
 
+console.log('lay lenis', $lenis)
 const flowProvider = useFlowProvider()
+
+
 useRaf((e) => {
   !flowProvider.flowIsHijacked && $lenis.raf(e.elapsed)
+})
+
+flowProvider.registerScrollInterface({
+  resume: () => { $lenis.start() },
+  stop: () => { $lenis.stop() },
+  scrollToTop: () => { $lenis.scrollTo('top', { immediate: true }) }
 })
 
 </script>

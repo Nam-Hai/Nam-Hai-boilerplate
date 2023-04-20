@@ -50,11 +50,7 @@ export default function usePageTransition<T>({
   if (provider.flowIsHijacked) return
   onBeforeRouteLeave(async (to, from, next) => {
     disablePointerEvent && N.PE.none(document.body)
-    $lenis.stop()
-
-    const resolve = async () => {
-      next()
-    }
+    provider.scrollFlow.stop()
 
     provider.onChangeRoute(to)
 
@@ -67,10 +63,11 @@ export default function usePageTransition<T>({
     let flowPromise = crossfadeExist ? provider.hijackFlow() : null
     await Promise.all([promiseOut, flowPromise])
 
-    $lenis.start()
-    $lenis.scrollTo('top', { immediate: true })
-    resolve()
+
+    next()
     disablePointerEvent && N.PE.all(document.body)
+    provider.scrollFlow.resume()
+    provider.scrollFlow.scrollToTop()
   })
 }
 

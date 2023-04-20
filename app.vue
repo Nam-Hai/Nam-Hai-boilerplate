@@ -17,9 +17,9 @@ const route = useRoute()
 const flowProvider = new FlowProvider(route)
 
 provideFlowProvider(flowProvider)
+
 flowProvider.registerPage('/', index)
 flowProvider.registerPage('/parallax', parallax)
-
 
 
 </script>

@@ -4,6 +4,13 @@ import { DefineComponent, ShallowRef } from 'nuxt/dist/app/compat/capi';
 
 export type FlowProps = Record<string, any>
 
+const preventScroll = (e: Event) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  console.log('test')
+  return false;
+}
 
 export class FlowProvider {
   // public transitionOut!: Promise<void>;
@@ -19,6 +26,18 @@ export class FlowProvider {
   flowIsHijacked: boolean = false;
 
   routerMap: Map<string, DefineComponent<{}, {}, any>>
+  scrollFlow = {
+    stop: () => {
+      document.addEventListener('wheel', preventScroll, { passive: false });
+    },
+    resume: () => {
+      document.removeEventListener('wheel', preventScroll);
+    },
+    scrollToTop: () => {
+      document.body.scrollTop = 0; // For Safari
+      document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+  }
 
   constructor(route: RouteLocationNormalized) {
     this.routeTo = route
@@ -29,6 +48,11 @@ export class FlowProvider {
 
   registerPage(path: string, pageComponent: DefineComponent<{}, {}, any>) {
     this.routerMap.set(path, pageComponent)
+  }
+
+  registerScrollInterface(api: { stop: () => void, resume: () => void, scrollToTop: () => void } | undefined) {
+    if (!api) return
+    this.scrollFlow = api
   }
 
   // connect the BufferPage in the Layout for crossfade animations
@@ -100,7 +124,7 @@ export const [provideFlowProvider, useFlowProvider] = createContext<FlowProvider
 //   })
 // }
 
-export function onFlow(mountedCallback: () => void, mountedBufferCallback = ()=> {}) {
+export function onFlow(mountedCallback: () => void, mountedBufferCallback = () => { }) {
   const flow = useFlowProvider()
   onMounted(() => {
     flow.flowIsHijacked ? mountedBufferCallback() : mountedCallback()
