@@ -5,7 +5,6 @@ export type transitionFunction<T> = (props: T, flowProps: FlowProps, resolve: ()
 
 // TODO cancel animation if a new route is taken early
 type PageTranstionOptions<T> = {
-  wrapperRef: Ref<HTMLElement>,
   props: T,
   transitionOutMap?: Map<string, transitionFunction<T>>,
   transitionOut?: transitionFunction<T>,
@@ -21,7 +20,6 @@ type PageTranstionOptions<T> = {
 
 
 export default function usePageTransition<T>({
-  wrapperRef,
   props,
   transitionOutMap,
   transitionOut,

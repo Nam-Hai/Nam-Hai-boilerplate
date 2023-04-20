@@ -62,7 +62,6 @@ useScrollEvent({
 });
 
 usePageTransition({
-  wrapperRef,
   props: {
     wrapperRef
   },
