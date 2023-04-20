@@ -1,4 +1,5 @@
 import { transitionFunction } from "~/composables/usePageTransition"
+import { N } from "~/helpers/namhai-utils"
 import { useFlowProvider } from "~/util/FlowProvider"
 
 // const flow = useFlowProvider()
@@ -9,6 +10,8 @@ export type IndexTransitionProps = {
 
 const transitionIndexOutDefault: transitionFunction<IndexTransitionProps> = ({ wrapperRef }, { canvas }, resolve) => {
   const { $TL } = useNuxtApp()
+  let fromRotation = [canvas.value.mesh.rotation.z, canvas.value.mesh.rotation.y]
+  let toRotation = [Math.PI * 2 * Math.random(), Math.PI /2 * Math.random()]
   let tl = new $TL()
   tl.from({
     el: wrapperRef.value,
@@ -25,8 +28,8 @@ const transitionIndexOutDefault: transitionFunction<IndexTransitionProps> = ({ w
     e: 'io4',
     update: (e) => {
       if (!canvas) return
-      canvas.value.mesh.rotation.z = e.progE * Math.PI
-      canvas.value.mesh.rotation.y = e.progE * Math.PI / 4
+      canvas.value.mesh.rotation.z = N.Lerp(fromRotation[0], toRotation[0], e.progE)
+      canvas.value.mesh.rotation.y = N.Lerp(fromRotation[1], toRotation[1], e.progE)
     }
   }).play()
 }
@@ -42,10 +45,10 @@ const transitionIndexCrossfadeInDefault: transitionFunction<IndexTransitionProps
   console.log(wrapperRef.value)
   tl.from({
     el: wrapperRef.value,
-    d: 1000,
+    d: 300,
     e: 'io2',
     p: {
-      x: [100, 0]
+      o: [0, 1]
     },
     cb: () => {
       resolve()

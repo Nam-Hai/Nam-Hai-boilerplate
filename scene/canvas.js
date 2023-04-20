@@ -1,5 +1,6 @@
 import {
   Renderer,
+  Box,
   Camera,
   Program,
   Plane,
@@ -34,7 +35,7 @@ export default class Canvas {
     const { $RafR } = useNuxtApp()
     this.raf = new $RafR(this.update);
 
-    this.mesh = this.createMedia("2.jpg", 650);
+    this.mesh = this.createMedia("2.jpg", 500);
     this.mesh.setParent(this.scene);
 
     this.init();
@@ -89,7 +90,8 @@ export default class Canvas {
     };
     image.src = src;
 
-    let geometry = new Plane(this.gl);
+    // let geometry = new Plane(this.gl);
+    let geometry = new Box(this.gl)
     let program = new Program(this.gl, {
       fragment: basicFrag,
 

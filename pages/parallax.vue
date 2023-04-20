@@ -81,14 +81,17 @@ usePageTransition({
   },
   enableCrossfade: 'TOP',
   transitionOut: ({ }, { canvas }, resolve) => {
+    let cubePosScale = canvas.value.mesh.scale
+    let scaleTo = (Math.random() + 0.3 )* 2
+    console.log(cubePosScale)
     let tl = new $TL()
     tl.from({
       d: 1000,
       e: 'io2',
       update: (e) => {
         if (!canvas) return
-        let s = N.Lerp(1, 0.7, e.progE)
-        s *= 2
+        console.log(cubePosScale)
+        let s = N.Lerp(cubePosScale[0], scaleTo, e.progE)
         canvas.value.mesh.scale.set(s, s, s)
       },
       cb: () => {

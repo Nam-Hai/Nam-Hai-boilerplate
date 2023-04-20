@@ -67,7 +67,7 @@ usePageTransition({
   },
   transitionOutMap: IndexTransitionOutMap,
   transitionInCrossfadeMap: IndexTransitionCrossfadeMap,
-  // enableCrossfade: true
+  enableCrossfade: true
 })
 
 
