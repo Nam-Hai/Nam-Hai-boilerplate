@@ -82,7 +82,7 @@ usePageTransition({
     buttonRef,
     wrapperRef
   },
-  // enableCrossfade: 'TOP',
+  enableCrossfade: 'TOP',
   transitionOut: ({ }, { canvas }, resolve) => {
     let cubePosScale = canvas.value.mesh.scale
     let scaleTo = (Math.random() + 0.3) * 1.2
