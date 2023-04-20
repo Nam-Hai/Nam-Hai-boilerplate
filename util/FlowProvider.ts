@@ -60,7 +60,7 @@ export class FlowProvider {
       this.bufferTopZState && (this.bufferTopZState.value = crossfadeMode == 'TOP')
     }
 
-    let a =  !(crossfadeMode == false) && !!this.bufferRouteState?.value
+    let a = !(crossfadeMode == false) && !!this.bufferRouteState?.value
     console.log(a)
     return a
   }
@@ -92,10 +92,17 @@ export class FlowProvider {
 
 export const [provideFlowProvider, useFlowProvider] = createContext<FlowProvider>('flow-provider');
 
-export function onFlow(cb: ()=> void){
+// export function onFlow(cb: () => void) {
+//   const flow = useFlowProvider()
+//   onMounted(() => {
+//     if (flow.flowIsHijacked) return
+//     cb()
+//   })
+// }
+
+export function onFlow(mountedCallback: () => void, mountedBufferCallback = ()=> {}) {
   const flow = useFlowProvider()
-  onMounted(()=>{
-    if(flow.flowIsHijacked) return
-    cb()
+  onMounted(() => {
+    flow.flowIsHijacked ? mountedBufferCallback() : mountedCallback()
   })
 }
