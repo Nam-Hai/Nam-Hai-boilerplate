@@ -4,6 +4,7 @@ import { DefineComponent, ShallowRef } from 'nuxt/dist/app/compat/capi';
 
 export type FlowProps = Record<string, any>
 
+
 export class FlowProvider {
   // public transitionOut!: Promise<void>;
   public flowHijacked!: Promise<void>;
@@ -90,3 +91,11 @@ export class FlowProvider {
 }
 
 export const [provideFlowProvider, useFlowProvider] = createContext<FlowProvider>('flow-provider');
+
+export function onFlow(cb: ()=> void){
+  const flow = useFlowProvider()
+  onMounted(()=>{
+    if(flow.flowIsHijacked) return
+    cb()
+  })
+}

@@ -3,6 +3,7 @@ import { FlowProps, FlowProvider, useFlowProvider } from "~/util/FlowProvider";
 
 export type transitionFunction<T> = (props: T, flowProps: FlowProps, resolve: () => void) => void
 
+// TODO cancel animation if a new route is taken early
 type PageTranstionOptions<T> = {
   wrapperRef: Ref<HTMLElement>,
   props: T,
