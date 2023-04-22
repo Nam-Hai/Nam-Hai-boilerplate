@@ -138,17 +138,7 @@ button {
 .center-img {
   @include center-img;
 }
-.btn {
-  border: 1px solid black;
-  text-transform: uppercase;
-  padding: 0 $p3;
-  color: black;
-  @include flex-row;
 
-  .icon {
-    margin-left: $p1;
-  }
-}
 .mask-split-line {
   overflow: hidden;
 }
