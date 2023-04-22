@@ -32,8 +32,9 @@ export default class Canvas {
     N.BM(this, ["update", "onResize", "onScroll"]);
 
     // this.raf = new N.RafR(this.update);
-    const { $RafR } = useNuxtApp()
+    const { $RafR, $ROR} = useNuxtApp()
     this.raf = new $RafR(this.update);
+    this.ro = new $ROR(this.onResize)
 
     this.mesh = this.createMedia("2.jpg", 300);
     this.mesh.setParent(this.scene);
@@ -43,7 +44,7 @@ export default class Canvas {
   }
   async init() {
     this.raf.run();
-    // this.ro.on();
+    this.ro.on();
   }
   addEventListener() {
     // document.addEventListener('wheel', this.onScroll)
@@ -53,7 +54,8 @@ export default class Canvas {
     this.scroll.target += e.deltaY / 100;
   }
 
-  onResize() {
+  onResize(e) {
+    console.log(e);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
     this.sizePixel = {
@@ -71,7 +73,11 @@ export default class Canvas {
       height: height,
       width: height * this.camera.aspect,
     };
-    console.log('resize')
+
+    if(!this.mesh) return
+    const w = 300;
+    let meshScale = (this.size.width * w * e.scale) / this.sizePixel.width;
+    this.mesh.scale.set(meshScale, meshScale, meshScale);
   }
 
   update(e) {

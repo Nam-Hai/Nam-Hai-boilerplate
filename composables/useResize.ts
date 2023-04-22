@@ -1,4 +1,6 @@
-export default function useResize(callback?: () => void) {
+import { ROR } from "~/plugins/core/resize";
+
+export default function useResize(callback?: ({vh, vw}: {vh: number, vw: number}) => void) {
   const onResize = ref<boolean>(false);
 
   const vw = ref<number>(0);
@@ -8,21 +10,25 @@ export default function useResize(callback?: () => void) {
 
   let to: any;
 
+  const { $ROR } = useNuxtApp()
+  const ro = ref() as Ref<ROR>
+
   onMounted(() => {
     updateSize();
-    window.addEventListener('resize', onResizeHandler);
+    ro.value = new $ROR(onResizeHandler)
+    ro.value.on()
   });
 
   onBeforeUnmount(() => {
-    window.removeEventListener('resize', onResizeHandler);
+    ro.value.off()
   });
 
-  function onResizeHandler(e: Event): void {
+  function onResizeHandler(): void {
     clearTimeout(to);
     to = setTimeout(() => {
       updateSize();
       onResize.value = !onResize.value;
-      callback && callback();
+      callback && callback({vh: vh.value, vw: vw.value});
     }, throttle);
   }
 
@@ -33,4 +39,21 @@ export default function useResize(callback?: () => void) {
 
   return { vw, vh, onResize };
 }
+
+export function useRO(callback: () => void) {
+  const { $ROR } = useNuxtApp()
+  const ro = ref() as Ref<ROR>
+
+  onMounted(() => {
+    ro.value = new $ROR(callback)
+    ro.value.on()
+  });
+
+  onBeforeUnmount(() => {
+    ro.value.off()
+  });
+
+  return ro.value;
+}
+
 
