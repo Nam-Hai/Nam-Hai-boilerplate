@@ -1,5 +1,5 @@
-import { Lerp, Round, Select, Has, BM, Is, Clamp, Svg } from "./utils";
-import { Ease, Ease4, Ease4Arg, EaseFunctionName } from "./eases";
+import { Lerp, Round, Select, Has, BM, Is, Clamp, Svg } from "~/helpers/core/utils";
+import { Ease, Ease4, Ease4Arg, EaseFunctionName } from "~/helpers/core/eases";
 import { Delay, rafCbType, RafR } from "./raf";
 
 export interface svgProp {

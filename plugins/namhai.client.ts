@@ -1,6 +1,6 @@
-import Lenis from '@studio-freight/lenis'
 import { Motion, TL } from './core/motion'
-import { Raf, RafR,  Delay} from './core/raf'
+import { RafR,  Delay} from './core/raf'
+import { ROR } from './core/resize'
 
 
 export default defineNuxtPlugin(nuxtApp =>{
@@ -9,6 +9,7 @@ export default defineNuxtPlugin(nuxtApp =>{
     RafR,
     Motion,
     TL,
+    ROR
   }
 
   return {

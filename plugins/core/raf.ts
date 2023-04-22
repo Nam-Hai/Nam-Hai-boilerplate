@@ -1,4 +1,5 @@
-import { BM, Is, Clamp } from "./utils";
+import { BM, Clamp, Is } from "~/helpers/core/utils";
+
 function now() {
     return (typeof performance === 'undefined' ? Date : performance).now();
 }
@@ -140,7 +141,7 @@ class RafR {
     }
 }
 
-const Delay = class {
+class Delay {
     cb;
     delay;
     raf;
@@ -164,19 +165,6 @@ const Delay = class {
         t = Clamp(t, 0, this.delay)
 
         1 === Clamp(t / this.delay, 0, 1) && (this.stop(), this.cb())
-    }
-}
-class Timer {
-    timer
-    constructor(arg: { cb: () => void, delay: number }) {
-        this.timer = new Delay(arg.cb, arg.delay)
-    }
-
-    // if this.run is not trigger within the delay, it trigger the callback
-    // usefull for exemple to buffer resize event
-    run() {
-        this.timer.stop()
-        this.timer.run()
     }
 }
 
