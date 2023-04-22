@@ -12,11 +12,11 @@
     "@types/node": "^18.15.11",
     "eslint": "^8.34.0",
     "nuxt": "^3.3.3",
-    "prettier": "^2.8.4"
+    "prettier": "^2.8.4",
+    "sass": "^1.61.0"
   },
   "dependencies": {
     "@studio-freight/lenis": "^1.0.6",
-    "ogl": "^0.0.116",
-    "sass": "^1.61.0"
+    "ogl": "^0.0.116"
   }
 }

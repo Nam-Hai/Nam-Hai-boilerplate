@@ -13,8 +13,7 @@ import index from '@/pages/index.vue';
 import parallax from '@/pages/parallax.vue';
 
 
-const route = useRoute()
-const flowProvider = new FlowProvider(route)
+const flowProvider = new FlowProvider()
 
 provideFlowProvider(flowProvider)
 

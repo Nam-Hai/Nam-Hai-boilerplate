@@ -2,13 +2,12 @@ import type { RouteLocationNormalized } from 'vue-router';
 import { createContext } from "~/util/apiInject";
 import { DefineComponent, ShallowRef } from 'nuxt/dist/app/compat/capi';
 
+
 export type FlowProps = Record<string, any>
 
 const preventScroll = (e: Event) => {
   e.preventDefault();
   e.stopPropagation();
-
-  console.log('test')
   return false;
 }
 
@@ -39,7 +38,8 @@ export class FlowProvider {
     }
   }
 
-  constructor(route: RouteLocationNormalized) {
+  constructor() {
+    const route = useRoute()
     this.routeTo = route
     this.routeFrom = route
 

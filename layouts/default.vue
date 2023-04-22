@@ -12,7 +12,6 @@ import { useFlowProvider } from '~/util/FlowProvider';
 // configure lenis in @/plugins/lenis.client.ts
 const { $lenis } = useNuxtApp()
 
-console.log('lay lenis', $lenis)
 const flowProvider = useFlowProvider()
 
 

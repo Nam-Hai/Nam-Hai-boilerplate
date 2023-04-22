@@ -1,9 +1,6 @@
 import { transitionFunction } from "~/composables/usePageTransition"
 import { N } from "~/helpers/namhai-utils"
-import { useFlowProvider } from "~/util/FlowProvider"
 
-// const flow = useFlowProvider()
-// console.log(flow)
 export type IndexTransitionProps = {
   wrapperRef: Ref<HTMLElement>,
 }
