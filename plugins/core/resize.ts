@@ -1,5 +1,6 @@
 import { BM, Clamp } from "~/helpers/core/utils"
 import { Delay, RafR } from "./raf"
+// @ts-ignore
 import SassVars from '@/styles/sass/variables.module.scss'
 
 console.log(SassVars)
@@ -22,12 +23,12 @@ type BreakpointType = {
 }
 
 type DeviceTypes = {
-    designSize:{
-        width: number, 
+    designSize: {
+        width: number,
         height: number
-    }, 
+    },
     remScale: {
-        min: number, 
+        min: number,
         max: number
     }
 }
@@ -37,63 +38,64 @@ const Ro = new class {
     raf: RafR
     timer: Timer
     arr: {
-        id:number,
+        id: number,
         cb: (e: {
-            vh:number,
+            vh: number,
             vw: number,
             scale: number,
             breakpoint: string
-        })=>void
+        }) => void
     }[]
 
     breakpoints: Record<string, BreakpointType>
-    deviceTypes: Record<string, DeviceTypes>= {}
+    deviceTypes: Record<string, DeviceTypes> = {}
     scale!: number
     vh!: number
     vw!: number
     private breakpoint!: string
-      
-    constructor(){
+
+    constructor() {
         this.tick = false
         this.arr = []
 
         BM(this, ['fn', 'gRaf', 'run'])
-        this.timer = new Timer({delay: 100, cb: this.gRaf})
+        this.timer = new Timer({ delay: 100, cb: this.gRaf })
         this.raf = new RafR(this.run)
         window.addEventListener('resize', this.fn)
 
         this.breakpoints = {}
         this.deviceTypes = {}   // Get breakpoints and device types from Sass
         SassVars.breakpoints.split(',').forEach((b: string) => {
-        const point = b.trim()
+            const point = b.trim()
 
-        this.breakpoints[point] = {
-            name: point,
-            width: parseInt(SassVars[`breakpoint_${point}_width`]),
-        }
+            this.breakpoints[point] = {
+                name: point,
+                width: parseInt(SassVars[`breakpoint_${point}_width`]),
+            }
 
-        this.deviceTypes[point] = {
-            designSize: {
-            width: parseInt(SassVars[`breakpoint_${point}_design_width`]),
-            height: parseInt(SassVars[`breakpoint_${point}_design_height`]),
-            },
-            remScale: {
-            min: parseFloat(SassVars[`breakpoint_${point}_scale_min`]),
-            max: parseFloat(SassVars[`breakpoint_${point}_scale_max`]),
-            },
-        }})
+            this.deviceTypes[point] = {
+                designSize: {
+                    width: parseInt(SassVars[`breakpoint_${point}_design_width`]),
+                    height: parseInt(SassVars[`breakpoint_${point}_design_height`]),
+                },
+                remScale: {
+                    min: parseFloat(SassVars[`breakpoint_${point}_scale_min`]),
+                    max: parseFloat(SassVars[`breakpoint_${point}_scale_max`]),
+                },
+            }
+        })
 
         this.update()
     }
 
     add(t: {
-      id: number,
-      cb: (e: {
-            vh:number,
+        id: number,
+        cb: (e: {
+            vh: number,
             vw: number,
             scale: number,
             breakpoint: string
-        })=> void
+        }) => void
     }) {
         const arg = {
             vw: this.vw,
@@ -105,7 +107,7 @@ const Ro = new class {
         this.arr.push(t)
     }
     remove(id: number) {
-        for (let t = this.l(); 0 <= t; t--){
+        for (let t = this.l(); 0 <= t; t--) {
             if (this.arr[t].id === id) return void this.arr.splice(t, 1)
         }
     }
@@ -125,14 +127,14 @@ const Ro = new class {
             breakpoint: this.breakpoint
         }
         for (let t = this.l(); 0 <= t; t--) this.arr[t].cb(arg);
-        this.raf.stop() 
+        this.raf.stop()
         this.tick = false
     }
     l() {
         return this.arr.length - 1
     }
 
-    private update(){
+    private update() {
         this.updateSize()
         this.updateBreakpoint()
         this.updateScale()
@@ -141,7 +143,7 @@ const Ro = new class {
         const bps = this.breakpoints
 
         let device = 'mobile'
-        
+
         for (const k of ['mobile', 'desktop']) {
             if (this.vw >= bps[k].width) {
                 device = k
@@ -149,12 +151,12 @@ const Ro = new class {
         }
         this.breakpoint = device
     }
-    private updateSize(){
+    private updateSize() {
         this.vw = innerWidth
         this.vh = innerHeight
     }
 
-    private updateScale(){
+    private updateScale() {
 
         const d = this.deviceTypes[this.breakpoint]
         const scaleX = this.vw / d.designSize.width
@@ -191,7 +193,7 @@ class ROR {
         breakpoint: string
     }) => void
     id: number
-    constructor(cb: (e:{
+    constructor(cb: (e: {
         vh: number,
         vw: number,
         scale: number,
