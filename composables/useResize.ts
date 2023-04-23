@@ -1,6 +1,6 @@
 import { ROR } from "~/plugins/core/resize";
 
-export default function useResize(callback?: ({vh, vw}: {vh: number, vw: number}) => void) {
+export default function useResize(callback?: ({ vh, vw }: { vh: number, vw: number }) => void) {
   const onResize = ref<boolean>(false);
 
   const vw = ref<number>(0);
@@ -28,7 +28,7 @@ export default function useResize(callback?: ({vh, vw}: {vh: number, vw: number}
     to = setTimeout(() => {
       updateSize();
       onResize.value = !onResize.value;
-      callback && callback({vh: vh.value, vw: vw.value});
+      callback && callback({ vh: vh.value, vw: vw.value });
     }, throttle);
   }
 
@@ -40,7 +40,7 @@ export default function useResize(callback?: ({vh, vw}: {vh: number, vw: number}
   return { vw, vh, onResize };
 }
 
-export function useRO(callback: () => void) {
+export function useRO(callback: (e: { vh: number, vw: number, scale: number, breakpoint: string }) => void) {
   const { $ROR } = useNuxtApp()
   const ro = ref() as Ref<ROR>
 

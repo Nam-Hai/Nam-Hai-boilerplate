@@ -33,18 +33,20 @@ type DeviceTypes = {
     }
 }
 
+type ResizeEvent = {
+    vh: number,
+    vw: number,
+    scale: number,
+    breakpoint: string
+}
+
 const Ro = new class {
     tick: boolean
     raf: RafR
     timer: Timer
     arr: {
         id: number,
-        cb: (e: {
-            vh: number,
-            vw: number,
-            scale: number,
-            breakpoint: string
-        }) => void
+        cb: (e: ResizeEvent) => void
     }[]
 
     breakpoints: Record<string, BreakpointType>
@@ -90,12 +92,7 @@ const Ro = new class {
 
     add(t: {
         id: number,
-        cb: (e: {
-            vh: number,
-            vw: number,
-            scale: number,
-            breakpoint: string
-        }) => void
+        cb: (e: ResizeEvent) => void
     }) {
         const arg = {
             vw: this.vw,
@@ -186,12 +183,7 @@ const Ro = new class {
 
 let RoId = 0;
 class ROR {
-    cb: (e: {
-        vh: number,
-        vw: number,
-        scale: number,
-        breakpoint: string
-    }) => void
+    cb: (e: ResizeEvent) => void
     id: number
     constructor(cb: (e: {
         vh: number,
