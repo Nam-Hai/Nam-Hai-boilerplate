@@ -34,6 +34,16 @@
 import { N } from '~/helpers/namhai-utils';
 import { IndexTransitionProps, IndexTransitionOutMap, IndexTransitionCrossfadeMap } from '@/pages/index.transitions';
 
+const { client } = usePrismic()
+const { data: test } = await useAsyncData('test', () => client.getAllByType('media'))
+
+onMounted(()=>{
+  for (const value of test.value!) {
+    console.log(value.data.header[0].text );
+  }
+})
+
+
 const { $TL } = useNuxtApp()
 const testRef = ref() as Ref<HTMLElement>
 const pinRef = ref() as Ref<HTMLElement>
