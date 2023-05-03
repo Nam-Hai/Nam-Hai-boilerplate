@@ -34,6 +34,10 @@
 import { N } from '~/helpers/namhai-utils';
 import { IndexTransitionProps, IndexTransitionOutMap, IndexTransitionCrossfadeMap } from '@/pages/index.transitions';
 
+
+// HOW TO USE PRISMIC, LEGACY PRISMIC
+// https://v3.prismic.nuxtjs.org/guides/basics/fetching-content
+// https://prismic.io/docs/technical-reference/prismicio-client?utm_campaign=devexp&utm_source=nuxt3doc&utm_medium=doc
 const { client } = usePrismic()
 const { data: test } = await useAsyncData('test', () => client.getAllByType('media'))
 
