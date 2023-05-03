@@ -6,7 +6,7 @@
     <div ref="pinRef"></div>
 
     <TestComponent />
-    <div v-for="i in 20">
+    <div v-for="i in 90">
       22
     </div>
     <div ref="testRef">
@@ -83,7 +83,7 @@ usePageTransition({
   div {
     display: flex;
     align-items: center;
-    height: 20rem;
+    height: 5rem;
     width: 100vw;
   }
 

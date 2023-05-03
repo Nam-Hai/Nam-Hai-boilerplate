@@ -32,7 +32,7 @@ export default class Canvas {
     N.BM(this, ["update", "onResize", "onScroll"]);
 
     // this.raf = new N.RafR(this.update);
-    const { $RafR, $ROR} = useNuxtApp()
+    const { $lenis, $RafR, $ROR} = useNuxtApp()
     this.raf = new $RafR(this.update);
     this.ro = new $ROR(this.onResize)
 
@@ -41,6 +41,9 @@ export default class Canvas {
 
     this.init();
     this.addEventListener();
+
+    $lenis.on('scroll', this.onScroll.bind(this))
+    
   }
   async init() {
     this.raf.run();
@@ -51,7 +54,10 @@ export default class Canvas {
   }
 
   onScroll(e) {
-    this.scroll.target += e.deltaY / 100;
+    // this.scroll.target += e.deltaY / 100;
+    console.log(e);
+    this.mesh.position.y =  e.animatedScroll  * this.size.height / innerHeight
+
   }
 
   onResize(e) {
@@ -75,7 +81,7 @@ export default class Canvas {
     };
 
     if(!this.mesh) return
-    const w = 300;
+    const w = 400;
     let meshScale = (this.size.width * w * e.scale) / this.sizePixel.width;
     this.mesh.scale.set(meshScale, meshScale, meshScale);
   }
@@ -96,8 +102,8 @@ export default class Canvas {
     };
     image.src = src;
 
-    // let geometry = new Plane(this.gl);
-    let geometry = new Box(this.gl)
+    let geometry = new Plane(this.gl);
+    // let geometry = new Box(this.gl)
     let program = new Program(this.gl, {
       fragment: basicFrag,
 
