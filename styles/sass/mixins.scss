@@ -20,24 +20,7 @@
   max-height: 100%;
   margin: auto;
 }
-@mixin flex-props($direction: row, $justify: center, $align: center) {
-  display: flex;
-  flex-direction: $direction;
-  justify-content: $justify;
-  align-items: $align;
-}
-@mixin flex-row {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-}
-@mixin flex-col {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
+
 @mixin user-select($val) {
   -webkit-user-select: $val;
   -moz-user-select: $val;
@@ -49,32 +32,6 @@
   -moz-user-drag: $val;
   -ms-user-drag: $val;
   user-drag: $val;
-}
-@mixin aspectRatio($ratio) {
-  &::before {
-    content: '';
-    display: block;
-    padding-top: ($ratio * 100%);
-  }
-}
-
-@mixin aspectRatioSize($width: 1, $height: $width, $relative: true) {
-  @if ($relative == true) {
-    position: relative;
-  }
-
-  &::before {
-    content: "";
-    display: block;
-    padding-top: unquote(math.div($height, $width) * 100 + "%");
-  }
-}
-@mixin fillContainer($offset: 0, $position: absolute) {
-  top: $offset;
-  left: $offset;
-  bottom: $offset;
-  right: $offset;
-  position: $position;
 }
 
 @mixin mainContainer(){
