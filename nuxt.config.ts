@@ -9,9 +9,9 @@ export default defineNuxtConfig({
     ],
 
     modules: ["@nuxtjs/prismic"],
-    buildModules: [
-        '@nuxtjs/prismic',
-    ],
+    // buildModules: [
+    //     '@nuxtjs/prismic',
+    // ],
 
     prismic: {
         endpoint: 'https://testtnuxt.cdn.prismic.io/api/v2',

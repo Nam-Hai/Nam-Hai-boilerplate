@@ -8,12 +8,15 @@
 </template>
 
 <script setup lang="ts">
+import useStore from '~/services/store';
 import { useFlowProvider } from '~/util/FlowProvider';
 // configure lenis in @/plugins/lenis.client.ts
 const { $lenis } = useNuxtApp()
 
 const flowProvider = useFlowProvider()
 
+const store = useStore()
+// store.init()
 
 useRaf((e) => {
   !flowProvider.flowIsHijacked && $lenis.raf(e.elapsed)

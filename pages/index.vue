@@ -1,5 +1,6 @@
 <template>
   <div ref="wrapperRef" class="wrapper">
+    <img v-for="url in urlRef" :src="url" alt="">
     <NuxtLink to='/parallax'>
       <div></div>
     </NuxtLink>
@@ -33,20 +34,27 @@
 <script lang="ts" setup>
 import { N } from '~/helpers/namhai-utils';
 import { IndexTransitionProps, IndexTransitionOutMap, IndexTransitionCrossfadeMap } from '@/pages/index.transitions';
+import useStore from '~/services/store';
 
 
 // HOW TO USE PRISMIC, LEGACY PRISMIC
 // https://v3.prismic.nuxtjs.org/guides/basics/fetching-content
 // https://prismic.io/docs/technical-reference/prismicio-client?utm_campaign=devexp&utm_source=nuxt3doc&utm_medium=doc
 const { client } = usePrismic()
-const { data: test } = await useAsyncData('test', () => client.getAllByType('media'))
+const { data: media } = await useAsyncData('media', () => client.getAllByType('mediatest'))
 
-onMounted(()=>{
-  for (const value of test.value!) {
-    console.log(value.data.header[0].text );
+const urlRef = ref([]) as Ref<Array<string>>
+onMounted(() => {
+  for (const value of media.value!) {
+    console.log(value.data.place);
+    urlRef.value.push(value.data.place.url)
   }
+  console.log(urlRef.value);
 })
 
+const store = useStore()
+useRaf(() => {
+})
 
 const { $TL } = useNuxtApp()
 const testRef = ref() as Ref<HTMLElement>

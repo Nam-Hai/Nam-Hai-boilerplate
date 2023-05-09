@@ -1,4 +1,5 @@
 import { N } from "~/helpers/namhai-utils"
+import useStore from "~/services/store"
 
 type useScrollEventOptions = {
   el: Ref<HTMLElement>,
@@ -25,13 +26,11 @@ export const useScrollEvent = ({
     bounds.value = el.value.getBoundingClientRect()
     bounds.value.y = bounds.value.top + window.scrollY
 
-    // intersectionObserver.value.disconnect()
-    // lenis.run()
-    // lenis.emit()
-    // intersectionInit()
   }
 
-  const { vh } = useResize(resize)
+  const { vh, vw } = useStore()
+  watch(vh, resize)
+  watch(vw, resize)
 
   onMounted(() => {
     intersectionInit()
