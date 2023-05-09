@@ -20,6 +20,8 @@
 }
 
 html {
+  background-color: white;
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: none;
@@ -34,9 +36,8 @@ html {
   &.remlock {
     font-size: 10px !important;
   }
-
-  background-color: black;
 }
+
 html,
 body {
   margin: 0;
@@ -44,7 +45,6 @@ body {
 }
 body {
   white-space: pre-line;
-  color: $text-base;
 }
 #__nuxt{
   display: contents
@@ -53,7 +53,6 @@ body {
 html, body, #__nuxt{
   width: 100%;
   height: 100%;
-  // overflow: hidden;
 }
 body, #__nuxt {
   overflow: hidden;
@@ -109,13 +108,6 @@ button {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   background: none;
-}
-
-.artboard {
-  @include full;
-  opacity: 0.3;
-  pointer-events: none;
-  z-index: 10000;
 }
 
 .condensed {

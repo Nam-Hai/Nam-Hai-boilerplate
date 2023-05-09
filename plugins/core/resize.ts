@@ -1,21 +1,8 @@
 import { BM, Clamp } from "~/helpers/core/utils"
-import { Delay, RafR } from "./raf"
+import { Timer, RafR } from "./raf"
 // @ts-ignore
 import SassVars from '@/styles/sass/variables.module.scss'
 
-console.log(SassVars)
-class Timer {
-    timer
-    constructor(arg: { cb: () => void, delay: number }) {
-        this.timer = new Delay(arg.cb, arg.delay)
-    }
-
-    // reset delay
-    run() {
-        this.timer.stop()
-        this.timer.run()
-    }
-}
 
 type BreakpointType = {
     name: string,
@@ -55,18 +42,20 @@ const Ro = new class {
     vh!: number
     vw!: number
     private breakpoint!: string
+    mode: 'fit' | 'width' | 'height'
 
     constructor() {
         this.tick = false
         this.arr = []
 
         BM(this, ['fn', 'gRaf', 'run'])
-        this.timer = new Timer({ delay: 100, cb: this.gRaf })
+        this.timer = new Timer(this.gRaf, 100)
         this.raf = new RafR(this.run)
         window.addEventListener('resize', this.fn)
 
         this.breakpoints = {}
         this.deviceTypes = {}   // Get breakpoints and device types from Sass
+        this.mode = SassVars.scale_mode
         SassVars.breakpoints.split(',').forEach((b: string) => {
             const point = b.trim()
 
@@ -110,7 +99,7 @@ const Ro = new class {
     }
 
     fn() {
-        this.timer.run()
+        this.timer.tick()
     }
     gRaf() {
         this.update()
@@ -123,7 +112,10 @@ const Ro = new class {
             scale: this.scale,
             breakpoint: this.breakpoint
         }
-        for (let t = this.l(); 0 <= t; t--) this.arr[t].cb(arg);
+        // for (let t = this.l(); 0 <= t; t--) this.arr[t].cb(arg);
+        for (const el of this.arr) {
+          el.cb(arg)
+        }
         this.raf.stop()
         this.tick = false
     }
@@ -131,6 +123,14 @@ const Ro = new class {
         return this.arr.length - 1
     }
 
+    get callbackArg() {
+        return {
+            vw: this.vw,
+            vh: this.vh,
+            scale: this.scale,
+            breakpoint: this.breakpoint
+        }
+    }
     private update() {
         this.updateSize()
         this.updateBreakpoint()
@@ -168,15 +168,15 @@ const Ro = new class {
         // src/styles/config/variables.sass
         // src/styles/helpers/breakpoints.sass // =remscale()
 
-        // if (this.config.scaleMode === 'fit') {
-        // this.scale = Clamp(Math.min(scaleX, scaleY), d.remScale.min, d.remScale.max)
-        // }
-        // else if (this.config.scaleMode === 'width') {
+        if (this.mode === 'fit') {
+        this.scale = Clamp(Math.min(scaleX, scaleY), d.remScale.min, d.remScale.max)
+        }
+        else if (this.mode === 'width') {
         this.scale = Clamp(scaleX, d.remScale.min, d.remScale.max)
-        // }
-        // else if (this.config.scaleMode === 'height') {
-        // this.scale = Clamp(scaleY, d.remScale.min, d.remScale.max)
-        // }
+        }
+        else if (this.mode === 'height') {
+        this.scale = Clamp(scaleY, d.remScale.min, d.remScale.max)
+        }
     }
 }
 
@@ -203,6 +203,10 @@ class ROR {
     }
     off() {
         Ro.remove(this.id)
+    }
+
+    trigger() {
+        this.cb(Ro.callbackArg)
     }
 }
 

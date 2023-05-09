@@ -1,14 +1,14 @@
-import { transitionFunction } from "~/composables/usePageTransition"
+import { FlowFunction } from "@nam-hai/water-flow"
 import { N } from "~/helpers/namhai-utils"
 
 export type IndexTransitionProps = {
   wrapperRef: Ref<HTMLElement>,
 }
 
-const transitionIndexOutDefault: transitionFunction<IndexTransitionProps> = ({ wrapperRef }, { canvas }, resolve) => {
+const transitionIndexOutDefault: FlowFunction<IndexTransitionProps> = ({ wrapperRef }, resolve, { canvas }) => {
   const { $TL } = useNuxtApp()
   let fromRotation = [canvas.value.mesh.rotation.z, canvas.value.mesh.rotation.y]
-  let toRotation = [Math.PI * 2 * Math.random(), Math.PI /2 * Math.random()]
+  let toRotation = [Math.PI * 2 * Math.random(), Math.PI / 2 * Math.random()]
   let tl = new $TL()
   tl.from({
     el: wrapperRef.value,
@@ -25,8 +25,6 @@ const transitionIndexOutDefault: transitionFunction<IndexTransitionProps> = ({ w
     e: 'io4',
     update: (e) => {
       if (!canvas) return
-      canvas.value.mesh.rotation.z = N.Lerp(fromRotation[0], toRotation[0], e.progE)
-      canvas.value.mesh.rotation.y = N.Lerp(fromRotation[1], toRotation[1], e.progE)
     }
   }).play()
 }
@@ -36,10 +34,9 @@ export const IndexTransitionOutMap = new Map([
   ['default', transitionIndexOutDefault]
 ])
 
-const transitionIndexCrossfadeInDefault: transitionFunction<IndexTransitionProps> = ({ wrapperRef }, { canvas }, resolve) => {
+const transitionIndexCrossfadeInDefault: FlowFunction<IndexTransitionProps> = ({ wrapperRef }, resolve, { canvas }) => {
   const { $TL } = useNuxtApp()
   let tl = new $TL()
-  console.log(wrapperRef.value)
   tl.from({
     el: wrapperRef.value,
     d: 300,

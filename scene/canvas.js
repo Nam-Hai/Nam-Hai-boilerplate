@@ -1,131 +1,72 @@
 import {
   Renderer,
-  Box,
   Camera,
-  Program,
-  Plane,
   Transform,
-  Texture,
-  Mesh,
 } from "ogl";
-import { basicFrag } from "./shaders/BasicFrag";
-import { basicVer } from "./shaders/BasicVer";
+import { useFlowProvider } from "@nam-hai/water-flow";
 import { N } from "~/helpers/namhai-utils";
+import { ROR } from "~/plugins/core/resize";
 
 export default class Canvas {
-  constructor({ canvas }) {
+  constructor() {
+    this.pages = {
+      index: null,
+      example2: null
+    }
     this.renderer = new Renderer({
-      canvas: canvas,
       alpha: true,
       antialias: true,
       dpr: devicePixelRatio,
     });
-    this.gl = this.renderer.gl;
+
+    this.gl = this.renderer.gl
+
 
     this.camera = new Camera(this.gl);
     this.camera.position.z = 5;
 
     this.scene = new Transform();
+    N.BM(this, ["resize"]);
 
-    this.onResize();
 
-    N.BM(this, ["update", "onResize", "onScroll"]);
+    this.size = ref({ width: 0, height: 0 })
 
-    // this.raf = new N.RafR(this.update);
-    const { $lenis, $RafR, $ROR} = useNuxtApp()
-    this.raf = new $RafR(this.update);
-    this.ro = new $ROR(this.onResize)
-
-    this.mesh = this.createMedia("2.jpg", 300);
-    this.mesh.setParent(this.scene);
-
-    this.init();
-    this.addEventListener();
-
-    $lenis.on('scroll', this.onScroll.bind(this))
-    
+    this.ro = new ROR(this.resize)
   }
+
   async init() {
-    this.raf.run();
     this.ro.on();
-  }
-  addEventListener() {
-    // document.addEventListener('wheel', this.onScroll)
-  }
 
-  onScroll(e) {
-    // this.scroll.target += e.deltaY / 100;
-    console.log(e);
-    this.mesh.position.y =  e.animatedScroll  * this.size.height / innerHeight
-
+    const flowProvider = useFlowProvider()
+    this.onChange(flowProvider.getRouteFrom())
+    this.currentCanvasPage = this.nextCanvasPage
   }
 
-  onResize(e) {
-    console.log(e);
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-
-    this.sizePixel = {
-      width: window.innerWidth,
-      height: window.innerHeight,
-    };
+  resize({ vh, vw, scale }) {
+    this.renderer.setSize(vw, vh);
 
     this.camera.perspective({
-      aspect: this.sizePixel.width / this.sizePixel.height,
+      // aspect: this.sizePixel.width / this.sizePixel.height,
+      aspect: vw / vh
     });
     const fov = (this.camera.fov * Math.PI) / 180;
 
     const height = 2 * Math.tan(fov / 2) * this.camera.position.z;
-    this.size = {
+
+    this.size.value = {
       height: height,
       width: height * this.camera.aspect,
-    };
-
-    if(!this.mesh) return
-    const w = 400;
-    let meshScale = (this.size.width * w * e.scale) / this.sizePixel.width;
-    this.mesh.scale.set(meshScale, meshScale, meshScale);
+    }
   }
 
-  update(e) {
-    this.renderer.render({
-      scene: this.scene,
-      camera: this.camera
-    });
-  }
-
-  createMedia(src, w, h = w) {
-    let image = new Image();
-    let texture = new Texture(this.gl);
-    image.crossOrigin = "anonymous";
-    image.onload = () => {
-      texture.image = image;
-    };
-    image.src = src;
-
-    let geometry = new Plane(this.gl);
-    // let geometry = new Box(this.gl)
-    let program = new Program(this.gl, {
-      fragment: basicFrag,
-
-      vertex: basicVer,
-      uniforms: {
-        tMap: { value: texture },
-      },
-      cullFace: null,
-    });
-
-    this.texture = texture
-
-    let mesh = new Mesh(this.gl, { geometry, program });
-    let width = (this.size.width * w) / this.sizePixel.width;
-    let height = (this.size.width * h) / this.sizePixel.width;
-    mesh.scale.set(width, height, width);
-    return mesh;
+  onChange(route) {
+    const page = null
+    if (!page) return
+    this.nextCanvasPage = new page({ gl: this.gl, scene: this.scene, camera: this.camera, titleMSDF: this.titleMSDF })
+    this.pages[route.name] = this.nextCanvasPage
   }
 
   destroy() {
-    this.raf.stop()
+    this.ro.off()
   }
-}
-
-
+};

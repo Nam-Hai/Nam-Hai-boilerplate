@@ -57,7 +57,7 @@ export interface MotionState {
         curr: number
     },
     prop?: pProp[],
-    propI?: { [key: string]: number },
+    propTable?: { [key: string]: number },
     svg?: svgProp,
     line?: lineProp
     delay?: number,
@@ -80,11 +80,17 @@ export interface MotionArgBasics {
     delay?: number,
     cb?: () => void,
     r?: number,
+    reverse?: boolean
 }
 
 export interface MotionArgP extends MotionArgBasics {
     p?: {
-        [key: string]: [number, number, string] | [number, number] | { newEnd?: number, newStart?: number }
+        [key: string]: [number, number, string] | [number, number] | { newEnd?: number, newStart?: number },
+        // x: [number, number, string] | [number,number],
+        // y: [number, number, string] | [number,number],
+        // o: [number,number],
+        // s: [number, number],
+        // r: [number, number]
     },
     update?: never
     svg?: never
@@ -163,7 +169,7 @@ class Motion {
         let e = false;
         if (p) {
             i.prop = []
-            i.propI = {}
+            i.propTable = {}
             let index = 0
             for (const [key, v] of Object.entries(p)) {
                 const value = v as [number, number] | [number, number, string]
@@ -178,10 +184,8 @@ class Motion {
                     end: value[1],
                     unit: value[2] || '%'
                 })
-
-                let o = key.charAt(0),
-                    d = (o === 'r' && e) ? "r2" : o
-                e = "r" === o, i.propI[d] = index;
+                const firstChar = key.charAt(0)
+                i.propTable[firstChar] = index;
                 index++;
             }
         } else if (svg) {
@@ -257,6 +261,9 @@ class Motion {
     vUpdate(arg: MotionArg = {}) {
         let s: 'start' | 'end' = Has(arg, 'reverse') ? 'start' : 'end'
 
+        this.v.e.curve = arg.e || this.v.e.curve
+        this.v.e.calc = Is.str(this.v.e.curve) ? Ease[this.v.e.curve] : Ease4(this.v.e.curve)
+
         if (Has(this.v, 'prop') && this.v.prop) {
             for (let prop of this.v.prop) {
                 prop.end = prop.origin[s]
@@ -266,21 +273,25 @@ class Motion {
                     Has(arg.p[prop.name], 'newStart') && (prop.start = (arg.p[prop.name] as { newStart: number }).newStart);
                 }
             }
+        } else if (Has(this.v, 'update')){
+            if(s == 'start') {
+                const ease = this.v.e.calc
+                this.v.e.calc = (t:number) => 1 - ease(t)
+            }
         } else if (Has(this.v, 'svg')) {
             // TODO
         } else if (Has(this.v, 'line')) {
             // TODO
-        }
+        } 
 
         this.v.d && (this.v.d.curr = Has(arg, 'd') ? arg.d! : Round(this.v.d!.origin - this.v.d!.curr + this.v.elapsed))
 
-        this.v.e.curve = arg.e || this.v.e.curve
-        this.v.e.calc = Is.str(this.v.e.curve) ? Ease[this.v.e.curve] : Ease4(this.v.e.curve)
         this.v.delay = (Has(arg, 'delay') ? arg : this.v).delay ?? 0
         this.v.cb = (Has(arg, "cb") ? arg : this.v).cb
 
         this.v.prog = this.v.progE = (this.v.d && this.v.d.curr === 0) ? 1 : 0
         this.delay = new Delay(this.initRaf, this.v.delay)
+
     }
 
     initRaf() {
@@ -305,7 +316,7 @@ class Motion {
     uProp() {
         if (!this.v.el) throw "el not specified for prop motion"
         const props = this.v.prop!;
-        let t = this.v.propI || {};
+        let t = this.v.propTable || {};
         if (props.length === 0) return
         for (const prop of props) {
             prop.curr = this.lerp(prop.start, prop.end)
@@ -313,8 +324,8 @@ class Motion {
         const x = Has(t, "x") ? props[t.x].curr + props[t.x].unit : 0,
             y = Has(t, 'y') ? props[t.y].curr + props[t.y].unit : 0;
         const translate = !x && !y ? 0 : `translate3d(${x},${y},0)`,
-            r = Has(t, 'r') ? `rotate(${props[t.r].curr}deg)` : 0,
-            s = Has(t, 's') ? `scale(${props[t.s].curr})` : 0;
+            r = Has(t, 'r') ? `${props[t.r].name == 'r' ? 'rotate' : props[t.r].name}(${props[t.r].curr}deg)` : 0,
+            s = Has(t, 's') ? `${props[t.s].name == 's' ? 'scale' : props[t.s].name}(${props[t.s].curr})` : 0;
         const transform = !translate && !r && !s ? 0 : [translate, r, s].filter(t => !!t).join(" "),
             o = Has(t, "o") ? props[t.o].curr : -1
 
@@ -330,9 +341,10 @@ class Motion {
     uLine() {
         if (!this.v.el) throw "el not specified for line motion"
         const line = this.v.line!
-        for (let index = 0; index < this.v.el.length - 1; index++) {
+        for (let index = 0; index < this.v.el.length; index++) {
             line.curr[index] = this.lerp(line.start[index], line.end[index]);
-            (this.v.el[index] as HTMLElement).style.strokeDasharray = '' + line.curr[index]
+
+            (this.v.el[index] as HTMLElement).style.strokeDashoffset = '' + line.curr[index]
         }
     }
     uSvg() {
@@ -340,19 +352,18 @@ class Motion {
         const svg = this.v.svg!
         let currTemp = ""
 
-        // console.log(svg.arrL);
         for (let index = 0; index < svg.arrL; index++) {
             svg.val[index] = isNaN(+svg.arr.start[index]) ? svg.arr.start[index] : this.lerp(svg.arr.start[index] as number, svg.arr.end[index] as number)
             currTemp += svg.val[index] + " "
             svg.curr = currTemp.trim()
         }
-        for (let index = 0; index < this.v.el.length - 1 && !Is.und(this.v.el[index]); index++) {
+        for (let index = 0; index < this.v.elL! && !Is.und(this.v.el[index]); index++) {
             (this.v.el![index] as HTMLElement).setAttribute(svg.attr, svg.curr)
         }
     }
 
     lerp(start: number, end: number) {
-        return Round(Lerp(start, end, this.v.progE), this.v.r)
+        return (Lerp(start, end, this.v.progE))
     }
 }
 

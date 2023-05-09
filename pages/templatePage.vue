@@ -5,7 +5,6 @@
 </template>
 
 <script lang="ts" setup>
-import useStore from '~/services/store';
 
 const props = defineProps({})
 const emits = defineEmits([])

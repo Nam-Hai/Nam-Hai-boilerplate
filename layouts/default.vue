@@ -1,38 +1,36 @@
 <template>
-  <TheWebGLScene />
-  <TheBufferPage />
+  <WebGLScene />
 
-  <div id="app_DOM">
-    <slot />
-  </div>
+  <BufferPage>
+    <Preloader>
+      <slot />
+    </Preloader>
+  </BufferPage>
 </template>
 
 <script setup lang="ts">
-import useStore from '~/services/store';
-import { useFlowProvider } from '~/util/FlowProvider';
-// configure lenis in @/plugins/lenis.client.ts
+import { BufferPage, useFlowProvider } from '@nam-hai/water-flow';
+
 const { $lenis } = useNuxtApp()
 
 const flowProvider = useFlowProvider()
 
-const store = useStore()
-// store.init()
+
 
 useRaf((e) => {
   !flowProvider.flowIsHijacked && $lenis.raf(e.elapsed)
+}, {firstStack: true})
+
+onMounted(() => {
+  $lenis.scrollTo('top')
 })
 
 flowProvider.registerScrollInterface({
-  resume: () => { $lenis.start() },
-  stop: () => { $lenis.stop() },
+  resume: ()=> $lenis.start(),
+  stop:  ()=> $lenis.stop(),
   scrollToTop: () => { $lenis.scrollTo('top', { immediate: true }) }
 })
 
 </script>
 
-<style lang="scss" scoped>
-#app_DOM {
-  position: relative;
-  z-index: 2;
-}
-</style>
+<style lang="scss" scoped></style>

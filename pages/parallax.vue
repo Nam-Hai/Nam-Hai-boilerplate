@@ -1,32 +1,33 @@
 <template>
   <div ref="wrapperRef">
-  <NuxtLink to='/'>
-    <div class="home" ref="buttonRef">
-    </div>
-  </NuxtLink>
+    <NuxtLink to='/'>
+      <div class="home" ref="buttonRef">
+      </div>
+    </NuxtLink>
 
-  <div class="mire"></div>
-  <div class="wrapper">
-    <TheParallax :amount="1.2">
-      <div></div>
-    </TheParallax>
-    <TheParallax :amount="0.9">
-      <div></div>
-    </TheParallax>
-    <TheParallax :amount="1.1">
-      <div></div>
-    </TheParallax>
-    <div ref="pinRef">
-      <div ref="layerRef" class="layer-blue"></div>
-      <span ref="textRef" style="position: relative;">test</span>
+    <div class="mire"></div>
+    <div class="wrapper">
+      <TheParallax :amount="1.2">
+        <div></div>
+      </TheParallax>
+      <TheParallax :amount="0.9">
+        <div></div>
+      </TheParallax>
+      <TheParallax :amount="1.1">
+        <div></div>
+      </TheParallax>
+      <div ref="pinRef">
+        <div ref="layerRef" class="layer-blue"></div>
+        <span ref="textRef" style="position: relative;">test</span>
+      </div>
+      <div ref="rotateRef"></div>
     </div>
-    <div ref="rotateRef"></div>
-  </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { N } from '~/helpers/namhai-utils';
+import { usePageFlow } from '@nam-hai/water-flow'
 
 const { $TL } = useNuxtApp()
 
@@ -76,13 +77,13 @@ useScrollEvent({
 })
 
 
-usePageTransition({
+usePageFlow({
   props: {
     buttonRef,
     wrapperRef
   },
   enableCrossfade: 'TOP',
-  transitionOut: ({ }, { canvas }, resolve) => {
+  flowOut: ({ }, resolve, { canvas }) => {
     let cubePosScale = canvas.value.mesh.scale
     let scaleTo = (Math.random() + 0.3) * 1.2
     let tl = new $TL()
@@ -99,7 +100,7 @@ usePageTransition({
       }
     }).play()
   },
-  transitionInCrossfade: ({ buttonRef }, { }, resolve) => {
+  flowInCrossfade: ({ buttonRef }, resolve) => {
     let tl = new $TL()
     tl.from({
       el: buttonRef.value,
@@ -113,26 +114,6 @@ usePageTransition({
       }
     }).play()
   },
-  // transitionIn: ({ buttonRef }, { }, resolve) => {
-  //   let tl = new $TL()
-  //   tl.from({
-  //     el: buttonRef.value,
-  //     d: 1000,
-  //     e: 'io2',
-  //     p: {
-  //       r: [0, 180]
-  //     },
-  //     cb: () => {
-  //       resolve()
-  //     }
-  //   }).from({
-  //     el: wrapperRef.value,
-  //     d: 250,
-  //     p: {
-  //       o: [0, 1],
-  //     },
-  //   }).play()
-  // }
 })
 
 </script>

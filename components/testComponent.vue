@@ -4,7 +4,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onFlow } from '~/util/FlowProvider';
+import { onFlow } from '@nam-hai/water-flow'
 
 const { $TL } = useNuxtApp()
 const wrapperRef = ref()

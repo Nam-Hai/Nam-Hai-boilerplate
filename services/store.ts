@@ -40,7 +40,4 @@ class storeService {
 }
 
 const store = new storeService()
-
-export default function useStore() {
-  return store
-}
+export default store

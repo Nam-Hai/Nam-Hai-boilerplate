@@ -1,5 +1,4 @@
 import { N } from "~/helpers/namhai-utils"
-import useStore from "~/services/store"
 
 type useScrollEventOptions = {
   el: Ref<HTMLElement>,

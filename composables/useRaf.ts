@@ -1,12 +1,12 @@
 import { RafR, rafCbType } from "../plugins/core/raf";
 
-export const useRaf = (cb: (e: rafCbType) => void) => {
+export const useRaf = (cb: (e: rafCbType) => void, options: { lastStack?: boolean, firstStack?: boolean } = { lastStack: false, firstStack: false }) => {
   const { $RafR } = useNuxtApp()
 
   const raf = ref() as Ref<RafR>
 
-  onMounted(() => {
-    raf.value = new $RafR(cb)
+  onBeforeMount(() => {
+    raf.value = new $RafR(cb, options.lastStack, options.firstStack)
     raf.value.run()
   })
 
@@ -14,7 +14,6 @@ export const useRaf = (cb: (e: rafCbType) => void) => {
     raf.value.stop()
   })
 
-  return {
-    raf
-  }
+  return raf
+
 }

@@ -49,7 +49,9 @@ export const usePin = ({
     onProgress(N.iLerp(offset.value, 0, end))
   })
 
-  const { vh } = useResize(resize)
+  const {vw,vh} = useStore()
+  watch(vh, resize)
+  watch(vw, resize)
 
   const intersectionObserver = ref() as Ref<IntersectionObserver>
   const intersectionInit = () => {

@@ -33,26 +33,40 @@
 
 <script lang="ts" setup>
 import { N } from '~/helpers/namhai-utils';
-import { IndexTransitionProps, IndexTransitionOutMap, IndexTransitionCrossfadeMap } from '@/pages/index.transitions';
-import useStore from '~/services/store';
+import { IndexTransitionOutMap, IndexTransitionCrossfadeMap } from '@/pages/index.transitions';
+import { usePageFlow } from '@nam-hai/water-flow'
 
 
 // HOW TO USE PRISMIC, LEGACY PRISMIC
 // https://v3.prismic.nuxtjs.org/guides/basics/fetching-content
 // https://prismic.io/docs/technical-reference/prismicio-client?utm_campaign=devexp&utm_source=nuxt3doc&utm_medium=doc
 const { client } = usePrismic()
-const { data: media } = await useAsyncData('media', () => client.getAllByType('mediatest'))
 
 const urlRef = ref([]) as Ref<Array<string>>
-onMounted(() => {
+const { $lenis } = useNuxtApp()
+
+const { data: media } = await useAsyncData('media', () => client.getAllByType('mediatest'))
+
+onMounted(async () => {
+  $lenis.scrollTo('top')
+
   for (const value of media.value!) {
     console.log(value.data.place);
     urlRef.value.push(value.data.place.url)
   }
-  console.log(urlRef.value);
+  nextTick()
+
+  $lenis.dimensions.onWindowResize()
+  $lenis.dimensions.onContentResize()
 })
 
+// onUpdated(()=>{
+//   $lenis.dimensions.onWindowResize()
+//   $lenis.dimensions.onContentResize()
+// })
+
 const store = useStore()
+
 useRaf(() => {
 })
 
@@ -83,12 +97,12 @@ useScrollEvent({
   }
 });
 
-usePageTransition({
+usePageFlow({
   props: {
     wrapperRef
   },
-  transitionOutMap: IndexTransitionOutMap,
-  transitionInCrossfadeMap: IndexTransitionCrossfadeMap,
+  flowOutMap: IndexTransitionOutMap,
+  flowInCrossfadeMap: IndexTransitionCrossfadeMap,
   enableCrossfade: true
 })
 

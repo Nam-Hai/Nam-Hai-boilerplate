@@ -87,6 +87,7 @@ const Raf = new class {
 
     add(rafItem: rafItem) {
         this.arr.push(rafItem)
+        this.arr.sort((a,b) => a.id - b.id)
     }
 
     remove(r: number): void {
@@ -122,10 +123,12 @@ class RafR {
     cb;
     on;
     id;
-    constructor(callback: (arg: { elapsed: number, delta: number }) => void) {
+    constructor(callback: (arg: { elapsed: number, delta: number }) => void, lastStack = false, firstStack = false) {
         this.cb = callback
         this.on = false
         this.id = RafId
+        this.id += firstStack ? +100000 : 0
+        this.id += lastStack ? -20000 : 0
         RafId++
     }
 
@@ -168,4 +171,17 @@ class Delay {
     }
 }
 
-export { Raf, RafR, Delay } 
+class Timer {
+    timer
+    constructor(callback: () => void, delay: number = 200) {
+        this.timer = new Delay(callback, delay)
+    }
+
+    // reset delay
+    tick() {
+        this.timer.stop()
+        this.timer.run()
+    }
+}
+
+export { Raf, RafR, Delay, Timer } 
