@@ -56,8 +56,9 @@ onMounted(() => {
 usePin({
     el: screenWrapperRef,
     start: 0,
-    end: 400,
+    end: 300,
     onProgress(t) {
+        console.log(t);
         t = t * 4
         let t1 = N.Clamp(t, 0, 1)
         screenTranslate(t1, screen2Ref, cube1Ref, cube2Ref)
@@ -67,7 +68,8 @@ usePin({
 })
 
 function screenTranslate(t: number, el: Ref<HTMLElement>, cube?: Ref<HTMLElement>, cubeAfter?: Ref<HTMLElement>) {
-    t = N.Ease.io1(t)
+    t = N.Ease.io3(t)
+
     N.T(el.value, (1 - t) * 100, 0)
     if (t == 0 || t == 1) return
     if (!cube) return
@@ -86,7 +88,7 @@ function screenTranslate(t: number, el: Ref<HTMLElement>, cube?: Ref<HTMLElement
 
 <style lang="scss" scoped>
 .slice {
-    height: 500vh;
+    height: 400vh;
     width: 100vw;
     position: relative;
 }

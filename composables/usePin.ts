@@ -15,7 +15,7 @@ export const usePin = ({
   end = Infinity,
   eStart = 0,
   onEnter = () => { },
-  onProgress = () => { }
+  onProgress = (t:number) => { }
 }: usePinOptions) => {
 
   const hasEnter = ref(false)
@@ -44,7 +44,8 @@ export const usePin = ({
     if (offset.value > 0) hasEnter.value = true
     N.T(el.value, 0, offset.value, 'px')
 
-    onProgress(N.iLerp(offset.value, 0, end))
+    // t [0:1]
+    onProgress(N.iLerp(offset.value, 0, end * vh.value / 100))
   })
 
   const { vw, vh } = useStore()
