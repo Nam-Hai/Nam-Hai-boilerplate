@@ -6,8 +6,6 @@
 <script lang='ts' setup>
 import { useFlowProvider } from '@nam-hai/water-flow'
 
-
-
 const sceneRef = ref()
 const wrapperSceneRef = ref()
 
@@ -18,10 +16,6 @@ onMounted(() => {
   wrapperSceneRef.value.appendChild($canvas.gl.canvas)
 })
 
-const flowProvider = useFlowProvider()
-flowProvider.addProps('canvasWrapperRef', wrapperSceneRef)
-const flowRef = ref(flowProvider)
-flowProvider.addProps('flowRef', flowRef)
 
 onUnmounted(() => {
 
@@ -34,7 +28,6 @@ onUnmounted(() => {
   position: relative;
   z-index: 17;
   pointer-events: none;
-
 }
 
 canvas {
@@ -43,6 +36,5 @@ canvas {
   left: 0;
   width: 100%;
   height: 100%;
-
 }
 </style>

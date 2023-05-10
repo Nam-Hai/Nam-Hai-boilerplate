@@ -1,4 +1,5 @@
 import { N } from "~/helpers/namhai-utils"
+import { useResize } from "./useResize"
 
 type usePinOptions = {
   el: Ref<HTMLElement>,
@@ -48,9 +49,7 @@ export const usePin = ({
     onProgress(N.iLerp(offset.value, 0, end * vh.value / 100))
   })
 
-  const { vw, vh } = useStore()
-  watch(vh, resize)
-  watch(vw, resize)
+  const { vh } = useResize(resize)
 
   watch(hasEnter, () => {
     onEnter()

@@ -21,6 +21,9 @@ provide('from-preloader', { value: true })
 flowProvider.registerPage('index', index)
 flowProvider.registerPage('parallax', parallax)
 
+const flowRef = ref(flowProvider)
+flowProvider.addProps('flowRef', flowRef)
+
 const store = useStore()
 onMounted(() => {
   store.init()

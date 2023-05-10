@@ -1,4 +1,5 @@
 import { N } from "~/helpers/namhai-utils"
+import { useResize } from "./useResize"
 
 type useScrollEventOptions = {
   el: Ref<HTMLElement>,
@@ -27,9 +28,7 @@ export const useScrollEvent = ({
 
   }
 
-  const { vh, vw } = useStore()
-  watch(vh, resize)
-  watch(vw, resize)
+  const { vh, vw } = useResize(resize)
 
   onMounted(() => {
     intersectionInit()
