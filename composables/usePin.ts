@@ -15,7 +15,7 @@ export const usePin = ({
   end = Infinity,
   eStart = 0,
   onEnter = () => { },
-  onProgress = (t:number) => { }
+  onProgress = (t: number) => { }
 }: usePinOptions) => {
 
   const hasEnter = ref(false)
@@ -38,7 +38,7 @@ export const usePin = ({
     bounds.y = boundsRect.top + window.scrollY
   })
 
-  const { lenis } = useLenisScroll((e) => {
+  useLenisScroll((e) => {
     const dist = window.scrollY - bounds.y + start * vh.value / 100 - bounds.height * eStart / 100
     offset.value = N.Clamp(dist, 0, end * vh.value / 100)
     if (offset.value > 0) hasEnter.value = true

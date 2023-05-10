@@ -16,7 +16,7 @@ import parallax from '@/pages/parallax.vue';
 const flowProvider = new FlowProvider()
 
 provideFlowProvider(flowProvider)
-provide('from-preloader', {value: true})
+provide('from-preloader', { value: true })
 
 flowProvider.registerPage('index', index)
 flowProvider.registerPage('parallax', parallax)
