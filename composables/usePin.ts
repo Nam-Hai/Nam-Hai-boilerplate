@@ -19,55 +19,37 @@ export const usePin = ({
 }: usePinOptions) => {
 
   const hasEnter = ref(false)
-  const bounds = ref() as Ref<DOMRect>
   const offset = ref(0)
+  const bounds = reactive({
+    y: 0,
+    height: 0
+  })
 
   const resize = () => {
 
     N.T(el.value, 0, 0, 'px')
-    bounds.value = el.value.getBoundingClientRect()
-    bounds.value.y = bounds.value.top + window.scrollY
-
-    intersectionObserver.value.disconnect()
-    lenis.run()
-    lenis.emit()
-    intersectionInit()
+    let boundsRect = el.value.getBoundingClientRect()
+    bounds.y = boundsRect.top + window.scrollY
   }
 
   onMounted(() => {
-    intersectionInit()
-    bounds.value = el.value.getBoundingClientRect()
-    bounds.value.y = bounds.value.top + window.scrollY
+    console.log(el, el.value);
+    let boundsRect = el.value.getBoundingClientRect()
+    bounds.y = boundsRect.top + window.scrollY
   })
 
   const { lenis } = useLenisScroll((e) => {
-    const dist = window.scrollY - bounds.value.y + start * vh.value / 100 - bounds.value.height * eStart / 100
-    offset.value = N.Clamp(dist, 0, end)
+    const dist = window.scrollY - bounds.y + start * vh.value / 100 - bounds.height * eStart / 100
+    offset.value = N.Clamp(dist, 0, end * vh.value / 100)
     if (offset.value > 0) hasEnter.value = true
     N.T(el.value, 0, offset.value, 'px')
 
     onProgress(N.iLerp(offset.value, 0, end))
   })
 
-  const {vw,vh} = useStore()
+  const { vw, vh } = useStore()
   watch(vh, resize)
   watch(vw, resize)
-
-  const intersectionObserver = ref() as Ref<IntersectionObserver>
-  const intersectionInit = () => {
-    intersectionObserver.value = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        entry.isIntersecting ? lenis.run() : lenis.stop()
-      })
-    })
-    intersectionObserver.value.observe(el.value)
-  }
-
-
-
-  onBeforeUnmount(() => {
-    intersectionObserver.value.disconnect()
-  })
 
   watch(hasEnter, () => {
     onEnter()

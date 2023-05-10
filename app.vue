@@ -18,8 +18,8 @@ const flowProvider = new FlowProvider()
 provideFlowProvider(flowProvider)
 provide('from-preloader', {value: true})
 
-flowProvider.registerPage('/', index)
-flowProvider.registerPage('/parallax', parallax)
+flowProvider.registerPage('index', index)
+flowProvider.registerPage('parallax', parallax)
 
 const store = useStore()
 onMounted(() => {
