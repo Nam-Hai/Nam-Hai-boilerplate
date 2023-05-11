@@ -5,8 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { N } from '~/helpers/namhai-utils';
-
+import { N } from '~/plugins/namhai.client'
 
 const rootRef = ref()
 

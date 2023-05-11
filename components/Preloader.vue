@@ -16,7 +16,7 @@ const wrapperRef = ref()
 const fromPreloader = inject('from-preloader') as Ref<boolean>
 watch(preloadComplete, () => {
     fromPreloader.value = false
-    $canvas.currentCanvasPage?.init()
+    $canvas.currentPage.init()
 })
 
 const index = ref(0)
@@ -40,10 +40,6 @@ onMounted(() => {
 
 <style scoped lang="scss">
 @use "@/styles/shared.scss" as *;
-@use '@/styles/app/colors.scss' as *;
-@use "@/styles/app/variables.scss" as *;
-@use "@/styles/shared.scss" as *;
-
 .wrapper__preloader {
   position: fixed;
   height: 100%;

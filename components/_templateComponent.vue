@@ -12,9 +12,6 @@ const emits = defineEmits([])
 const store = useStore()
 const { $TL } = useNuxtApp()
 
-const { client } = usePrismic()
-const { data: media } = await useAsyncData('media', () => client.getAllByType('mediatest'))
-
 const wrapperRef = ref() as Ref<HTMLElement>
 
 
