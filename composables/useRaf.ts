@@ -1,6 +1,6 @@
-import { RafR, rafCbType } from "../plugins/core/raf";
+import { RafR, rafEvent } from "../plugins/core/raf";
 
-export const useRaf = (cb: (e: rafCbType) => void, options: { lastStack?: boolean, firstStack?: boolean } = { lastStack: false, firstStack: false }) => {
+export const useRaf = (cb: (e: rafEvent) => void, options: { lastStack?: boolean, firstStack?: boolean } = { lastStack: false, firstStack: false }) => {
   const { $RafR } = useNuxtApp()
 
   const raf = ref() as Ref<RafR>
