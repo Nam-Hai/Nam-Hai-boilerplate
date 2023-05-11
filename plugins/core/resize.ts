@@ -1,7 +1,7 @@
-import { BM, Clamp } from "~/helpers/core/utils"
 import { Timer, RafR } from "./raf"
 // @ts-ignore
 import SassVars from '@/styles/sass/variables.module.scss'
+import { BM, Clamp } from "./utils"
 
 
 type BreakpointType = {
@@ -210,4 +210,4 @@ class ROR {
     }
 }
 
-export { ROR }
+export { ROR, ResizeEvent }

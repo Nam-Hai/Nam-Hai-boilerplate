@@ -1,4 +1,4 @@
-import { N } from "~/helpers/namhai-utils"
+import { N } from "~/plugins/namhai.client"
 import { useResize } from "./useResize"
 
 type usePinOptions = {

@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { N } from '~/helpers/namhai-utils'
+import { N } from '~/plugins/namhai.client'
 
 
 const props = defineProps({})

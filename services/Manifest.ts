@@ -1,13 +1,22 @@
+// @ts-ignore
 import { Texture } from "ogl"
 
 export default class Manifest {
-  constructor(gl) {
+  length: number
+  index: globalThis.Ref<number>
+  callback: (n: any) => void
+
+  textures: {
+    images: {
+      [key: string]: Texture
+    };
+  }
+  jsons: { [key: string]: {} }
+  constructor(gl: any) {
     const textures = {
       images: {
         // texture1: new Texture(gl)
       },
-      font: {
-      }
     }
 
     this.jsons = {
@@ -22,8 +31,8 @@ export default class Manifest {
 
     this.index = ref(0)
 
-    this.callback = (n)=>{}
-    watch(this.index, i =>{
+    this.callback = (n) => { }
+    watch(this.index, i => {
       this.callback(i)
     })
 

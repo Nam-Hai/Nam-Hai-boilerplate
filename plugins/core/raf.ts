@@ -1,4 +1,4 @@
-import { BM, Clamp, Is } from "~/helpers/core/utils";
+import { BM, Is, Clamp } from "./utils";
 
 function now() {
     return (typeof performance === 'undefined' ? Date : performance).now();
@@ -55,7 +55,7 @@ export type rafItem = {
     cb: (arg: { elapsed: number, delta: number }) => void,
     startTime?: number
 }
-export type rafCbType = {
+export type rafEvent = {
     elapsed: number,
     delta: number
 }
@@ -163,7 +163,7 @@ class Delay {
         this.raf.stop()
     }
 
-    update(e: rafCbType) {
+    update(e: rafEvent) {
         let t = e.elapsed
         t = Clamp(t, 0, this.delay)
 

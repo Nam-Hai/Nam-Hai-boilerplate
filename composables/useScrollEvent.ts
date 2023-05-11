@@ -1,4 +1,4 @@
-import { N } from "~/helpers/namhai-utils"
+import { N } from "~/plugins/namhai.client"
 import { useResize } from "./useResize"
 
 type useScrollEventOptions = {
@@ -21,6 +21,7 @@ export const useScrollEvent = ({
 }: useScrollEventOptions) => {
   const hasEnter = ref(false)
   const bounds = ref() as Ref<DOMRect>
+
 
   const resize = () => {
     bounds.value = el.value.getBoundingClientRect()
