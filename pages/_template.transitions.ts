@@ -1,5 +1,4 @@
 import { FlowFunction } from "@nam-hai/water-flow"
-import { N } from "~/plugins/namhai.client"
 
 export type TemplateTransitionProps = {
   wrapperRef: Ref<HTMLElement>,

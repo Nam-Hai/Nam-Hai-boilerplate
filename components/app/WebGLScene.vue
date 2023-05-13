@@ -4,7 +4,6 @@
 </template>
 
 <script lang='ts' setup>
-import { useFlowProvider } from '@nam-hai/water-flow'
 
 const sceneRef = ref()
 const wrapperSceneRef = ref()

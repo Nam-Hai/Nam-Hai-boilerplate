@@ -7,10 +7,23 @@ export default defineNuxtConfig({
         '@/styles/app/index.scss'
     ],
 
-    modules: ["@nuxtjs/prismic"],
+    modules: [
+        "@nuxtjs/prismic",
+    ],
     prismic: {
-        endpoint: 'https://testtnuxt.cdn.prismic.io/api/v2',
+        endpoint: 'https://testtnuxt.cdn.prismic.io/api/v2'
+
         // modern: true
         // see documentation for more!
-    }
+    },
+    components: {
+        global: true,
+        dirs: [
+            '~/components/app'
+        ]
+    },
+    // vite:{
+    //     optimizeDeps: { exclude: ["fsevents"] }
+    // }
+
 })
