@@ -1,6 +1,7 @@
 <template>
     <div ref="wrapperRef">
 
+        404
     </div>
 </template>
 
@@ -21,3 +22,4 @@ const wrapperRef = ref() as Ref<HTMLElement>
 @use "@/styles/shared.scss" as *;
 
 </style>
+

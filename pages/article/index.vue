@@ -1,7 +1,11 @@
 <template>
     <div ref="wrapperRef">
-
+        l'article n'existe pas
     </div>
+
+    <NuxtLink to="/article/article-1"></NuxtLink>
+    <NuxtLink to="/article/article-2"></NuxtLink>
+    <NuxtLink to="/article/article-3"></NuxtLink>
 </template>
 
 <script lang="ts" setup>
@@ -10,7 +14,6 @@ const store = useStore()
 const { $TL } = useNuxtApp()
 
 const { client } = usePrismic()
-const { data: media } = await useAsyncData('media', () => client.getAllByType('mediatest'))
 
 const wrapperRef = ref() as Ref<HTMLElement>
 
@@ -19,5 +22,5 @@ const wrapperRef = ref() as Ref<HTMLElement>
 
 <style lang="scss" scoped>
 @use "@/styles/shared.scss" as *;
-
 </style>
+

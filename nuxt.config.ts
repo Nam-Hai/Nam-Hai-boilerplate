@@ -1,6 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
 export default defineNuxtConfig({
     ssr: true,
+    nitro: {
+        prerender: {
+            crawlLinks: true
+        }
+    },
 
     css: [
         '@/styles/core.scss',
@@ -11,7 +17,15 @@ export default defineNuxtConfig({
         "@nuxtjs/prismic",
     ],
     prismic: {
-        endpoint: 'https://testtnuxt.cdn.prismic.io/api/v2'
+        endpoint: 'https://testtnuxt.cdn.prismic.io/api/v2',
+        configClient: {
+            routes: [
+                {
+                    type: 'article',
+                    path: '/article/:uid'
+                }
+            ]
+        }
 
         // modern: true
         // see documentation for more!

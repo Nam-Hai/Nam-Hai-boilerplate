@@ -16,7 +16,7 @@ const wrapperRef = ref()
 const fromPreloader = inject('from-preloader') as Ref<boolean>
 watch(preloadComplete, () => {
     fromPreloader.value = false
-    $canvas.currentPage.init()
+    $canvas.currentPage && $canvas.currentPage.init()
 })
 
 const index = ref(0)

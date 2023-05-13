@@ -71,6 +71,7 @@ export default class Canvas {
 
     onChange(route: RouteLocationNormalized) {
         const createPage = this.mapRouteObject[route.name?.toString() || ''] || null
+        if (!createPage) return
         this.nextPage = createPage.bind(this)()
     }
 
