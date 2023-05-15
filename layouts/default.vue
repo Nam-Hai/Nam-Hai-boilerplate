@@ -11,27 +11,26 @@
 <script setup lang="ts">
 import { BufferPage, useFlowProvider } from '@nam-hai/water-flow';
 
-const { $lenis } = useNuxtApp()
-
 const flowProvider = useFlowProvider()
 
+const lenis = useStore().lenis
 
 
 useRaf((e) => {
-  !flowProvider.flowIsHijacked && $lenis.raf(e.elapsed)
-}, {firstStack: true})
+  !flowProvider.flowIsHijacked && lenis.value.raf(e.elapsed)
+}, { firstStack: true })
 
 onMounted(() => {
-  $lenis.scrollTo('top')
+  console.log(useStore());
+  lenis.value.scrollTo('top')
 })
 
 flowProvider.registerScrollInterface({
-  resume: ()=> $lenis.start(),
-  stop:  ()=> $lenis.stop(),
-  scrollToTop: () => { $lenis.scrollTo('top', { immediate: true }) }
+  resume: () => lenis.value.start(),
+  stop: () => lenis.value.stop(),
+  scrollToTop: () => { lenis.value.scrollTo('top', { immediate: true }) }
 })
 
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

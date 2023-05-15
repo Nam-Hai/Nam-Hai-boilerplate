@@ -9,7 +9,6 @@ class StoreService {
   scale: globalThis.Ref<number>;
   breakpoint: globalThis.Ref<string>;
   manifestLoaded: globalThis.Ref<boolean>;
-  showLogoLayout: globalThis.Ref<boolean>;
   mouse: { x: number; y: number; };
   cursorState: globalThis.Ref<CursorState>;
   indexMaskBound: globalThis.Ref<number>;
@@ -24,8 +23,6 @@ class StoreService {
     this.breakpoint = ref('desktop')
 
     this.manifestLoaded = ref(false)
-
-    this.showLogoLayout = ref(false)
 
     this.cursorState = ref('default') as Ref<CursorState>
     this.indexMaskBound = ref(0)

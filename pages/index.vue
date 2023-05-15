@@ -1,5 +1,6 @@
 <template>
   <main ref="wrapperRef">
+    Index Page
   </main>
 </template>
 

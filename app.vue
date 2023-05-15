@@ -1,6 +1,9 @@
 <template>
-  <div id="app">
-    <NuxtLayout>
+  <div id="app" v-if="cmsLoaded">
+    <NuxtLayout v-if="!isMobile" name="default">
+      <NuxtPage></NuxtPage>
+    </NuxtLayout>
+    <NuxtLayout v-else name="mobile">
       <NuxtPage></NuxtPage>
     </NuxtLayout>
   </div>
@@ -11,6 +14,10 @@ import { FlowProvider, provideFlowProvider } from '@nam-hai/water-flow';
 
 import index from '@/pages/index.vue';
 
+const isMobile = ref()
+onBeforeMount(() => {
+  isMobile.value = N.Snif.isMobile()
+})
 
 const flowProvider = new FlowProvider()
 
@@ -23,9 +30,13 @@ const flowRef = ref(flowProvider)
 flowProvider.addProps('flowRef', flowRef)
 
 const store = useStore()
-onMounted(() => {
-  store.init()
+const cmsLoaded = ref(false)
+const manifest = useManifest()
+
+onMounted(async () => {
+  manifest.loadCMS().then(() => {
+    cmsLoaded.value = true
+    store.init()
+  })
 })
-
-
 </script>
