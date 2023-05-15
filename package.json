@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@nam-hai/water-flow": "^0.0.22",
-    "@studio-freight/lenis": "^1.0.6",
+    "@studio-freight/lenis": "^1.0.12",
     "ogl": "^0.0.116"
   }
 }

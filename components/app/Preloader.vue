@@ -1,37 +1,41 @@
 <template>
   <div ref="wrapperRef" class="wrapper__preloader" v-if="!preloadComplete">
-    {{index}}
   </div>
+
   <slot v-if="preloadComplete" />
 </template>
 
 <script lang="ts" setup>
-const preloadComplete = ref(false)
-
-
-const { $TL, $canvas, $manifest } = useNuxtApp()
+const fromPreloader = inject('from-preloader') as Ref<boolean>
 
 const wrapperRef = ref()
+const preloadComplete = ref(false)
 
-const fromPreloader = inject('from-preloader') as Ref<boolean>
+const canvas = useCanvas()
+
 watch(preloadComplete, () => {
-    fromPreloader.value = false
-    $canvas.currentPage && $canvas.currentPage.init()
+  fromPreloader.value = false
+  canvas.currentPage.init()
 })
 
-const index = ref(0)
-onMounted(() => {
 
-  $manifest.callback = (i) => {
-    index.value = i
-    if (i == $manifest.length) {
-      preloadComplete.value = true
-    }
-  }
-  $manifest.loadManifest()
-  if($manifest.length ===0){
-    preloadComplete.value = true
-  }
+const { manifestLoaded, showLogoLayout } = useStore()
+
+const quitLoader = ref(false)
+
+function endPreloader() {
+  preloadComplete.value = true
+}
+
+
+const { client } = usePrismic()
+onMounted(() => {
+  const manifest = useManifest()
+
+  manifest.loadManifest()
+  if (manifest.length == 0) return endPreloader()
+  watch(manifest.percentage, i => {
+  })
 })
 
 
@@ -40,13 +44,5 @@ onMounted(() => {
 
 <style scoped lang="scss">
 @use "@/styles/shared.scss" as *;
-.wrapper__preloader {
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-}
-
 
 </style>

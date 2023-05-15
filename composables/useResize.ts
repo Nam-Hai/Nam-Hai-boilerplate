@@ -45,12 +45,12 @@ export function useRO(callback: (e: { vh: number, vw: number, scale: number, bre
 }
 
 // TODO use a store ?
-export function useCanvasSize(callback?: (size: { width: number, height: number }) => void): Ref<{ height: number, width: number }> {
+export function useCanvasSize(callback?: (size: { width: number, height: number }) => void) {
   const { $canvas } = useNuxtApp()
 
-  watch($canvas.size, size => {
+  const unWatch = watch($canvas.size, (size) => {
     callback && callback(size)
-  })
+  }, {immediate: true})
 
-  return $canvas.size
+  return { canvasSize: $canvas.size, unWatch }
 }

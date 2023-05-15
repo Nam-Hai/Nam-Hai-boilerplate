@@ -5,7 +5,6 @@
 </template>
 
 <script setup lang="ts">
-import { N } from '~/plugins/namhai.client'
 
 const rootRef = ref()
 
@@ -21,7 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
 useScrollEvent({
   el: rootRef,
   vStart: 100,
-  end: 0,
+  vEnd: 0,
   onProgress: (t) => {
     N.T(rootRef.value, 0, (1 - props.amount) * (t - 0.5) * 100, 'vh')
   }

@@ -15,5 +15,4 @@ export const useRaf = (cb: (e: rafEvent) => void, options: { lastStack?: boolean
   })
 
   return raf
-
 }

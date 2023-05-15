@@ -1,5 +1,5 @@
 export const useLenisScroll = (callback: (e: any) => void) => {
-  const { $lenis } = useNuxtApp()
+  const $lenis = useLenis()
 
   const onScrollSubscription = ref()
   onMounted(() => {

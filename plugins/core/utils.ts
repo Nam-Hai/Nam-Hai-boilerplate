@@ -52,7 +52,7 @@ const Rand = {
 }
 const Arr = {
     /** Create an Array of n element */
-    uniq: (ArrayLength: number) => {
+    create: (ArrayLength: number) => {
         return [...Array(ArrayLength).keys()]
     },
     /** shuffle an Array */
@@ -144,4 +144,16 @@ const Svg = {
         return s
     }
 }
-export { Is, Lerp, iLerp, map, Clamp, get, getAll, Select, Cr, Round, random, Rand, Arr, Has, O, PE, Snif, T, BM, Ga, PD, ZL, Svg }
+
+const Class = {
+    add: (el: Element, name: string)=>{
+        el.classList.add(name)
+    },
+    remove: (el: Element, name: string) =>{
+        el.classList.remove(name)
+    },
+    toggle: (el: Element, name: string)=>{
+        el.classList.toggle(name)
+    }
+}
+export { Is, Lerp, iLerp, map, Clamp, get, getAll, Select, Cr, Round, random, Rand, Arr, Has, O, PE, Snif, T, BM, Ga, PD, ZL, Svg, Class }

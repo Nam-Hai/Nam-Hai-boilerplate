@@ -5,12 +5,10 @@
 </template>
 
 <script lang="ts" setup>
-const props = defineProps({})
-const emits = defineEmits([])
+// const props = defineProps({})
+// const emits = defineEmits([])
 
 const store = useStore()
-const { $TL } = useNuxtApp()
-
 const wrapperRef = ref() as Ref<HTMLElement>
 
 </script>

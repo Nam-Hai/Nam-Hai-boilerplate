@@ -1,6 +1,7 @@
 import { RafR, rafEvent } from "~/plugins/core/raf"
 import { ROR, ResizeEvent } from "~/plugins/core/resize"
-import { N } from "~/plugins/namhai.client"
+import Callstack from "../utils/Callstack";
+import { useRafR, useROR } from "~/composables/pluginComposables";
 
 export interface CanvasPage {
   gl: any,
@@ -10,7 +11,7 @@ export interface CanvasPage {
 
   ro: ROR,
   raf: RafR,
-  canvasSize: Ref<{ height: number; width: number }>,
+  canvasSize: { width: number; height: number; };
 
   init(): void
   resize({ vh, vw, scale, breakpoint }: ResizeEvent): void
@@ -25,11 +26,11 @@ export default class IndexCanvas implements CanvasPage {
   scene: any
   camera: any
 
-  canvasSize: globalThis.Ref<{ height: number; width: number }>
   ro: ROR
   raf: RafR
+  canvasSize: { width: number; height: number; };
+  callStack: Callstack;
   constructor({ gl, scene, camera }: { gl: any, scene: any, camera: any }) {
-    const { $RafR, $ROR } = useNuxtApp()
     this.gl = gl
     this.renderer = this.gl.renderer
 
@@ -38,13 +39,15 @@ export default class IndexCanvas implements CanvasPage {
 
     N.BM(this, ['render', 'resize'])
 
-    this.ro = new $ROR(this.resize)
-    this.canvasSize = useCanvasSize(() => {
+
+    this.raf = useRafR(this.render)
+    this.ro = useROR(this.resize)
+    const { canvasSize, unWatch } = useCanvasSize(() => {
       this.ro.trigger()
     })
-    this.ro.trigger()
+    this.canvasSize = canvasSize
 
-    this.raf = new $RafR(this.render)
+    this.callStack = new Callstack([unWatch,this.raf.stop, this.ro.off])
   }
   async init() {
     this.raf.run()
@@ -55,6 +58,7 @@ export default class IndexCanvas implements CanvasPage {
 
 
   render(e: rafEvent) {
+  
     this.renderer.render({
       scene: this.scene,
       camera: this.camera,
@@ -64,7 +68,7 @@ export default class IndexCanvas implements CanvasPage {
 
 
   destroy() {
-    this.raf.stop()
+    this.callStack.call()
   }
 }
 

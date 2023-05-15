@@ -4,55 +4,87 @@ import { Texture } from "ogl"
 export default class Manifest {
   length: number
   index: globalThis.Ref<number>
-  callback: (n: any) => void
+  callback?: (n: number) => void
 
   textures: {
     images: {
       [key: string]: Texture
-    };
+    },
+    prismicAny: {
+      [key: string]: Texture
+    }
   }
   jsons: { [key: string]: {} }
+  percentage: Ref<number>
+  canvasContext: any
+  prismicData: any
   constructor(gl: any) {
-    const textures = {
+    this.canvasContext = gl
+    this.textures = {
       images: {
-        // texture1: new Texture(gl)
+        // '1.png': new Texture(gl),
+        // '2.jpg': new Texture(gl),
+        // '3.png': new Texture(gl),
+        // '4.jpg': new Texture(gl),
+        // '5.jpg': new Texture(gl),
+        // '6.jpg': new Texture(gl),
+        // '7.jpg': new Texture(gl),
       },
+      prismicAny: {
+
+      }
     }
+
+    this.index = ref(0)
+    this.percentage = ref(0)
+    this.length = 0
 
     this.jsons = {
     }
+  }
 
+  async loadCMS() {
+    // const { client } = usePrismic()
+    // const { data: media } = await useAsyncData('media', () => client.getAllByType('mediatest'))
+    // if (!media.value) return
+    // this.prismicData = media
+    // for (const data of media.value) {
+    //   this.textures.prismicAny[data.data.place.url] = new Texture(this.canvasContext)
+    // }
+  }
 
-    this.length = 0
-    for (const m of Object.values(textures)) {
+  init() {
+    for (const m of Object.values(this.textures)) {
       this.length += Object.values(m).length
     }
     this.length += Object.values(this.jsons).length
 
-    this.index = ref(0)
 
-    this.callback = (n) => { }
-    watch(this.index, i => {
-      this.callback(i)
+    const { manifestLoaded } = useStore()
+
+    const unWatch = watch(this.index, i => {
+      this.percentage.value = i / this.length
+      i == this.length && (manifestLoaded.value = true, unWatch())
     })
 
-    this.textures = textures
   }
 
-
   async loadManifest() {
+    const { manifestLoaded } = useStore()
+
+    this.length === 0 && (this.percentage.value = 1, manifestLoaded.value = true)
     for (const m of Object.values(this.textures)) {
       for (const [keys, values] of Object.entries(m)) {
-        // await new Promise((resolve) => {
-        let image = new Image()
-        image.crossOrigin = 'anonymous'
-        image.onload = () => {
-          values.image = image
-
-          this.index.value += 1
-          // resolve()
-        }
-        image.src = keys
+        await new Promise<void>(res => {
+          let image = new Image()
+          image.crossOrigin = 'anonymous'
+          image.onload = () => {
+            values.image = image
+            this.index.value++;
+            res()
+          }
+          image.src = keys
+        })
       }
     }
 

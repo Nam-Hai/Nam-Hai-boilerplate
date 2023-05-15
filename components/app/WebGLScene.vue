@@ -4,20 +4,24 @@
 </template>
 
 <script lang='ts' setup>
+import { useFlowProvider } from '@nam-hai/water-flow'
+
 
 const sceneRef = ref()
 const wrapperSceneRef = ref()
 
-const { $canvas } = useNuxtApp()
+const canvas = useCanvas()
 onMounted(() => {
-  $canvas.init()
-  sceneRef.value = $canvas
-  wrapperSceneRef.value.appendChild($canvas.gl.canvas)
+  canvas.init()
+  sceneRef.value = canvas
+  wrapperSceneRef.value.appendChild(canvas.gl.canvas)
 })
 
+const flowProvider = useFlowProvider()
+flowProvider.addProps('canvasWrapperRef', wrapperSceneRef)
 
 onUnmounted(() => {
-
+  canvas.destroy()
 })
 
 </script>

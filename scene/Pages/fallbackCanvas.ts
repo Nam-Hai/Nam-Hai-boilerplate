@@ -2,7 +2,7 @@ import { RafR, rafEvent } from "~/plugins/core/raf"
 import { ROR, ResizeEvent } from "~/plugins/core/resize"
 import { CanvasPage } from "./indexCanvas"
 
-export default class ExampleCanvas implements CanvasPage {
+export default class FallbackCanvas implements CanvasPage {
   gl: any
   renderer: any
   scene: any
@@ -22,31 +22,22 @@ export default class ExampleCanvas implements CanvasPage {
     N.BM(this, ['render', 'resize'])
 
     this.ro = new $ROR(this.resize)
-    const {canvasSize, unWatch}= useCanvasSize(() => {
+    const { canvasSize, unWatch}= useCanvasSize(() => {
       this.ro.trigger()
     })
-    this.canvasSize = canvasSize
+    this.canvasSize  = canvasSize
 
     this.raf = new $RafR(this.render)
   }
   async init() {
-    this.raf.run()
   }
 
   resize({ vh, vw, scale, breakpoint }: ResizeEvent) {
   }
 
-
   render(e: rafEvent) {
-    this.renderer.render({
-      scene: this.scene,
-      camera: this.camera,
-    })
   }
 
-
-
   destroy() {
-    this.raf.stop()
   }
 }

@@ -1,11 +1,11 @@
-import { N } from "~/plugins/namhai.client"
 import { useResize } from "./useResize"
 
 type useScrollEventOptions = {
   el: Ref<HTMLElement>,
   vStart?: number,
   eStart?: number,
-  end?: number,
+  vEnd?: number,
+  eEnd?: number,
   onEnter?: () => void,
   onProgress?: (t: number) => void,
   pin?: boolean
@@ -13,9 +13,10 @@ type useScrollEventOptions = {
 
 export const useScrollEvent = ({
   el,
-  vStart = 0,
+  vStart = 100,
   eStart = 0,
-  end = 0,
+  vEnd = 0,
+  eEnd = 100,
   onEnter = undefined,
   onProgress = undefined
 }: useScrollEventOptions) => {
@@ -39,9 +40,9 @@ export const useScrollEvent = ({
 
   const { lenis } = useLenisScroll(() => {
     const dist = window.scrollY - bounds.value.y + vh.value * vStart / 100 - bounds.value.height * eStart / 100
-    const offset = N.Clamp(dist, 0, vh.value * (vStart - end) / 100)
-
-    const t = N.iLerp(offset / vh.value, 0, (vStart - end) / 100)
+    const max = bounds.value.height * (eEnd - eStart) / 100 + vh.value * (vStart - vEnd) / 100
+    const offset = N.Clamp(dist, 0, max)
+    const t = offset / max
     if (t > 0 && !hasEnter.value) {
       hasEnter.value = true
       onEnter && onEnter()
