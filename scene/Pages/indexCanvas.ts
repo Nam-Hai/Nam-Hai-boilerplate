@@ -2,6 +2,10 @@ import { RafR, rafEvent } from "~/plugins/core/raf"
 import { ROR, ResizeEvent } from "~/plugins/core/resize"
 import Callstack from "../utils/Callstack";
 import { useRafR, useROR } from "~/composables/pluginComposables";
+import BasicMaterial from "../lib/BasicMaterial";
+// @ts-ignore
+import { Mesh, Sphere } from 'ogl'
+import NormalMaterial from "../lib/NormalMaterial";
 
 export interface CanvasPage {
   gl: any,
@@ -40,6 +44,16 @@ export default class IndexCanvas implements CanvasPage {
     N.BM(this, ['render', 'resize'])
 
 
+    const program = new BasicMaterial(this.gl, {tMap: '2.jpg'})
+
+    let mesh = new Mesh(this.gl, {
+      geometry: new Sphere(this.gl),
+      program
+    })
+
+
+    mesh.setParent(this.scene)
+
     this.raf = useRafR(this.render)
     this.ro = useROR(this.resize)
     const { canvasSize, unWatch } = useCanvasSize(() => {
@@ -47,7 +61,7 @@ export default class IndexCanvas implements CanvasPage {
     })
     this.canvasSize = canvasSize
 
-    this.callStack = new Callstack([unWatch,this.raf.stop, this.ro.off])
+    this.callStack = new Callstack([unWatch, this.raf.stop, this.ro.off])
   }
   async init() {
     this.raf.run()
@@ -58,7 +72,7 @@ export default class IndexCanvas implements CanvasPage {
 
 
   render(e: rafEvent) {
-  
+
     this.renderer.render({
       scene: this.scene,
       camera: this.camera,
