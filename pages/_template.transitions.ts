@@ -5,7 +5,6 @@ export type TemplateTransitionProps = {
 }
 
 const transitionIndexOutDefault: FlowFunction<TemplateTransitionProps> = ({ wrapperRef }, resolve) => {
-  const { $TL } = useNuxtApp()
   resolve()
 }
 

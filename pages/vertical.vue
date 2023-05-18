@@ -23,8 +23,6 @@
 import { N } from '~/plugins/namhai.client'
 
 
-const props = defineProps({})
-const emits = defineEmits([])
 
 const store = useStore()
 const { $TL } = useNuxtApp()

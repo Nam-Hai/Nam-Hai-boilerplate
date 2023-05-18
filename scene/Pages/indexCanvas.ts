@@ -4,8 +4,11 @@ import Callstack from "../utils/Callstack";
 import { useRafR, useROR } from "~/composables/pluginComposables";
 import BasicMaterial from "../lib/BasicMaterial";
 // @ts-ignore
-import { Mesh, Sphere } from 'ogl'
+import { Mesh, Sphere, Plane, Texture } from 'ogl'
 import NormalMaterial from "../lib/NormalMaterial";
+import RampMap from "../lib/RampMap";
+import palettes from "../utils/palettes";
+import ToonMaterial from "../lib/ToonMaterial";
 
 export interface CanvasPage {
   gl: any,
@@ -34,6 +37,7 @@ export default class IndexCanvas implements CanvasPage {
   raf: RafR
   canvasSize: { width: number; height: number; };
   callStack: Callstack;
+  mesh: any;
   constructor({ gl, scene, camera }: { gl: any, scene: any, camera: any }) {
     this.gl = gl
     this.renderer = this.gl.renderer
@@ -43,16 +47,35 @@ export default class IndexCanvas implements CanvasPage {
 
     N.BM(this, ['render', 'resize'])
 
+    const palette = [
+      {
+        hex: '#427062',
+        x: 0,
+      },
+      {
+        hex: '#33594E',
+        x: 0.1,
+      },
+      {
+        hex: '#234549',
+        x: 0.65,
+      },
+      {
+        hex: '#1E363F',
+        x: 0.995,
+      },
+    ];
 
-    const program = new BasicMaterial(this.gl, {tMap: '2.jpg'})
+    const program = new ToonMaterial(this.gl, { palette, lightPosition: [-5, 15, 15] })
 
     let mesh = new Mesh(this.gl, {
-      geometry: new Sphere(this.gl),
+      geometry: new Sphere(this.gl, { widthSegments: 40 }),
       program
     })
 
 
     mesh.setParent(this.scene)
+    this.mesh = mesh
 
     this.raf = useRafR(this.render)
     this.ro = useROR(this.resize)
