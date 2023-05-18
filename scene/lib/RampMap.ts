@@ -2,36 +2,34 @@
 import { Color } from "ogl";
 import palettes from "../utils/palettes";
 
-type RampMapOptions = {
+export type RampMapOptions = {
   hex: string,
   x: number
 }
 
 export default class RampMap {
   resolution: number;
-  data: RampMapOptions[];
-  private points: { x: number; hex: string; color: any; }[];
+  private points!: { x: number; hex: string; color: any; }[];
   gradientData!: Uint8Array;
   constructor(data: RampMapOptions[], resolution: number = 1000) {
     this.resolution = resolution;
-    this.data = data;
-    this.points = this._updatePoints();
+    this.updatePoints(data)
     this.sortPoints();
     this.computeDataImage()
   }
 
-  _updatePoints() {
-    return this.data.map((d) => {
+  updatePoints(data: RampMapOptions[]) {
+    this.points = data.map((d) => {
       return {
         x: d.x,
         hex: d.hex,
         color: new Color(d.hex),
       };
     });
+    this.update()
   }
 
   update() {
-    this.points = this._updatePoints();
     this.sortPoints();
     this.computeDataImage()
   }
@@ -72,27 +70,17 @@ export default class RampMap {
   }
 
   add(options: RampMapOptions) {
-    const randomColor = palettes[Math.floor(Math.random() * palettes.length)];
-    console.log(randomColor);
-
     this.points.push({
-      hex: randomColor,
+      hex: options.hex,
       x: options.x,
-      color: new Color(randomColor),
+      color: new Color(options.hex),
     });
 
-    this.data = this.pointToData();
     this.update()
-  }
-  pointToData() {
-    return this.points.map((p) => {
-      return { hex: p.hex, x: p.x };
-    });
   }
 
   remove() {
     this.points.pop();
 
-    this.data = this.pointToData();
   }
 }

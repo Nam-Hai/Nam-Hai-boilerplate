@@ -49,7 +49,7 @@ export default class IndexCanvas implements CanvasPage {
 
     const palette = [
       {
-        hex: '#427062',
+        hex: '#ff0000',
         x: 0,
       },
       {
@@ -57,22 +57,40 @@ export default class IndexCanvas implements CanvasPage {
         x: 0.1,
       },
       {
+        hex: '#ff00ff',
+        x: 0.3,
+      },
+      {
         hex: '#234549',
         x: 0.65,
       },
       {
-        hex: '#1E363F',
+        hex: '#235579',
+        x: 0.78,
+      },
+      {
+        hex: '#0000ff',
         x: 0.995,
       },
     ];
 
-    const program = new ToonMaterial(this.gl, { palette, lightPosition: [-5, 15, 15] })
+    const program = new ToonMaterial(this.gl, { palette, lightPosition: [-15, 15, 4] })
+    program.addColor({
+      x: 0.5,
+      hex: '#ff0000'
+    })
 
     let mesh = new Mesh(this.gl, {
       geometry: new Sphere(this.gl, { widthSegments: 40 }),
       program
     })
 
+    let mesh2 = new Mesh(this.gl, {
+      geometry: new Sphere(this.gl, { widthSegments: 40 }),
+      program
+    })
+    mesh2.setParent(this.scene)
+    mesh2.position.set(-3, 0, 0);
 
     mesh.setParent(this.scene)
     this.mesh = mesh
