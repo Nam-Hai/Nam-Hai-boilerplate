@@ -4,51 +4,6 @@ function now() {
     return (typeof performance === 'undefined' ? Date : performance).now();
 }
 
-// Clock from Three.js, pretty sure it is possible to get rid from things here
-class Clock {
-    autostart;
-    startTime;
-    oldTime;
-    elapsedTime;
-    running;
-    constructor(autostart = true) {
-        this.autostart = autostart
-        this.startTime = 0
-        this.oldTime = 0
-        this.elapsedTime = 0
-        this.running = false
-    }
-
-    start() {
-        this.startTime = now()
-        this.oldTime = this.startTime
-        this.elapsedTime = 0
-        this.running = true
-    }
-    stop() {
-        this.getElapsedTime();
-        this.running = false
-        this.autostart = false
-    }
-    getElapsedTime() {
-        this.getDelta()
-        return this.elapsedTime
-    }
-    getDelta() {
-        let diff = 0;
-        if (this.autostart && !this.running) {
-            this.start()
-            return 0
-        }
-        if (this.running) {
-            const newTime = now()
-            diff = (newTime - this.oldTime)
-            this.oldTime = newTime
-            this.elapsedTime += diff
-        }
-        return diff
-    }
-}
 
 export type rafItem = {
     id: number,
@@ -61,15 +16,16 @@ export type rafEvent = {
 }
 
 const Raf = new class {
-    clock;
     arr: Array<{
         id: number,
         cb: (arg: { elapsed: number, delta: number }) => void,
         startTime: number
     } | rafItem>;
     on;
+    now: number;
     constructor() {
-        this.clock = new Clock
+        this.now = performance.now()
+
         this.arr = []
         this.on = !0
         BM(this, ['update', 'stop', 'resume'])
@@ -87,7 +43,7 @@ const Raf = new class {
 
     add(rafItem: rafItem) {
         this.arr.push(rafItem)
-        this.arr.sort((a,b) => a.id - b.id)
+        this.arr.sort((a, b) => a.id - b.id)
     }
 
     remove(r: number): void {
@@ -95,14 +51,15 @@ const Raf = new class {
             if (this.arr[t].id === r) return void this.arr.splice(t, 1)
     }
 
-    update() {
+    update(now: number) {
         let s;
-        let d = this.clock.getDelta()
-        let elapsedTime = this.clock.elapsedTime
+        const deltaTime = now - this.now
+        this.now = now
+
         if (this.on) {
             for (let t = this.l(); 0 <= t; t--) {
                 const e = this.arr[t]
-                Is.def(e) && (e.startTime || (e.startTime = elapsedTime), s = elapsedTime - e.startTime, e.cb({ elapsed: s, delta: d }))
+                Is.def(e) && (e.startTime || (e.startTime = this.now), s = this.now - e.startTime, e.cb({ elapsed: s, delta: deltaTime }))
             }
         }
         this.raf()
@@ -127,8 +84,8 @@ class RafR {
         this.cb = callback
         this.on = false
         this.id = RafId
-        this.id += firstStack ? +100000 : 0
-        this.id += lastStack ? -20000 : 0
+        this.id += firstStack ? lastStack ? -20000 : +100000 : 0
+        // this.id += lastStack ? -20000 : 0
         RafId++
     }
 
