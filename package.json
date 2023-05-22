@@ -16,7 +16,7 @@
     "sass": "^1.61.0"
   },
   "dependencies": {
-    "@nam-hai/water-flow": "^0.0.22",
+    "@nam-hai/water-flow": "^0.1.0",
     "@studio-freight/lenis": "^1.0.12",
     "ogl": "^0.0.116"
   }

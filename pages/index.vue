@@ -25,4 +25,11 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use "@/styles/shared.scss" as *;
+
+main {
+  pointer-events: none;
+}
+img {
+  opacity: 0;
+}
 </style>

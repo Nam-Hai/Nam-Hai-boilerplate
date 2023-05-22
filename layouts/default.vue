@@ -17,7 +17,7 @@ const lenis = useStore().lenis
 
 
 useRaf((e) => {
-  !flowProvider.flowIsHijacked && lenis.value.raf(e.elapsed)
+  !flowProvider.flowIsHijacked.value && lenis.value.raf(e.elapsed)
 }, { firstStack: true })
 
 onMounted(() => {

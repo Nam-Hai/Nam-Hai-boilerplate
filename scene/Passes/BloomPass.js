@@ -1,7 +1,7 @@
-import PostProcessor from "../PostProcessor.js";
 import { Vec2, Camera, Texture} from "ogl";
 import { shader as screen } from "../shaders/screen.js";
 import noise from "../shaders/noise.js";
+import PostProcessor from "../PostProcessor.ts";
 
 export default class BloomPass {
   constructor(gl, {screen = false, enabled = true, iteration = 5, bloomStrength = 1, threshold = 0.8 , direction = {x: 2, y:2}} = {}) {
@@ -164,7 +164,6 @@ const compositeFragment = /* glsl */ `#version 300 es
   in vec2 vUv;
   out vec4 color;
 
-  ${noise}
 
   uniform float uTime;
 
@@ -172,8 +171,15 @@ const compositeFragment = /* glsl */ `#version 300 es
     vec4 tex = texture(tMap, vUv); 
     vec4 bloom = texture(tBloom, vUv) * uBloomStrength;
     color = tex + bloom;
+    color = bloom;
+
+    // gooey effect
+    // color.a = min(1., color.a * 18. - 8.);
     // color.a = 1.;
-    color *= mix(0.75, 1.,noise(gl_FragCoord.xy, uTime * 100.));
+
+    // import noise
+    // color.a = 1.;
+    // color *= mix(0.75, 1.,noise(gl_FragCoord.xy, uTime * 100.));
   }
 `;
 
