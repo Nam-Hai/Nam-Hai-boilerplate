@@ -122,7 +122,7 @@ export interface MotionArgUpdate extends MotionArgBasics {
     line?: never
     svg?: never
 }
-type MotionArg = MotionArgLine | MotionArgSvg | MotionArgP | MotionArgUpdate
+export type MotionArg = MotionArgLine | MotionArgSvg | MotionArgP | MotionArgUpdate
 class Motion {
     v;
     raf;

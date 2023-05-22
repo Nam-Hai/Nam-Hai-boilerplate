@@ -36,8 +36,4 @@ export default defineNuxtConfig({
             '~/components/app'
         ]
     },
-    // vite:{
-    //     optimizeDeps: { exclude: ["fsevents"] }
-    // }
-
 })
