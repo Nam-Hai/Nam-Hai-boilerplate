@@ -37,7 +37,7 @@ type PassObject = {
   beforePass?: (e: rafEvent, { scene, texture, camera }: { scene: any, texture: any, camera: any }) => void
 }
 export interface PassEffect {
-  render: () => void,
+  // render: () => void,
   addPassRef: (addPass: (pass: Partial<PassOptions>) => PassObject) => void,
   toggleEffect: () => void,
 }
