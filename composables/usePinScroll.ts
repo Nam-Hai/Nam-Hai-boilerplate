@@ -16,13 +16,13 @@ export function usePinScroll({
     })
 
     let current = 0
-    const lenis = useLenis()
     const timer = ref() as Ref<Timer>
+    const { lenis } = useStore()
 
 
     const pin = () => {
         if (Math.abs(current - bounds.y) < reach) {
-            lenis.scrollTo(bounds.y, {
+            lenis.value.scrollTo(bounds.y, {
                 easing: N.Ease.io4
             })
         }
@@ -45,11 +45,11 @@ export function usePinScroll({
     let skip = 0
     useLenisScroll(e => {
         current = e.animatedScroll
-        if (Math.abs(current - bounds.y) < hardReach) {
-            skip +=1
-            skip == 3 && (skip = 0)
-            !skip && (lenis.targetScroll = bounds.y)
-        }
+        // if (Math.abs(current - bounds.y) < hardReach) {
+        //     skip++
+        //     skip != 5 && (skip = 0)
+        //     lenis.value.targetScroll = bounds.y
+        // }
         if (Math.abs(current - bounds.y) < reach) {
             timer.value.tick()
         }
