@@ -36,7 +36,7 @@ const manifest = useManifest()
 onMounted(async () => {
   manifest.loadCMS().then(() => {
     cmsLoaded.value = true
-    store.init()
+    store.initClient()
   })
 })
 </script>

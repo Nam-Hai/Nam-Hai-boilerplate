@@ -13,7 +13,7 @@ import { BufferPage, useFlowProvider } from '@nam-hai/water-flow';
 
 const flowProvider = useFlowProvider()
 
-const lenis = useStore().lenis
+const { lenis } = useStore()
 
 
 useRaf((e) => {
@@ -21,7 +21,6 @@ useRaf((e) => {
 }, { firstStack: true })
 
 onMounted(() => {
-  console.log(useStore());
   lenis.value.scrollTo('top')
 })
 

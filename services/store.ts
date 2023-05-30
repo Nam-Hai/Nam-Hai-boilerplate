@@ -28,7 +28,7 @@ class StoreService {
     this.indexMaskBound = ref(0)
   }
 
-  init() {
+  initClient() {
     this.lenis = ref(new Lenis())
     const ro = useROR(({ vh, vw, scale, breakpoint }) => {
       this.vh.value = vh
