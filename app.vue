@@ -1,5 +1,5 @@
 <template>
-  <div id="app" v-if="cmsLoaded">
+  <div id="app">
     <NuxtLayout v-if="!isMobile" name="default">
       <NuxtPage></NuxtPage>
     </NuxtLayout>
@@ -28,15 +28,4 @@ flowProvider.registerPage('index', index)
 
 const flowRef = ref(flowProvider)
 flowProvider.addProps('flowRef', flowRef)
-
-const store = useStore()
-const cmsLoaded = ref(false)
-const manifest = useManifest()
-
-onMounted(async () => {
-  manifest.loadCMS().then(() => {
-    cmsLoaded.value = true
-    store.initClient()
-  })
-})
 </script>
