@@ -2,31 +2,10 @@ import { RafR, rafEvent } from "~/plugins/core/raf"
 import { ROR, ResizeEvent } from "~/plugins/core/resize"
 import Callstack from "../utils/Callstack";
 import { useRafR, useROR } from "~/composables/pluginComposables";
-import BasicMaterial from "../lib/BasicMaterial";
+import { CanvasPage } from "../utils/types";
+
 // @ts-ignore
 import { Mesh, Sphere } from 'ogl'
-import NormalMaterial from "../lib/NormalMaterial";
-import RampMap from "../lib/RampMap";
-import palettes from "../utils/palettes";
-import ToonMaterial from "../lib/ToonMaterial";
-
-
-export interface CanvasPage {
-  gl: any,
-  scene: any,
-  camera: any,
-  renderer: any,
-
-  ro: ROR,
-  raf: RafR,
-  canvasSize: { width: number; height: number; };
-
-  init(): void
-  resize({ vh, vw, scale, breakpoint }: ResizeEvent): void
-  render(e: rafEvent): void
-  destroy(): void
-}
-
 
 export default class IndexCanvas implements CanvasPage {
   gl: any

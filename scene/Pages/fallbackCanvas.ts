@@ -1,6 +1,6 @@
 import { RafR, rafEvent } from "~/plugins/core/raf"
 import { ROR, ResizeEvent } from "~/plugins/core/resize"
-import { CanvasPage } from "./indexCanvas"
+import { CanvasPage } from "../utils/types"
 
 export default class FallbackCanvas implements CanvasPage {
   gl: any

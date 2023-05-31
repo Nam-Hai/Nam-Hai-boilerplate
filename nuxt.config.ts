@@ -12,21 +12,15 @@ export default defineNuxtConfig({
         '@/styles/core.scss',
         '@/styles/app/index.scss'
     ],
-
+    ignore: [
+        'pages/_templatePage.vue',
+        'pages/_template.transitions.ts',
+    ],
     modules: [
         "@nuxtjs/prismic",
     ],
     prismic: {
-        endpoint: 'https://testtnuxt.cdn.prismic.io/api/v2',
-        configClient: {
-            routes: [
-                {
-                    type: 'article',
-                    path: '/article/:uid'
-                }
-            ]
-        }
-
+        endpoint: 'endpoint',
         // modern: true
         // see documentation for more!
     },
