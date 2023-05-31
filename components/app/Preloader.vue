@@ -19,7 +19,7 @@ watch(preloadComplete, () => {
 })
 
 
-const { manifestLoaded, showLogoLayout } = useStore()
+const { manifestLoaded } = useStore()
 
 const quitLoader = ref(false)
 

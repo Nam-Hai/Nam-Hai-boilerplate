@@ -1,17 +1,14 @@
 <template>
   <main ref="wrapperRef">
-    Index Page
 
-    <img v-for="data in media" :src="data.data.place.url" alt="">
+    <NuxtWelcome />
   </main>
 </template>
 
 <script lang="ts" setup>
+import { NuxtWelcome } from '~~/.nuxt/components';
 
 
-
-const { client } = usePrismic()
-const { data: media } = await useAsyncData('media', () => client.getAllByType('mediatest'))
 const store = useStore()
 
 store.resetLenis()
@@ -27,9 +24,5 @@ onMounted(() => {
 @use "@/styles/shared.scss" as *;
 
 main {
-  pointer-events: none;
-}
-img {
-  opacity: 0;
 }
 </style>

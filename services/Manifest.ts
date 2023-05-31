@@ -23,12 +23,6 @@ export default class Manifest {
     this.textures = {
       images: {
         // '1.png': new Texture(gl),
-        // '2.jpg': new Texture(gl),
-        // '3.png': new Texture(gl),
-        // '4.jpg': new Texture(gl),
-        // '5.jpg': new Texture(gl),
-        // '6.jpg': new Texture(gl),
-        // '7.jpg': new Texture(gl),
       },
       prismicAny: {
 
