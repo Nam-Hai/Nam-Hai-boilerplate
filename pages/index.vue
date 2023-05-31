@@ -1,12 +1,10 @@
 <template>
   <main ref="wrapperRef">
 
-    <NuxtWelcome />
   </main>
 </template>
 
 <script lang="ts" setup>
-import { NuxtWelcome } from '~~/.nuxt/components';
 
 
 const store = useStore()
