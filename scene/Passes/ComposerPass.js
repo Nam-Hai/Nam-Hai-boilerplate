@@ -1,5 +1,5 @@
 import { Color } from 'ogl'
-export default class ComposerPass {
+export class ComposerPass {
   constructor(gl, { enabled = true, target, }) {
     this.gl = gl
     this.enabled = enabled

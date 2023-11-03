@@ -5,7 +5,7 @@ import { Clock } from '../utils/Clock'
 import { ROR, ResizeEvent } from '~/plugins/core/resize'
 
 const { vh, vw, mouse } = useStore()
-export default class FlowMap {
+export class FlowMap {
     gl: any
     clock: Clock
     uResolution: { value: number[] }
