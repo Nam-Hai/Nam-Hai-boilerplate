@@ -1,8 +1,13 @@
 import { RafR, rafEvent } from "~/plugins/core/raf"
 import { ROR, ResizeEvent } from "~/plugins/core/resize"
 import { CanvasPage } from "./fallbackCanvas"
+import Callstack from "../utils/Callstack"
 
-export default class ExampleCanvas implements CanvasPage {
+
+//@ts-ignore
+import { Transform } from "ogl";
+
+export class ExampleCanvas implements CanvasPage {
   gl: any
   renderer: any
   scene: any
@@ -11,23 +16,33 @@ export default class ExampleCanvas implements CanvasPage {
   ro: ROR
   raf: RafR
   canvasSize: { width: number; height: number }
+  callStack: Callstack
+  canvasScene: any
   constructor({ gl, scene, camera }: { gl: any, scene: any, camera: any }) {
-    const { $RafR, $ROR } = useNuxtApp()
     this.gl = gl
     this.renderer = this.gl.renderer
 
-    this.scene = scene
+    this.canvasScene = scene;
+    this.scene = new Transform();
+    this.scene.setParent(this.canvasScene);
+
     this.camera = camera
 
-    N.BM(this, ['render', 'resize'])
+    N.BM(this, ["render", "resize", "init"]);
 
-    this.ro = new $ROR(this.resize)
-    const {canvasSize, unWatch}= useCanvasSize(() => {
+    this.ro = useROR(this.resize)
+    const { canvasSize, unWatch } = useCanvasSize(() => {
       this.ro.trigger()
     })
     this.canvasSize = canvasSize
 
-    this.raf = new $RafR(this.render)
+    this.raf = useRafR(this.render)
+
+    this.callStack = new Callstack([
+      () => unWatch(),
+      () => this.raf.stop(),
+      () => this.ro.off(),
+    ]);
   }
   async init() {
     this.raf.run()
@@ -44,9 +59,8 @@ export default class ExampleCanvas implements CanvasPage {
     })
   }
 
-
-
   destroy() {
-    this.raf.stop()
+    this.scene.setParent(null);
+    this.callStack.call();
   }
 }

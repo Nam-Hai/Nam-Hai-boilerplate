@@ -30,11 +30,6 @@ const route = useRoute()
 watch(preloaderComplete, async () => {
   await nextTick()
 
-  const canvas = useCanvas()
-  if (route.name != 'index') {
-    canvas.init(flowProvider)
-  }
-
   fromPreloader.value = false
 
   useDelay(1000, () => {
@@ -65,15 +60,8 @@ onMounted(() => {
 function endPreloader() {
   const canvas = useCanvas()
 
-  console.log('test');
   canvas.preloader()
-  // if (route.name == 'index') {
-  //   canvas.init(flowProvider)
-  // } else {
-  //   preloaderComplete.value = true
 
-  //   canvas.gl.canvas.style.backgroundColor = "black";
-  // }
   N.Class.add(wrapperRef.value, 'hide')
 }
 

@@ -1,6 +1,5 @@
 <template>
     <main ref="mainRef">
-        Nuxt Boiler plate
     </main>
 </template>
 

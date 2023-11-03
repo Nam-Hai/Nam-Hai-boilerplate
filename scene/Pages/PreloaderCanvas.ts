@@ -6,9 +6,7 @@ import { CanvasPage } from "./fallbackCanvas";
 //@ts-ignore
 import { Transform } from "ogl";
 
-const { vh, vw, scale } = useStore();
-
-export default class PreloaderCanvas implements CanvasPage {
+export class PreloaderCanvas implements CanvasPage {
   gl: any;
   renderer: any;
   scene: any;

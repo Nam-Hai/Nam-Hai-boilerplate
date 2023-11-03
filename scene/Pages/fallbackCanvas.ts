@@ -17,7 +17,7 @@ export interface CanvasPage {
   destroy(): void
 }
 
-export default class FallbackCanvas implements CanvasPage {
+export class FallbackCanvas implements CanvasPage {
   gl: any
   renderer: any
   scene: any
