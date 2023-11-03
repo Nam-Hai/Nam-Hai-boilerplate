@@ -1,10 +1,5 @@
-//
-// requires:
-// ~/composables/useResize
-//
-
 export default function useDevice() {
-  const { onResize } = useResize()
+  useRO(_update)
 
   const dpr = ref<number>(1)
 
@@ -22,7 +17,6 @@ export default function useDevice() {
 
   onBeforeMount(_init)
   onMounted(_update)
-  watch(onResize, _update)
 
   function _init(): void {
     safari.value =

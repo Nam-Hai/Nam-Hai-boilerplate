@@ -1,6 +1,6 @@
-import { Lerp, Round, Select, Has, BM, Is, Clamp, Svg } from "~/helpers/core/utils";
-import { Ease, Ease4, Ease4Arg, EaseFunctionName } from "~/helpers/core/eases";
-import { Delay, rafCbType, RafR } from "./raf";
+import { EaseFunctionName, Ease4Arg, Ease, Ease4 } from "./eases";
+import { Delay, rafEvent, RafR } from "./raf";
+import { BM, Select, Has, Svg, Is, Round, Clamp, Lerp } from "./utils";
 
 export interface svgProp {
     type: string,
@@ -46,7 +46,7 @@ export interface lineProp {
     end: number[]
 }
 export interface MotionState {
-    el?: NodeList | HTMLElement[],
+    el?: NodeList | Element[],
     elL?: number,
     e: {
         curve: EaseFunctionName | Ease4Arg,
@@ -74,7 +74,7 @@ export interface MotionUpdate {
 }
 
 export interface MotionArgBasics {
-    el?: string | NodeList | HTMLElement[] | HTMLElement,
+    el?: string | NodeList | Element[] | Element | null,
     e?: EaseFunctionName | Ease4Arg
     d?: number,
     delay?: number,
@@ -122,16 +122,15 @@ export interface MotionArgUpdate extends MotionArgBasics {
     line?: never
     svg?: never
 }
-type MotionArg = MotionArgLine | MotionArgSvg | MotionArgP | MotionArgUpdate
+export type MotionArg = MotionArgLine | MotionArgSvg | MotionArgP | MotionArgUpdate
 class Motion {
     v;
     raf;
-    delay;
+    delay!: Delay;
     constructor(arg: MotionArg) {
         BM(this, ["initRaf", "run", "uSvg", "uLine", "uProp"])
         this.v = this.vInit(arg)
         this.raf = new RafR(this.run)
-        this.delay = new Delay(() => { }, 0)
     }
 
     vInit(arg: MotionArg) {
@@ -236,7 +235,10 @@ class Motion {
                     strokeDasharray = lineTemp.dashed
                 } else strokeDasharray = lineTemp.shapeL;
                 (i.el![index] as HTMLElement).style.strokeDasharray = strokeDasharray
-                lineTemp.origin.start[index] = lineTemp.coeff.start * lineTemp.shapeL[index]
+
+
+                lineTemp.origin.start[index] = lineTemp.coeff.start * lineTemp.shapeL[index];
+                (i.el![index] as HTMLElement).style.strokeDashoffset = '' + lineTemp.origin.start[index];
                 lineTemp.origin.end[index] = lineTemp.coeff.end * lineTemp.shapeL[index]
                 lineTemp.curr[index] = lineTemp.origin.start[index]
                 lineTemp.start[index] = lineTemp.origin.start[index]
@@ -273,16 +275,16 @@ class Motion {
                     Has(arg.p[prop.name], 'newStart') && (prop.start = (arg.p[prop.name] as { newStart: number }).newStart);
                 }
             }
-        } else if (Has(this.v, 'update')){
-            if(s == 'start') {
+        } else if (Has(this.v, 'update')) {
+            if (s == 'start') {
                 const ease = this.v.e.calc
-                this.v.e.calc = (t:number) => 1 - ease(t)
+                this.v.e.calc = (t: number) => 1 - ease(t)
             }
         } else if (Has(this.v, 'svg')) {
             // TODO
         } else if (Has(this.v, 'line')) {
             // TODO
-        } 
+        }
 
         this.v.d && (this.v.d.curr = Has(arg, 'd') ? arg.d! : Round(this.v.d!.origin - this.v.d!.curr + this.v.elapsed))
 
@@ -298,11 +300,11 @@ class Motion {
         this.raf.run()
     }
 
-    run(e: rafCbType) {
+    run(e: rafEvent) {
         let t = e.elapsed
         if (this.v.prog === 1) {
             this.pause()
-            this.v.update({ prog: this.v.prog, progE: this.v.progE })
+            this.v.update({ prog: 1, progE: 1 })
             this.v.cb && this.v.cb()
         } else {
             this.v.elapsed = Clamp(t, 0, this.v.d.curr)
@@ -369,32 +371,25 @@ class Motion {
 
 export class Timeline {
     arr: Array<Motion>;
-    delay;
     constructor() {
         this.arr = []
-        this.delay = 0
     }
 
     from(t: MotionArg) {
-        this.delay = Has(t, 'delay') ? t.delay! : 0
-        t.delay = this.delay
         let m = new Motion(t)
         this.arr.push(m)
         return this
     }
     play() {
-        this.run("play")
-    }
-    pause() {
-        this.run('pause')
-    }
-
-    run(action: 'play' | 'pause') {
         for (const motion of this.arr) {
-            motion[action]()
+            motion.play()
         }
     }
-
+    pause() {
+        for (const motion of this.arr) {
+            motion.pause()
+        }
+    }
 }
 const TL = Timeline
 

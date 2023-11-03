@@ -1,36 +1,42 @@
 <template>
-  <WebGLScene />
-
-  <BufferPage>
-    <Preloader>
-      <slot />
-    </Preloader>
-  </BufferPage>
+  <div class="app__wrapper">
+    <WebGLScene />
+    <div class="page__wrapper">
+      <Preloader>
+        <BufferPage />
+      </Preloader>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { BufferPage, useFlowProvider } from '@nam-hai/water-flow';
+import { useFlowProvider } from "~/waterflow/FlowProvider";
+import BufferPage from "~/waterflow/components/BufferPage.vue";
 
-const { $lenis } = useNuxtApp()
+const flowProvider = useFlowProvider();
 
-const flowProvider = useFlowProvider()
+const lenis = useStore().lenis;
 
-
-
-useRaf((e) => {
-  !flowProvider.flowIsHijacked && $lenis.raf(e.elapsed)
-}, {firstStack: true})
-
-onMounted(() => {
-  $lenis.scrollTo('top')
-})
+useRaf(
+  (e) => {
+    !flowProvider.flowIsHijacked.value && lenis.value.raf(e.elapsed);
+  },
+  { firstStack: true }
+);
 
 flowProvider.registerScrollInterface({
-  resume: ()=> $lenis.start(),
-  stop:  ()=> $lenis.stop(),
-  scrollToTop: () => { $lenis.scrollTo('top', { immediate: true }) }
-})
-
+  resume: () => {
+    lenis.value.start();
+  },
+  stop: () => {
+    lenis.value.stop();
+  },
+  scrollToTop: () => {
+    lenis.value.scrollTo("top", { immediate: true });
+  },
+});
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+@use "@/styles/shared.scss" as *;
+</style>

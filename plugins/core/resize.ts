@@ -1,7 +1,7 @@
-import { BM, Clamp } from "~/helpers/core/utils"
 import { Timer, RafR } from "./raf"
 // @ts-ignore
 import SassVars from '@/styles/sass/variables.module.scss'
+import { BM, Clamp } from "./utils"
 
 
 type BreakpointType = {
@@ -29,7 +29,6 @@ type ResizeEvent = {
 
 const Ro = new class {
     tick: boolean
-    raf: RafR
     timer: Timer
     arr: {
         id: number,
@@ -43,19 +42,19 @@ const Ro = new class {
     vw!: number
     private breakpoint!: string
     mode: 'fit' | 'width' | 'height'
+    // raf: RafR
 
     constructor() {
         this.tick = false
         this.arr = []
 
         BM(this, ['fn', 'gRaf', 'run'])
-        this.timer = new Timer(this.gRaf, 100)
-        this.raf = new RafR(this.run)
+        this.timer = new Timer(this.gRaf, 200)
         window.addEventListener('resize', this.fn)
 
         this.breakpoints = {}
         this.deviceTypes = {}   // Get breakpoints and device types from Sass
-        this.mode = SassVars.scale_mode
+        this.mode = SassVars.scale_mode as 'fit' | 'width' | 'height'
         SassVars.breakpoints.split(',').forEach((b: string) => {
             const point = b.trim()
 
@@ -103,7 +102,7 @@ const Ro = new class {
     }
     gRaf() {
         this.update()
-        this.tick || (this.tick = true, this.raf.run())
+        this.tick || (this.tick = true, this.run())
     }
     run() {
         const arg = {
@@ -114,9 +113,8 @@ const Ro = new class {
         }
         // for (let t = this.l(); 0 <= t; t--) this.arr[t].cb(arg);
         for (const el of this.arr) {
-          el.cb(arg)
+            el.cb(arg)
         }
-        this.raf.stop()
         this.tick = false
     }
     l() {
@@ -151,6 +149,9 @@ const Ro = new class {
     private updateSize() {
         this.vw = innerWidth
         this.vh = innerHeight
+
+        document.documentElement.style.setProperty('--vh', `${this.vh * 0.01}px`)
+        document.documentElement.style.setProperty('--100vh', `${this.vh}px`)
     }
 
     private updateScale() {
@@ -169,13 +170,13 @@ const Ro = new class {
         // src/styles/helpers/breakpoints.sass // =remscale()
 
         if (this.mode === 'fit') {
-        this.scale = Clamp(Math.min(scaleX, scaleY), d.remScale.min, d.remScale.max)
+            this.scale = Clamp(Math.min(scaleX, scaleY), d.remScale.min, d.remScale.max)
         }
         else if (this.mode === 'width') {
-        this.scale = Clamp(scaleX, d.remScale.min, d.remScale.max)
+            this.scale = Clamp(scaleX, d.remScale.min, d.remScale.max)
         }
         else if (this.mode === 'height') {
-        this.scale = Clamp(scaleY, d.remScale.min, d.remScale.max)
+            this.scale = Clamp(scaleY, d.remScale.min, d.remScale.max)
         }
     }
 }
@@ -185,12 +186,14 @@ let RoId = 0;
 class ROR {
     cb: (e: ResizeEvent) => void
     id: number
+    triggerCb: (() => void) | undefined
     constructor(cb: (e: {
         vh: number,
         vw: number,
         scale: number,
         breakpoint: string
-    }) => void) {
+    }) => void, triggerCb?: ()=> void) {
+        this.triggerCb = triggerCb
         this.cb = cb
         this.id = RoId
         RoId++
@@ -206,8 +209,9 @@ class ROR {
     }
 
     trigger() {
+        if(this.triggerCb) this.triggerCb()
         this.cb(Ro.callbackArg)
     }
 }
 
-export { ROR }
+export { ROR, ResizeEvent }

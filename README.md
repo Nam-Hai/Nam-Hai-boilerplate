@@ -1,42 +1,20 @@
-# Nuxt 3 Minimal Starter
+# Nam Hai Boilerplate
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Nuxt + WebGL the boilerplate
+Inhouse animation library is shared but you can plug GSAP
 
 ## Setup
 
-Make sure to install the dependencies:
-
 ```bash
-# yarn
-yarn install
-
 # npm
 npm install
+npm run dev
 
 # pnpm
 pnpm install
+pnpm run dev
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`
-
-```bash
-npm run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-npm run build
-```
-
-Locally preview production build:
-
-```bash
-npm run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+# HOW TO USE PRISMIC, LEGACY PRISMIC
+https://v3.prismic.nuxtjs.org/guides/basics/fetching-content
+https://prismic.io/docs/technical-reference/prismicio-client?utm_campaign=devexp&utm_source=nuxt3doc&utm_medium=doc
