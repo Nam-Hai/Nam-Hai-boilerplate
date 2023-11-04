@@ -2,7 +2,6 @@ import { RafR, rafEvent } from "~/plugins/core/raf"
 import { ROR, ResizeEvent } from "~/plugins/core/resize"
 import Callstack from "../utils/Callstack"
 import { CanvasPage } from "../utils/types";
-import { WelcomeGL } from "../Components/Welcome";
 
 //@ts-ignore
 import { Transform } from "ogl";
@@ -38,8 +37,10 @@ export class IndexCanvas implements CanvasPage {
     this.raf = useRafR(this.render)
     this.destroyStack.add(() => this.raf.kill())
 
-    const a = new WelcomeGL(this.gl)
-    a.mesh.setParent(this.scene)
+
+    canvasWatch(useCanvas().size, (newSize) => {
+      this.ro.trigger()
+    })
   }
   init() {
     this.raf.run()
