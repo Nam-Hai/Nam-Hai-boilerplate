@@ -31,14 +31,16 @@ export function useMotion(arg: MotionArg) {
     return new $Motion(arg)
 }
 
-export function useDelay(callback: () => void, delay: number) {
+export function useDelay(delay: number, callback: () => void, options?: { immediate?: boolean }) {
     const { $Delay } = useNuxtApp()
-    return new $Delay(callback, delay)
+    const d = new $Delay(callback, delay)
+    d.run()
+    return d
 }
 
-export function useRafR(callback: (arg: rafEvent) => void) {
+export function useRafR(callback: (arg: rafEvent) => void, options?: { lastStack?: boolean, firstStack?: boolean }) {
     const { $RafR } = useNuxtApp()
-    return new $RafR(callback)
+    return new $RafR(callback, options?.lastStack, options?.firstStack)
 }
 
 export function useROR(callback: (arg: ResizeEvent) => void) {

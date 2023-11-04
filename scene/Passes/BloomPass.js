@@ -3,7 +3,7 @@ import { shader as screen } from "../shaders/screen.js";
 import noise from "../shaders/noise.js";
 import PostProcessor from "../PostProcessor.ts";
 
-export default class BloomPass {
+export class BloomPass {
   constructor(gl, {screen = false, enabled = true, iteration = 5, bloomStrength = 1, threshold = 0.8 , direction = {x: 2, y:2}} = {}) {
     this.screen = screen
     this.gl = gl;

@@ -5,10 +5,11 @@
 </template>
 
 <script lang="ts" setup>
-// const props = defineProps({})
+// const {propName = fallbackValue} = defineProps<{propName: type}>()
 // const emits = defineEmits([])
 
 const store = useStore()
+
 const wrapperRef = ref() as Ref<HTMLElement>
 
 </script>

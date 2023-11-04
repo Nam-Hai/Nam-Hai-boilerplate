@@ -1,8 +1,9 @@
 import { RafR, rafEvent } from "~/plugins/core/raf"
 import { ROR, ResizeEvent } from "~/plugins/core/resize"
 import { CanvasPage } from "../utils/types"
+import Callstack from "../utils/Callstack"
 
-export default class FallbackCanvas implements CanvasPage {
+export class FallbackCanvas implements CanvasPage {
   gl: any
   renderer: any
   scene: any
@@ -10,9 +11,10 @@ export default class FallbackCanvas implements CanvasPage {
 
   ro: ROR
   raf: RafR
-  canvasSize: { width: number; height: number }
+  once: boolean
+  destroyStack: Callstack
   constructor({ gl, scene, camera }: { gl: any, scene: any, camera: any }) {
-    const { $RafR, $ROR } = useNuxtApp()
+    this.destroyStack = new Callstack();
     this.gl = gl
     this.renderer = this.gl.renderer
 
@@ -21,23 +23,34 @@ export default class FallbackCanvas implements CanvasPage {
 
     N.BM(this, ['render', 'resize'])
 
-    this.ro = new $ROR(this.resize)
-    const { canvasSize, unWatch}= useCanvasSize(() => {
-      this.ro.trigger()
-    })
-    this.canvasSize  = canvasSize
+    this.ro = useROR(this.resize)
+    this.destroyStack.add(() => this.ro.off())
+    this.raf = useRafR(this.render)
+    this.destroyStack.add(() => this.raf.kill())
 
-    this.raf = new $RafR(this.render)
+    this.once = false
   }
-  async init() {
+  init() {
+    this.raf.run()
+    this.ro.on()
   }
 
   resize({ vh, vw, scale, breakpoint }: ResizeEvent) {
   }
 
   render(e: rafEvent) {
+    if (this.once) {
+      this.raf.stop()
+      return
+    }
+    this.renderer.render({
+      camera: this.camera,
+      scene: this.scene
+    })
+    this.once = true
   }
 
   destroy() {
+    this.destroyStack.call()
   }
 }

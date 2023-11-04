@@ -5,5 +5,8 @@ node_modules
 .cache
 .output
 .env
+.env.local
 dist
 .DS_Store
+
+.vscode

@@ -1,12 +1,5 @@
-//
-// requires:
-// ~/composables/useResize
-//
-
-import { useResize } from "./useResize"
-
 export default function useDevice() {
-  useResize(_update)
+  useRO(_update)
 
   const dpr = ref<number>(1)
 

@@ -4,20 +4,22 @@
 </template>
 
 <script lang='ts' setup>
-import { useFlowProvider } from '@nam-hai/water-flow'
-
-
+import { useFlowProvider } from '~/waterflow/FlowProvider'
 const sceneRef = ref()
 const wrapperSceneRef = ref()
-
 const canvas = useCanvas()
+
+const { vh, canvasRef, scale, breakpoint } = useStore()
+
 onMounted(() => {
-  canvas.init()
   sceneRef.value = canvas
   wrapperSceneRef.value.appendChild(canvas.gl.canvas)
+
+  canvasRef.value = canvas.gl.canvas
 })
 
 const flowProvider = useFlowProvider()
+flowProvider.addProps('canvasRef', canvasRef)
 flowProvider.addProps('canvasWrapperRef', wrapperSceneRef)
 
 onUnmounted(() => {
@@ -29,11 +31,16 @@ onUnmounted(() => {
 <style lang="scss">
 .wrapper-scene {
   position: relative;
-  z-index: 17;
+  z-index: 8;
   pointer-events: none;
+
+  &.BOTTOM {
+    z-index: 6;
+  }
 }
 
 canvas {
+  // background-color: white;
   position: fixed;
   top: 0;
   left: 0;

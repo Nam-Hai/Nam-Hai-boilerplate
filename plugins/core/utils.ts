@@ -1,3 +1,4 @@
+
 const Lerp = (xi: number, xf: number, t: number) => {
     return (1 - t) * xi + t * xf
 }
@@ -16,7 +17,7 @@ const map = (x: number, start1: number, end1: number, start2: number, end2: numb
 
 const get = (selector: string, context?: ParentNode) => {
     const c = context || document;
-    return c.querySelector(selector) as HTMLElement
+    return c.querySelector(selector)
 }
 const getAll = (selector: string, context?: ParentNode) => {
     const c = context || document
@@ -31,7 +32,7 @@ const Is = {
     und: (t: any): t is undefined => t === undefined
 }
 
-const Select = (t: string | NodeList | HTMLElement[] | HTMLElement) => {
+const Select = (t: string | NodeList | Element[] | Element) => {
     return Is.str(t) ? getAll(t) : (t instanceof window.NodeList || Array.isArray(t)) ? t : [t];
 }
 

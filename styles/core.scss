@@ -5,7 +5,7 @@
 
 :root {
   --vh100max: 100vh;
-  --vh100: 100vh;
+  --100vh: 100vh;
   --vh100min: 100vh;
   --vh: 1vh;
 
@@ -20,7 +20,6 @@
 }
 
 html {
-  background-color: white;
 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -32,7 +31,11 @@ html {
 
   @include rem-scale();
 
-  font-family: "HelveticaNeue";
+  // font-family: "Plus Jakarta Sans";
+  // font-family: "GT America";
+  font-family: "Circular";
+  font-weight: 500;
+
   &.remlock {
     font-size: 10px !important;
   }
@@ -41,20 +44,30 @@ html {
 html,
 body {
   margin: 0;
-  // line-height: 100% !important;
+  line-height: 0 !important;
 }
+
 body {
   white-space: pre-line;
 }
-#__nuxt{
+
+#__nuxt {
   display: contents
 }
 
-html, body, #__nuxt{
+html,
+body,
+#__nuxt {
   width: 100%;
-  height: 100%;
+  // height: 100%;
 }
-body, #__nuxt {
+
+html {
+  height: auto
+}
+
+body,
+#__nuxt {
   overflow: hidden;
 }
 
@@ -85,6 +98,11 @@ p {
   margin: 0;
 }
 
+p {
+  font-family: 'Geist';
+  font-weight: 300;
+}
+
 button,
 input {
   border: none;
@@ -98,21 +116,23 @@ input {
   padding: 0;
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  transition: all 5000000s ease-in-out 0s;
-}
 button {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   background: none;
 }
 
+img, video, svg {
+  user-select: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+}
+
 .condensed {
   font-stretch: condensed;
 }
+
 .expanded {
   font-stretch: expanded;
 }
@@ -123,14 +143,17 @@ button {
     display: none !important;
   }
 }
+
 .desktop-only {
   @include breakpoint(mobile) {
     display: none !important;
   }
 }
+
 .full {
   @include full;
 }
+
 .center-img {
   @include center-img;
 }
@@ -138,11 +161,64 @@ button {
 .mask-split-line {
   overflow: hidden;
 }
+
 .split-element {
   display: inline-block;
   position: relative;
   text-decoration: inherit;
 }
+
 .split-words {
   white-space: nowrap;
+}
+
+main {
+  position: relative;
+  z-index: 5;
+}
+
+
+section,
+footer,
+main {
+  // overflow: hidden;
+  position: relative;
+}
+
+.splited-line {
+  display: inline-block;
+}
+
+main {
+  width: 100%;
+  min-height: var(--100vh);
+
+  position: relative;
+}
+
+.light {
+  font-weight: 300;
+}
+
+.bold {
+  font-weight: 500;
+}
+
+.overflow {
+  overflow: hidden;
+
+  .overflow-content {
+    display: inline-block;
+    transform: translateY(100%);
+  }
+}
+
+.splited-line {
+  opacity: 0;
+}
+
+body.flowIsHijacked {
+  a {
+    pointer-events: none;
+  }
 }

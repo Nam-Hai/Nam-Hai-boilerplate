@@ -1,19 +1,29 @@
 <template>
-  <main ref="wrapperRef">
-
-  </main>
+    <main ref="mainRef">
+    </main>
 </template>
 
 <script lang="ts" setup>
+import { usePageFlow } from '~/waterflow/composables/usePageFlow';
+import { defaultFlowIn, defaultFlowOut } from './default.transition';
 
 
-const store = useStore()
 
-store.resetLenis()
+const mainRef = ref()
 
-const wrapperRef = ref()
+useResetLenis({
+    infinite: false,
+    direction: "vertical"
+})
 
-onMounted(() => {
+
+
+
+usePageFlow({
+    props: {},
+    flowOut: defaultFlowOut,
+    flowInCrossfade: defaultFlowIn,
+    enableCrossfade: 'BOTTOM'
 })
 
 </script>
@@ -22,5 +32,7 @@ onMounted(() => {
 @use "@/styles/shared.scss" as *;
 
 main {
+    top: 0;
+    line-height: 100%;
 }
 </style>

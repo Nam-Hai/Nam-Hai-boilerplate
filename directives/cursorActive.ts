@@ -1,7 +1,5 @@
-
 const toggleMouse = (active: boolean) => {
-    const { cursorState } = useStore()
-    cursorState.value = active ? 'active' : 'default'
+    useCursorStore().toggleMouse(active)
 }
 
 export const vCursorActive = {

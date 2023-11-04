@@ -1,5 +1,5 @@
-export function split(element: Element, expression = ' ', append = true ) {
-  const words = splitText(element.innerHTML.toString().trim(), expression)
+export function split(element: HTMLElement, expression = ' ', append = true ) {
+  const words = splitText(element.innerText.trim(), expression)
 
   let innerHTML = ''
 
@@ -87,3 +87,33 @@ function parseLine(line: string) {
 
   return (line === '' || line === ' ') ? line : line == '<br>' ? '<br>' : `<span>${line}</span>` + ((line.length > 1) ? ' ' : '')
 }
+
+export function calculate(spans: HTMLElement[] | NodeListOf<HTMLElement>) {
+  const lines = []
+  let words = []
+
+  let position = spans[0].offsetTop
+
+  for (const [index, span] of spans.entries()) {
+
+    if (span.offsetTop === position) {
+      words.push(span)
+    }
+
+    if (span.offsetTop !== position) {
+      lines.push(words)
+
+      words = []
+      words.push(span)
+
+      position = span.offsetTop
+    }
+
+    if (index + 1 === spans.length) {
+      lines.push(words)
+    }
+  }
+
+  return lines
+}
+

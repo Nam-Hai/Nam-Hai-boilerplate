@@ -1,56 +1,49 @@
-import { ROR } from "~/plugins/core/resize";
+import { WatchCallback, WatchEffect, WatchSource } from "nuxt/dist/app/compat/capi";
+import { MultiWatchSources } from "nuxt/dist/app/composables/asyncData";
+import { CanvasPage } from "~/scene/utils/types";
 
-export const useResize = (callback?: (e: { vh: number, vw: number, scale: number, breakpoint: string }) => void) => {
+export function useRO(callback: (e: { vh: number, vw: number, scale: number, breakpoint: string }) => void, triggerCb?: () => void) {
   const { $ROR } = useNuxtApp()
-  const ro = ref() as Ref<ROR>
-
-  const vh = ref(0)
-  const vw = ref(0)
-  const scale = ref(0)
-  const breakpoint = ref('')
-  const updateData = (e: { vh: number, vw: number, scale: number, breakpoint: string }) => {
-    vh.value = e.vh
-    vw.value = e.vw
-    scale.value = e.scale
-    breakpoint.value = e.breakpoint
-  }
+  const ro = new $ROR(callback, triggerCb)
 
   onMounted(() => {
-    ro.value = new $ROR((e) => {
-      updateData(e)
-      callback && callback(e)
-    })
-    ro.value.on()
+    ro.on()
   });
 
   onBeforeUnmount(() => {
-    ro.value.off()
+    ro.off()
   });
-  return { vh, vw, scale, breakpoint }
+
+
+
+  return ro;
 }
-export function useRO(callback: (e: { vh: number, vw: number, scale: number, breakpoint: string }) => void) {
-  const { $ROR } = useNuxtApp()
-  const ro = ref() as Ref<ROR>
 
-  onMounted(() => {
-    ro.value = new $ROR(callback)
-    ro.value.on()
-  });
-
-  onBeforeUnmount(() => {
-    ro.value.off()
-  });
-
-  return ro.value;
+export function plugWatch(ctx: CanvasPage,) {
+  return function canvasWatch(ref: MultiWatchSources | WatchSource | WatchCallback, callback: WatchCallback) {
+    const unWatch = watch(ref, callback)
+    ctx.destroyStack.add(() => {
+      unWatch()
+    })
+  }
 }
 
 // TODO use a store ?
 export function useCanvasSize(callback?: (size: { width: number, height: number }) => void) {
-  const { $canvas } = useNuxtApp()
+  const canvas = useCanvas()
 
-  const unWatch = watch($canvas.size, (size) => {
+  const unWatch = watch(canvas.size, (size) => {
     callback && callback(size)
-  }, {immediate: true})
+  }, { immediate: true })
 
-  return { canvasSize: $canvas.size, unWatch }
+  return { canvasSize: canvas.size, unWatch }
+}
+
+export function useBounds(el: Ref<HTMLElement>): Ref<DOMRect> {
+  const bounds = ref()
+  useRO(() => {
+    bounds.value = el.value.getBoundingClientRect()
+  })
+
+  return bounds
 }

@@ -1,6 +1,7 @@
 import { Color } from 'ogl'
-export default class ComposerPass {
-  constructor({ enabled = true, target,   }) {
+export class ComposerPass {
+  constructor(gl, { enabled = true, target, }) {
+    this.gl = gl
     this.enabled = enabled
     // this.textures = textures
 
@@ -25,7 +26,7 @@ export default class ComposerPass {
 
     return { resizeCallback: this.resize.bind(this) }
   }
-
+ 
   resize({ width, height }) {
     this.size.width = width
     this.size.height = height
