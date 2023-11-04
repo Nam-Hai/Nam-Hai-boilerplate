@@ -6,7 +6,7 @@ import { ROR } from '~/plugins/core/resize';
 import { FlowProvider } from '~/waterflow/FlowProvider';
 import { PreloaderCanvas } from './Pages/PreloaderCanvas';
 import { CanvasPage } from './utils/types';
-import { IndexCanvas } from './Pages/IndexCanvas';
+import { IndexCanvas } from './Pages/indexCanvas';
 
 type routeMapType = 'index'
 
