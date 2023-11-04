@@ -33,7 +33,9 @@ export function useMotion(arg: MotionArg) {
 
 export function useDelay(delay: number, callback: () => void, options?: { immediate?: boolean }) {
     const { $Delay } = useNuxtApp()
-    return new $Delay(callback, delay)
+    const d = new $Delay(callback, delay)
+    d.run()
+    return d
 }
 
 export function useRafR(callback: (arg: rafEvent) => void, options?: { lastStack?: boolean, firstStack?: boolean }) {

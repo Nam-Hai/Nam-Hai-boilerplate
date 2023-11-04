@@ -4,6 +4,7 @@ import { ROR, ResizeEvent } from '~/plugins/core/resize';
 // @ts-ignore
 import { Program, Mesh, RenderTarget, Triangle } from 'ogl'
 import Callstack from './utils/Callstack';
+import { CanvasElement } from './utils/types';
 
 type PostProcessorOptions = {
   width: number,
@@ -51,7 +52,7 @@ type PostRenderOptions = {
   frustumCull: boolean,
   beforePostCallbacks: (() => void)[]
 }
-export default class PostProcessor {
+export default class PostProcessor implements CanvasElement {
   gl: any;
   camera: any;
   sizePlaneCamera: { width: number; height: number; };
@@ -65,7 +66,7 @@ export default class PostProcessor {
   width: any;
   height: any;
   passes: PassObject[];
-  callStack: Callstack;
+  destroyStack: Callstack;
   constructor(
     gl: any,
     {
@@ -90,12 +91,8 @@ export default class PostProcessor {
 
     this.passes = [];
 
-    const { canvasSize, unWatch } = useCanvasSize((size) => {
-      for (const pass of this.passes) {
-        pass.mesh.scale.set(size.width, size.height, 1)
-      }
-    })
-    this.sizePlaneCamera = canvasSize
+    const { size: canvasSize } = useCanvas()
+    this.sizePlaneCamera = canvasSize.value
 
     this.options = { width, height, wrapS, wrapT, minFilter, magFilter };
 
@@ -118,8 +115,12 @@ export default class PostProcessor {
     this.dpr = dpr
 
     this.ro = useROR(this.resize.bind(this))
+    this.destroyStack = new Callstack([() => this.ro.off()])
+    this.init()
+  }
+  init() {
     this.ro.on()
-    this.callStack = new Callstack([() => this.ro.off(), () => unWatch()])
+
   }
 
   addPass({ vertex = this.camera ? cameraVertex : defaultVertex, fragment = defaultFragment, uniforms = {}, textureUniform = 'tMap', enabled = true, beforePass }: Partial<PassOptions>): PassObject {
@@ -152,6 +153,12 @@ export default class PostProcessor {
   }
 
   resize({ vw, vh, scale }: ResizeEvent) {
+    const { size: canvasSize } = useCanvas()
+    this.sizePlaneCamera = canvasSize.value
+    for (const pass of this.passes) {
+      pass.mesh.scale.set(canvasSize.value.width, canvasSize.value.height, 1)
+    }
+
     this.width = vw
     this.height = vh
 
@@ -205,7 +212,7 @@ export default class PostProcessor {
   }
 
   destroy() {
-    this.callStack.call()
+    this.destroyStack.call()
     // this.ro.off()
   }
 }

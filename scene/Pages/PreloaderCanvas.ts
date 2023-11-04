@@ -1,10 +1,10 @@
 import { RafR, rafEvent } from "~/plugins/core/raf";
 import Callstack from "../utils/Callstack";
 import { ROR, ResizeEvent } from "~/plugins/core/resize";
-import { CanvasPage } from "./fallbackCanvas";
 
 //@ts-ignore
 import { Transform } from "ogl";
+import { CanvasPage } from "../utils/types";
 
 export class PreloaderCanvas implements CanvasPage {
   gl: any;
@@ -14,12 +14,13 @@ export class PreloaderCanvas implements CanvasPage {
 
   ro: ROR;
   raf!: RafR;
-  canvasSize: { width: number; height: number };
-  callStack: Callstack;
+  destroyStack: Callstack;
 
   canvasScene: any;
 
   constructor({ gl, scene, camera }: { gl: any; scene: any; camera: any }) {
+    const canvasWatch = plugWatch(this)
+
     this.gl = gl;
     this.renderer = this.gl.renderer;
 
@@ -32,14 +33,9 @@ export class PreloaderCanvas implements CanvasPage {
 
     this.raf = useRafR(this.render);
     this.ro = useROR(this.resize);
-    const { canvasSize, unWatch } = useCanvasSize(() => {
-      this.ro.trigger();
-    });
-    this.canvasSize = canvasSize;
 
 
-    this.callStack = new Callstack([
-      () => unWatch(),
+    this.destroyStack = new Callstack([
       () => this.raf.stop(),
       () => this.ro.off(),
     ]);
@@ -68,6 +64,6 @@ export class PreloaderCanvas implements CanvasPage {
 
   destroy() {
     this.scene.setParent(null);
-    this.callStack.call();
+    this.destroyStack.call();
   }
 }

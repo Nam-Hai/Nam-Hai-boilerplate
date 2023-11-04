@@ -32,6 +32,9 @@ watch(preloaderComplete, async () => {
 
   fromPreloader.value = false
 
+  const canvas = useCanvas()
+  canvas.onChange(flowProvider.getRouteTo())
+
   useDelay(1000, () => {
     killPreloader.value = true
   }).run()
@@ -54,7 +57,7 @@ onMounted(() => {
     console.log('load');
     endPreloader()
   })
-  if (manifest.length == 0) return endPreloader()
+  // if (manifest.length == 0) return endPreloader()
 })
 
 function endPreloader() {

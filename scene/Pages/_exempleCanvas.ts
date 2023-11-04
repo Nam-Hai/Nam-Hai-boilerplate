@@ -1,13 +1,13 @@
 import { RafR, rafEvent } from "~/plugins/core/raf"
 import { ROR, ResizeEvent } from "~/plugins/core/resize"
-import { CanvasPage } from "./fallbackCanvas"
 import Callstack from "../utils/Callstack"
-
+import { CanvasPage } from "../utils/types";
 
 //@ts-ignore
 import { Transform } from "ogl";
 
-export class ExampleCanvas implements CanvasPage {
+
+export class ExempleCanvas implements CanvasPage {
   gl: any
   renderer: any
   scene: any
@@ -15,10 +15,12 @@ export class ExampleCanvas implements CanvasPage {
 
   ro: ROR
   raf: RafR
-  canvasSize: { width: number; height: number }
-  callStack: Callstack
+  destroyStack: Callstack
   canvasScene: any
+
   constructor({ gl, scene, camera }: { gl: any, scene: any, camera: any }) {
+    this.destroyStack = new Callstack();
+    const canvasWatch = plugWatch(this)
     this.gl = gl
     this.renderer = this.gl.renderer
 
@@ -28,24 +30,16 @@ export class ExampleCanvas implements CanvasPage {
 
     this.camera = camera
 
-    N.BM(this, ["render", "resize", "init"]);
+    N.BM(this, ["render", "resize", "init", "destroy"]);
 
     this.ro = useROR(this.resize)
-    const { canvasSize, unWatch } = useCanvasSize(() => {
-      this.ro.trigger()
-    })
-    this.canvasSize = canvasSize
-
+    this.destroyStack.add(() => this.ro.off())
     this.raf = useRafR(this.render)
-
-    this.callStack = new Callstack([
-      () => unWatch(),
-      () => this.raf.stop(),
-      () => this.ro.off(),
-    ]);
+    this.destroyStack.add(() => this.raf.kill())
   }
-  async init() {
+  init() {
     this.raf.run()
+    this.ro.on()
   }
 
   resize({ vh, vw, scale, breakpoint }: ResizeEvent) {
@@ -61,6 +55,6 @@ export class ExampleCanvas implements CanvasPage {
 
   destroy() {
     this.scene.setParent(null);
-    this.callStack.call();
+    this.destroyStack.call();
   }
 }

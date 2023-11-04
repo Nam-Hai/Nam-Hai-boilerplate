@@ -1,3 +1,7 @@
+import { WatchCallback, WatchEffect, WatchSource } from "nuxt/dist/app/compat/capi";
+import { MultiWatchSources } from "nuxt/dist/app/composables/asyncData";
+import { CanvasPage } from "~/scene/utils/types";
+
 export function useRO(callback: (e: { vh: number, vw: number, scale: number, breakpoint: string }) => void, triggerCb?: () => void) {
   const { $ROR } = useNuxtApp()
   const ro = new $ROR(callback, triggerCb)
@@ -15,15 +19,24 @@ export function useRO(callback: (e: { vh: number, vw: number, scale: number, bre
   return ro;
 }
 
+export function plugWatch(ctx: CanvasPage,) {
+  return function canvasWatch(ref: MultiWatchSources | WatchSource | WatchCallback, callback: WatchCallback) {
+    const unWatch = watch(ref, callback)
+    ctx.destroyStack.add(() => {
+      unWatch()
+    })
+  }
+}
+
 // TODO use a store ?
 export function useCanvasSize(callback?: (size: { width: number, height: number }) => void) {
-  const { $canvas } = useNuxtApp()
+  const canvas = useCanvas()
 
-  const unWatch = watch($canvas.size, (size) => {
+  const unWatch = watch(canvas.size, (size) => {
     callback && callback(size)
   }, { immediate: true })
 
-  return { canvasSize: $canvas.size, unWatch }
+  return { canvasSize: canvas.size, unWatch }
 }
 
 export function useBounds(el: Ref<HTMLElement>): Ref<DOMRect> {

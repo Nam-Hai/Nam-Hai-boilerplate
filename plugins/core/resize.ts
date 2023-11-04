@@ -92,9 +92,12 @@ const Ro = new class {
         this.arr.push(t)
     }
     remove(id: number) {
-        for (let t = this.l(); 0 <= t; t--) {
-            if (this.arr[t].id === id) return void this.arr.splice(t, 1)
-        }
+        // for (let t = this.l(); 0 <= t; t--) {
+        //     if (this.arr[t].id === id) return void this.arr.splice(t, 1)
+        // }
+        this.arr = this.arr.filter(el => {
+            return el.id != id
+        })
     }
 
     fn() {

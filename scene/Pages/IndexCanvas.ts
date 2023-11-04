@@ -1,9 +1,13 @@
 import { RafR, rafEvent } from "~/plugins/core/raf"
 import { ROR, ResizeEvent } from "~/plugins/core/resize"
-import { CanvasPage } from "../utils/types"
 import Callstack from "../utils/Callstack"
+import { CanvasPage } from "../utils/types";
 
-export class FallbackCanvas implements CanvasPage {
+//@ts-ignore
+import { Transform } from "ogl";
+
+
+export class IndexCanvas implements CanvasPage {
   gl: any
   renderer: any
   scene: any
@@ -11,46 +15,52 @@ export class FallbackCanvas implements CanvasPage {
 
   ro: ROR
   raf: RafR
-  once: boolean
   destroyStack: Callstack
+  canvasScene: any
+
   constructor({ gl, scene, camera }: { gl: any, scene: any, camera: any }) {
     this.destroyStack = new Callstack();
+    const canvasWatch = plugWatch(this)
     this.gl = gl
     this.renderer = this.gl.renderer
 
-    this.scene = scene
+    this.canvasScene = scene;
+    this.scene = new Transform();
+    this.scene.setParent(this.canvasScene);
+
     this.camera = camera
 
-    N.BM(this, ['render', 'resize'])
+    N.BM(this, ["render", "resize", "init", "destroy"]);
 
     this.ro = useROR(this.resize)
     this.destroyStack.add(() => this.ro.off())
     this.raf = useRafR(this.render)
     this.destroyStack.add(() => this.raf.kill())
 
-    this.once = false
+
+    canvasWatch(useCanvas().size, (newSize) => {
+      this.ro.trigger()
+    })
   }
   init() {
     this.raf.run()
     this.ro.on()
+    // useDelay(4000, this.destroy)
   }
 
   resize({ vh, vw, scale, breakpoint }: ResizeEvent) {
   }
 
+
   render(e: rafEvent) {
-    if (this.once) {
-      this.raf.stop()
-      return
-    }
     this.renderer.render({
+      scene: this.scene,
       camera: this.camera,
-      scene: this.scene
     })
-    this.once = true
   }
 
   destroy() {
-    this.destroyStack.call()
+    this.scene.setParent(null);
+    this.destroyStack.call();
   }
 }
