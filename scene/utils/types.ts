@@ -20,6 +20,7 @@ export interface CanvasPage extends CanvasElement {
 
 export interface CanvasElement {
   destroyStack: Callstack
+
   init(): void
 
   destroy(): void
