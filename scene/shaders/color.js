@@ -1,4 +1,4 @@
-const color = `
+const shader = `
 
 vec3 rgb2hsv(vec3 c)
 {
@@ -19,13 +19,10 @@ vec3 hsv2rgb(vec3 c)
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
 
-`;
-
-const cosinePalette = `
 vec3 cosinePalette( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d )
 {
     return a + b*cos( 6.28318*(c*t+d) );
 }
-`
+`;
 
-export { color, cosinePalette };
+export { shader };
