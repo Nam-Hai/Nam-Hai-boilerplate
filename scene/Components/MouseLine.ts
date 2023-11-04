@@ -38,12 +38,9 @@ export default class MouseLine {
         this.ro = useROR(this.resize)
         this.uResolution = { value: [innerWidth, innerHeight] }
 
-        const { canvasSize, unWatch } = useCanvasSize(() => {
-            this.ro.trigger()
-        })
-        this.canvasSize = canvasSize
 
-
+        const { size: canvasSize } = useCanvas()
+        this.canvasSize = canvasSize.value
         this.mouse = mouse
         this.uMouse = { value: [this.mouse.x, this.mouse.y] }
         const unWatchMouse = watch(mouse, (m) => {
@@ -55,10 +52,10 @@ export default class MouseLine {
 
 
         this.camera = new Camera(this.gl, {
-            left: -this.canvasSize.width / 2,
-            right: this.canvasSize.width / 2,
-            top: this.canvasSize.height / 2,
-            bottom: -this.canvasSize.height / 2,
+            left: -canvasSize.value.width / 2,
+            right: canvasSize.value.width / 2,
+            top: canvasSize.value.height / 2,
+            bottom: -canvasSize.value.height / 2,
         });
 
         // this.mouse = mouse
@@ -88,10 +85,11 @@ export default class MouseLine {
         const lenis = useLenis()
         const lenisUnSubscribe = lenis.on('scroll', this.onScroll)
 
-        this.callstack = new Callstack([() => unWatch(), () => unWatchMouse(), () => this.raf.stop(), () => this.ro.off(), () => this.post.destroy(), () => lenisUnSubscribe()])
+        this.callstack = new Callstack([() => unWatchMouse(), () => this.raf.stop(), () => this.ro.off(), () => this.post.destroy(), () => lenisUnSubscribe()])
     }
     init() {
         this.raf.run()
+        this.ro.on()
     }
     computeNextLine(x: number, y: number) {
 
@@ -120,6 +118,8 @@ export default class MouseLine {
 
     resize({ vh, vw }: { vh: number, vw: number }) {
         this.uResolution.value = [vw, vh]
+        const { size: canvasSize } = useCanvas()
+        this.canvasSize = canvasSize.value
     }
 
     update() {
