@@ -16,7 +16,7 @@ void main() {
 
 export { basicVer };
 
-const shader = /* glsl */`
+const orthVer = /* glsl */`
 precision highp float;
 
 in vec3 position;
@@ -32,4 +32,4 @@ void main() {
   gl_Position = vec4( position, 1. );
 }`;
 
-export { shader };
+export { orthVer };

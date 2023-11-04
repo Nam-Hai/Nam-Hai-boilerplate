@@ -5,57 +5,62 @@ import { CanvasPage } from "../utils/types";
 
 //@ts-ignore
 import { Transform } from "ogl";
+import { WelcomeGL } from "../Components/Welcome";
 
 
 export class IndexCanvas implements CanvasPage {
-  gl: any
-  renderer: any
-  scene: any
-  camera: any
+    gl: any
+    renderer: any
+    scene: any
+    camera: any
 
-  ro: ROR
-  raf: RafR
-  destroyStack: Callstack
-  canvasScene: any
+    ro: ROR
+    raf: RafR
+    destroyStack: Callstack
+    canvasScene: any
 
-  constructor({ gl, scene, camera }: { gl: any, scene: any, camera: any }) {
-    this.destroyStack = new Callstack();
-    const canvasWatch = plugWatch(this)
-    this.gl = gl
-    this.renderer = this.gl.renderer
+    constructor({ gl, scene, camera }: { gl: any, scene: any, camera: any }) {
+        this.destroyStack = new Callstack();
+        const canvasWatch = plugWatch(this)
+        this.gl = gl
+        this.renderer = this.gl.renderer
 
-    this.canvasScene = scene;
-    this.scene = new Transform();
-    this.scene.setParent(this.canvasScene);
+        this.canvasScene = scene;
+        this.scene = new Transform();
+        this.scene.setParent(this.canvasScene);
 
-    this.camera = camera
+        this.camera = camera
 
-    N.BM(this, ["render", "resize", "init", "destroy"]);
+        N.BM(this, ["render", "resize", "init", "destroy"]);
 
-    this.ro = useROR(this.resize)
-    this.destroyStack.add(() => this.ro.off())
-    this.raf = useRafR(this.render)
-    this.destroyStack.add(() => this.raf.kill())
-  }
-  init() {
-    this.raf.run()
-    this.ro.on()
-    // useDelay(4000, this.destroy)
-  }
+        this.ro = useROR(this.resize)
+        this.destroyStack.add(() => this.ro.off())
+        this.raf = useRafR(this.render)
+        this.destroyStack.add(() => this.raf.kill())
 
-  resize({ vh, vw, scale, breakpoint }: ResizeEvent) {
-  }
+        const welcome = new WelcomeGL(this.gl)
+        welcome.mesh.setParent(this.scene)
+    }
+    init() {
+        this.raf.run()
+        this.ro.on()
+
+        // useDelay(4000, this.destroy)
+    }
+
+    resize({ vh, vw, scale, breakpoint }: ResizeEvent) {
+    }
 
 
-  render(e: rafEvent) {
-    this.renderer.render({
-      scene: this.scene,
-      camera: this.camera,
-    })
-  }
+    render(e: rafEvent) {
+        this.renderer.render({
+            scene: this.scene,
+            camera: this.camera,
+        })
+    }
 
-  destroy() {
-    this.scene.setParent(null);
-    this.destroyStack.call();
-  }
+    destroy() {
+        this.scene.setParent(null);
+        this.destroyStack.call();
+    }
 }
