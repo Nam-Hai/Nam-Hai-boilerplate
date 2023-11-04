@@ -4,7 +4,7 @@ import { basicVer } from '../shaders/BasicVer'
 import { ProgramOptions } from './NormalMaterial'
 import { loadTexture } from '../utils/WebGL.utils'
 
-export default class BasicMaterial extends Program {
+export class BasicMaterial extends Program {
     uColor: Color
     tMap: any
     constructor(gl: any, options: Partial<ProgramOptions & { color: any, tMap: string }> = {}) {

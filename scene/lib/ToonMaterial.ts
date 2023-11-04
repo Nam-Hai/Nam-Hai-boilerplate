@@ -1,13 +1,13 @@
 // @ts-ignore
 import { Program, Texture, Color } from 'ogl'
-import RampMap, { RampMapOptions } from './RampMap'
+import { RampMap, RampMapOptions } from './RampMap'
 
 type PaletteType = Array<{
   x: number,
   hex: string
 }>
 
-export default class ToonMaterial extends Program {
+export class ToonMaterial extends Program {
   uLightPosition: globalThis.Ref<number[]>
   ramp: RampMap
   tMap: { value: any }

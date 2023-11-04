@@ -1,13 +1,12 @@
 // @ts-ignore
 import { Color } from "ogl";
-import palettes from "../utils/palettes";
 
 export type RampMapOptions = {
   hex: string,
   x: number
 }
 
-export default class RampMap {
+export class RampMap {
   resolution: number;
   private points!: { x: number; hex: string; color: any; }[];
   gradientData!: Uint8Array;
