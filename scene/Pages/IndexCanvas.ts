@@ -6,6 +6,7 @@ import { CanvasPage } from "../utils/types";
 //@ts-ignore
 import { Transform } from "ogl";
 import { WelcomeGL } from "../Components/Welcome";
+import { Floor } from "../Components/Floor";
 
 
 export class IndexCanvas implements CanvasPage {
@@ -40,6 +41,10 @@ export class IndexCanvas implements CanvasPage {
 
         const welcome = new WelcomeGL(this.gl)
         welcome.mesh.setParent(this.scene)
+
+        const floor = new Floor(this.gl)
+        floor.mesh.setParent(this.scene)
+
     }
     init() {
         this.raf.run()

@@ -2,11 +2,11 @@ import Callstack from "../utils/Callstack";
 import { CanvasElement } from "../utils/types";
 
 //@ts-ignore
-import { Plane, Box, Program, Mesh } from "ogl"
+import { Plane, Program, Mesh } from "ogl"
 import { cosinePalette } from "../shaders/color";
 import { RafR, rafEvent } from "~/plugins/core/raf";
 
-export class WelcomeGL implements CanvasElement {
+export class Floor implements CanvasElement {
 
     destroyStack: Callstack
     gl: any;
@@ -19,7 +19,7 @@ export class WelcomeGL implements CanvasElement {
         this.gl = gl
 
         this.uTime = { value: 0 }
-        const geometry = new Box(this.gl)
+        const geometry = new Plane(this.gl)
         const program = new Program(this.gl, {
             vertex,
             fragment,
@@ -32,7 +32,10 @@ export class WelcomeGL implements CanvasElement {
         this.destroyStack.add(() => this.raf.kill())
 
         this.mesh = new Mesh(this.gl, { program, geometry })
-        this.mesh.scale.set(0.5)
+
+        this.mesh.position.y = -1 
+        this.mesh.scale.set(4)
+        this.mesh.rotation.x = -Math.PI / 2
         this.init()
     }
 
@@ -42,8 +45,6 @@ export class WelcomeGL implements CanvasElement {
 
     update({ elapsed }: rafEvent) {
         this.uTime.value = elapsed / 4000
-        this.mesh.rotation.x = elapsed / 2000
-        this.mesh.rotation.y = elapsed / 2000
     }
 
     destroy() {
@@ -66,16 +67,7 @@ out vec4 FragColor;
 ${cosinePalette}
 
 void main() {
-    vec4 coord = gl_FragCoord;
-
-    vec3 worldPosition = ( modelMatrix * vec4( vPosition, 1.0 )).xyz;
-    vec3 worldNormal = normalize( vec3( modelMatrix * vec4( vNormal, 0.0 ) ) );
-    vec3 lightVector = normalize( vec3(-2., 3., 6.) - worldPosition );
-    float brightness = dot( worldNormal, lightVector );
-
-    // color = vec3(brightness + 1.)/ 2.;
-    // vec3 color = cosinePalette(uTime + coord.y * 0.0004, vec3(0.5), vec3(0.5), vec3(0.9 , 1., 0.85), vec3(0., 0.1, 0.2));
-    vec3 color = cosinePalette(uTime + brightness * coord.y * 0.0002, vec3(0.5), vec3(0.5), vec3(0.9 , 1., 0.85), vec3(0., 0.1, 0.2));
+    vec3 color = vec3(0.9, 0.9, 0.9);
 
     FragColor = vec4(color, 1.);
 }
