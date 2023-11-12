@@ -5,6 +5,7 @@ import { CanvasElement } from "../utils/types";
 import { Plane, Box, Program, Mesh } from "ogl"
 import { cosinePalette } from "../shaders/color";
 import { RafR, rafEvent } from "~/plugins/core/raf";
+import { getUId } from "../utils/WebGL.utils";
 
 export class WelcomeGL implements CanvasElement {
 
@@ -24,7 +25,9 @@ export class WelcomeGL implements CanvasElement {
             vertex,
             fragment,
             uniforms: {
-                uTime: this.uTime
+                uTime: this.uTime,
+                uPicking: { value: false },
+                uId: { value: getUId() }
             }
         })
 
@@ -57,6 +60,8 @@ uniform float uTime;
 
 uniform mat4 modelMatrix;
 uniform mat3 normalMatrix;
+uniform bool uPicking;
+uniform vec4 uId;
 
 in vec3 vNormal;
 in vec3 vPosition;
@@ -78,6 +83,10 @@ void main() {
     vec3 color = cosinePalette(uTime + brightness * coord.y * 0.0002, vec3(0.5), vec3(0.5), vec3(0.9 , 1., 0.85), vec3(0., 0.1, 0.2));
 
     FragColor = vec4(color, 1.);
+
+    if(uPicking){
+        FragColor = uId;
+    }
 }
 `
 

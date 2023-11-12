@@ -6,8 +6,7 @@ import { CanvasPage } from "../utils/types";
 //@ts-ignore
 import { Transform } from "ogl";
 import { WelcomeGL } from "../Components/Welcome";
-import { Floor } from "../Components/Floor";
-
+import Picker from "../Components/Picking";
 
 export class IndexCanvas implements CanvasPage {
     gl: any
@@ -39,12 +38,21 @@ export class IndexCanvas implements CanvasPage {
         this.raf = useRafR(this.render)
         this.destroyStack.add(() => this.raf.kill())
 
-        const welcome = new WelcomeGL(this.gl)
-        welcome.mesh.setParent(this.scene)
+        for (let i = 0; i < 300; i++) {
+            const welcome = new WelcomeGL(this.gl)
+            welcome.mesh.setParent(this.scene)
+            this.destroyStack.add(() => welcome.destroy())
+            welcome.mesh.position.set(
+                Math.random() * 2 - 1,
+                Math.random() * 2 - 1,
+                Math.random() * 2 - 1,
+            )
+        }
 
-        const floor = new Floor(this.gl)
-        floor.mesh.setParent(this.scene)
-
+        const picker = new Picker(this.gl, {
+            node: this.scene,
+            camera: this.camera
+        })
     }
     init() {
         this.raf.run()

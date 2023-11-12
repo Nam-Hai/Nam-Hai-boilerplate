@@ -1,43 +1,72 @@
+// @ts-ignore
+import { Transform, Camera, Program } from 'ogl'
+
 import Callstack from "../utils/Callstack";
+import { basicVer } from '../shaders/BasicVer';
 
 const { mouse } = useStore()
 
-// Alpha Picker
+// Alpha Picker, click
+// Drop frames with mousemove after 300 meshes
 export default class Picker {
+    private gl: any;
+    dpr: number;
+    node: Transform;
+    camera: Camera;
+
     needUpdate: boolean;
     indexPicked: null | number;
-    gl: any;
-    clickEvent: boolean;
-    hoverCallstack: Callstack;
-    clickCallstack: Callstack;
-    dpr: number;
 
-    constructor(gl: any) {
+    private clickCallstack: Callstack;
+    pickerProgam: any;
+    constructor(gl: any, options: { node: Transform, camera: Camera }) {
         this.gl = gl
+        this.node = options.node
+        this.camera = options.camera
 
         this.dpr = devicePixelRatio
 
         this.needUpdate = false
         this.indexPicked = null
-        this.clickEvent = false
 
-        N.BM(this, ['onClick', 'onMouseMove'])
-        document.addEventListener('click', this.onClick)
-        document.addEventListener('mousemove', this.onMouseMove)
+        N.BM(this, ['pick'])
+        document.addEventListener('mousemove', this.pick)
 
         this.clickCallstack = new Callstack()
-        this.hoverCallstack = new Callstack()
-    }
-    onClick() {
-        this.needUpdate = true
-        this.clickEvent = true
-    }
-
-    onMouseMove() {
-        this.needUpdate = true
+        this.pickerProgam = new Program(this.gl, {
+            vertex: basicVer,
+            fragment: pickerFragment,
+            uniforms: {
+                uId: { value: [0, 0, 0, 0] }
+            }
+        })
     }
 
-    pick() {
+    onClick(callback: () => void) {
+        this.needUpdate = true
+        this.clickCallstack.add(callback)
+    }
+
+    // onBeforePicking(callback: () => void) {
+
+    // }
+
+    private pick() {
+        const renderList = this.gl.renderer.getRenderList({
+            scene: this.node,
+            camera: this.camera
+        })
+
+        for (let index = 0; index < renderList.length; index++) {
+            const program = renderList[index].program
+            program.uniforms.uPicking.value = true
+        }
+
+        this.gl.renderer.render({
+            scene: this.node,
+            camera: this.camera
+        })
+
         const data = new Uint8Array(4);
         this.gl.readPixels(
             mouse.x * this.dpr,
@@ -48,20 +77,31 @@ export default class Picker {
             this.gl.UNSIGNED_BYTE,  // type
             data);             // typed array to hold result
 
-        const index = data[3] - 1
+        const index = data[0] + data[1] * 256 + data[2] * 256 * 256
         this.indexPicked = index >= 0 ? index : null
 
         this.needUpdate = false
 
-        this.hoverCallstack.call()
-
-        if (this.clickEvent) {
-            this.clickCallstack.call()
-            this.clickEvent = false
+        for (let index = 0; index < renderList.length; index++) {
+            const program = renderList[index].program
+            program.uniforms.uPicking.value = false
         }
     }
 
     destroy() {
-        document.removeEventListener('click', this.onClick)
+        document.removeEventListener('click', this.pick)
     }
 }
+
+const pickerFragment = /* glsl */ `#version 300 es
+precision highp float;
+
+uniform vec4 uId;
+
+in vec2 vUv;
+out vec4 FragColor;
+
+void main() {
+  FragColor = uId;
+}
+`
