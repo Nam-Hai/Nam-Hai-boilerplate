@@ -30,7 +30,7 @@ export default class Picker {
         this.indexPicked = null
 
         N.BM(this, ['pick'])
-        document.addEventListener('mousemove', this.pick)
+        document.addEventListener('click', this.pick)
 
         this.clickCallstack = new Callstack()
         this.pickerProgam = new Program(this.gl, {
@@ -46,10 +46,6 @@ export default class Picker {
         this.needUpdate = true
         this.clickCallstack.add(callback)
     }
-
-    // onBeforePicking(callback: () => void) {
-
-    // }
 
     private pick() {
         const renderList = this.gl.renderer.getRenderList({
@@ -82,6 +78,7 @@ export default class Picker {
 
         this.needUpdate = false
 
+        console.log({ id: index });
         for (let index = 0; index < renderList.length; index++) {
             const program = renderList[index].program
             program.uniforms.uPicking.value = false
