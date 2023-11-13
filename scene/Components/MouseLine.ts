@@ -27,7 +27,7 @@ export default class MouseLine {
     post: PostProcessor
     callstack: Callstack
     constructor(gl: any, { color }: { color: [number, number, number, number] } = { color: [1, 1, 1, 1] }) {
-        const { mouse, vh, vw } = useStore()
+        const { mouse, vh, vw } = useStoreView()
         this.vw = vw
         this.vh = vh
         N.BM(this, ['update', 'onScroll', 'resize', 'computeNextLine'])

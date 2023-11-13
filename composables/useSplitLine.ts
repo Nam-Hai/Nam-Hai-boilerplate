@@ -15,7 +15,7 @@ export const useSplitLine = {
     onMounted(() => {
       computeLines();
     });
-    const { breakpoint } = useStore();
+    const { breakpoint } = useStoreView();
     watch(breakpoint, () => {
       wrapper.value.innerHTML = text;
       computeLines();
@@ -65,8 +65,8 @@ export const useSplitAnime = (elRef: Ref<HTMLElement>, show: Ref<boolean>) => {
     animation(show)
   });
 
-  const {breakpoint} = useStore()
-  watch(breakpoint, async()=>{
+  const { breakpoint } = useStoreView()
+  watch(breakpoint, async () => {
     await nextTick()
     animation(show.value)
   })

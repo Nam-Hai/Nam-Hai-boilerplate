@@ -1,10 +1,10 @@
-import { RafR, rafEvent } from "~/plugins/core/raf";
+import type { RafR, rafEvent } from "~/plugins/core/raf";
 import Callstack from "../utils/Callstack";
-import { ROR, ResizeEvent } from "~/plugins/core/resize";
+import type { ROR, ResizeEvent } from "~/plugins/core/resize";
 
 //@ts-ignore
 import { Transform } from "ogl";
-import { CanvasPage } from "../utils/types";
+import type { CanvasPage } from "../utils/types";
 
 export class PreloaderCanvas implements CanvasPage {
   gl: any;

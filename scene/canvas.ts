@@ -5,7 +5,7 @@ import { FallbackCanvas } from './Pages/fallbackCanvas';
 import { ROR } from '~/plugins/core/resize';
 import { FlowProvider } from '~/waterflow/FlowProvider';
 import { PreloaderCanvas } from './Pages/PreloaderCanvas';
-import type { CanvasPage } from './utils/types';
+import type { CanvasElement, CanvasPage } from './utils/types';
 import { IndexCanvas } from './Pages/IndexCanvas';
 
 type routeMapType = 'index'
@@ -26,6 +26,7 @@ export default class Canvas {
     size: Ref<{ width: number; height: number; }>;
     fallback?: FallbackCanvas;
     index?: IndexCanvas;
+    dom: HTMLCanvasElement;
 
     constructor() {
         this.renderer = new Renderer({
@@ -35,6 +36,7 @@ export default class Canvas {
         });
         this.gl = this.renderer.gl
         this.gl.clearColor(1., 1, 1, 1)
+        this.dom = this.gl.canvas
 
         this.map = new Map([
             // ['fallback', this.createFallbackCanvas],
@@ -81,7 +83,6 @@ export default class Canvas {
             height,
             width: height * this.camera.aspect
         }
-        console.log(this.size);
     }
 
     onChange(route: RouteLocationNormalized) {

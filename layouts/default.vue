@@ -15,7 +15,7 @@ import BufferPage from "~/waterflow/components/BufferPage.vue";
 
 const flowProvider = useFlowProvider();
 
-const lenis = useStore().lenis;
+const lenis = useStoreView().lenis;
 
 useRaf(
   (e) => {

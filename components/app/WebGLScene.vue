@@ -9,17 +9,13 @@ const sceneRef = ref()
 const wrapperSceneRef = ref()
 const canvas = useCanvas()
 
-const { vh, canvasRef, scale, breakpoint } = useStore()
-
 onMounted(() => {
   sceneRef.value = canvas
   wrapperSceneRef.value.appendChild(canvas.gl.canvas)
 
-  canvasRef.value = canvas.gl.canvas
 })
 
 const flowProvider = useFlowProvider()
-flowProvider.addProps('canvasRef', canvasRef)
 flowProvider.addProps('canvasWrapperRef', wrapperSceneRef)
 
 onUnmounted(() => {

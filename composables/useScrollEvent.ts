@@ -29,7 +29,7 @@ export const useScrollEvent = ({
     bounds.value.y = bounds.value.top + window.scrollY;
   };
 
-  const { vh, vw } = useStore();
+  const { vh, vw } = useStoreView();
   useRO(resize);
 
   onMounted(() => {
@@ -108,7 +108,7 @@ export const onEnter = ({
     boundY = bounds.top + (isFixed ? 0 : scrollY)
   };
 
-  const { vh, vw } = useStore();
+  const { vh, vw } = useStoreView();
   useRO(computeBounds);
 
   onMounted(() => {

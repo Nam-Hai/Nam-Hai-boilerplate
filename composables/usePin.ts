@@ -65,7 +65,7 @@ export const usePin = ({
     on = true
   })
 
-  const { vh, vw } = useStore()
+  const { vh, vw } = useStoreView()
   useRO(resize)
 
   onMounted(() => {
