@@ -1,11 +1,10 @@
 import Callstack from "../utils/Callstack";
-import { CanvasElement } from "../utils/types";
+import type { CanvasElement } from "../utils/types";
 
 //@ts-ignore
 import { Plane, Box, Program, Mesh } from "ogl"
 import { cosinePalette } from "../shaders/color";
-import { RafR, rafEvent } from "~/plugins/core/raf";
-import { getUId } from "../utils/WebGL.utils";
+import type { RafR, rafEvent } from "~/plugins/core/raf";
 
 export class WelcomeGL implements CanvasElement {
 
@@ -26,8 +25,6 @@ export class WelcomeGL implements CanvasElement {
             fragment,
             uniforms: {
                 uTime: this.uTime,
-                uPicking: { value: false },
-                uId: { value: getUId() }
             }
         })
 
@@ -37,6 +34,9 @@ export class WelcomeGL implements CanvasElement {
         this.mesh = new Mesh(this.gl, { program, geometry })
         this.mesh.scale.set(0.5)
         this.init()
+
+        const p = usePicker()
+        console.log(p);
     }
 
     init() {

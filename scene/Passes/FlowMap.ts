@@ -2,15 +2,14 @@
 import { Triangle, Transform, Mesh, Program, Plane, Vec2, RenderTarget } from 'ogl'
 import Callstack from '../utils/Callstack'
 import { Clock } from '../utils/Clock'
-import { ROR, ResizeEvent } from '~/plugins/core/resize'
+import { ROR, type ResizeEvent } from '~/plugins/core/resize'
 
-const { vh, vw, mouse } = useStore()
+const { vh, vw, mouse } = useStoreView()
 export class FlowMap {
     gl: any
     clock: Clock
     uResolution: { value: number[] }
     ro: ROR
-    canvasSize: { width: number; height: number }
     mouse: any
     oldMouse: any
     velo: any
@@ -21,6 +20,7 @@ export class FlowMap {
     enabled: boolean
     mask!: { write: any; read: any; swap: () => void }
     uniform: any
+    canvasSize: globalThis.Ref<{ width: number; height: number }>
     constructor(gl: any, { enabled = true } = {}) {
         this.enabled = enabled
         N.BM(this, ['mousemove', 'resize'])
@@ -43,7 +43,7 @@ export class FlowMap {
 
         const unWatch = watch(mouse, this.mousemove)
 
-        this.callstack = new Callstack([()=>unWatch(), ()=>unWatchCanvas()])
+        this.callstack = new Callstack([() => unWatch(), () => unWatchCanvas()])
     }
     resize({ vh, vw }: ResizeEvent) {
         this.uResolution.value = [vw * devicePixelRatio, vh]
@@ -160,8 +160,8 @@ export class FlowMap {
 
         backgroundBufferMesh.setParent(sceneBuffer)
 
-        backgroundBufferMesh.scale.x = this.canvasSize.width
-        backgroundBufferMesh.scale.y = this.canvasSize.height
+        backgroundBufferMesh.scale.x = this.canvasSize.value.width
+        backgroundBufferMesh.scale.y = this.canvasSize.value.height
 
         return renderObject
     }

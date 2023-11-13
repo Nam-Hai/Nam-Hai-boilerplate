@@ -40,8 +40,6 @@ onBeforeMount(() => {
   useStoreView().init()
 
   const { vh } = useStoreView()
-  console.log(vh);
-
 
   waitBeforeMount.value = true
 })

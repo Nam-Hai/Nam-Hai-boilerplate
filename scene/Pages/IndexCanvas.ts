@@ -1,12 +1,13 @@
-import { RafR, rafEvent } from "~/plugins/core/raf"
-import { ROR, ResizeEvent } from "~/plugins/core/resize"
+import type { RafR, rafEvent } from "~/plugins/core/raf";
+import type { ROR, ResizeEvent } from "~/plugins/core/resize";
 import Callstack from "../utils/Callstack"
-import { CanvasPage } from "../utils/types";
+import type { CanvasPage } from "../utils/types";
 
 //@ts-ignore
 import { Transform } from "ogl";
 import { WelcomeGL } from "../Components/Welcome";
-import Picker from "../Components/Picking";
+import { Picker } from "../Components/Picking";
+import { providerPicker } from "~/composables/useCanvas";
 
 export class IndexCanvas implements CanvasPage {
     gl: any
@@ -38,7 +39,8 @@ export class IndexCanvas implements CanvasPage {
         this.raf = useRafR(this.render)
         this.destroyStack.add(() => this.raf.kill())
 
-        for (let i = 0; i < 300; i++) {
+
+        for (let i = 0; i < 5; i++) {
             const welcome = new WelcomeGL(this.gl)
             welcome.mesh.setParent(this.scene)
             this.destroyStack.add(() => welcome.destroy())
@@ -48,17 +50,31 @@ export class IndexCanvas implements CanvasPage {
                 Math.random() * 2 - 1,
             )
         }
+        const group = new Transform()
+        const welcome = new WelcomeGL(this.gl)
+        welcome.mesh.setParent(group)
+        this.destroyStack.add(() => welcome.destroy())
+        welcome.mesh.position.set(
+            Math.random() * 2 - 1,
+            Math.random() * 2 - 1,
+            Math.random() * 2 - 1,
+        )
 
         const picker = new Picker(this.gl, {
             node: this.scene,
             camera: this.camera
         })
+
+        providerPicker(picker)
     }
     init() {
         this.raf.run()
         this.ro.on()
 
-        // useDelay(4000, this.destroy)
+        // useDelay(1000, () => {
+        //     const canvas = useCanvas()
+        //     console.log(canvas);
+        // }).run()
     }
 
     resize({ vh, vw, scale, breakpoint }: ResizeEvent) {

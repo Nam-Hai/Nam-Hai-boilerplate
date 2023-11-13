@@ -12,11 +12,6 @@ export function useLenis() {
     return lenis.value
 }
 
-export function useCanvas() {
-    const { $canvas } = useNuxtApp()
-    return $canvas
-}
-
 export function useTL() {
     const { $TL } = useNuxtApp()
     return new $TL

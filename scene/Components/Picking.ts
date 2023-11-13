@@ -1,14 +1,14 @@
 // @ts-ignore
-import { Transform, Camera, Program } from 'ogl'
+import { Transform, Camera, RenderTarget, Program } from 'ogl'
 
 import Callstack from "../utils/Callstack";
 import { basicVer } from '../shaders/BasicVer';
+import { getUId } from '../utils/WebGL.utils';
 
-const { mouse } = useStore()
+const { mouse, vh, vw } = useStoreView()
 
-// Alpha Picker, click
 // Drop frames with mousemove after 300 meshes
-export default class Picker {
+export class Picker {
     private gl: any;
     dpr: number;
     node: Transform;
@@ -19,6 +19,7 @@ export default class Picker {
 
     private clickCallstack: Callstack;
     pickerProgam: any;
+    target: any;
     constructor(gl: any, options: { node: Transform, camera: Camera }) {
         this.gl = gl
         this.node = options.node
@@ -31,7 +32,12 @@ export default class Picker {
 
         N.BM(this, ['pick'])
         document.addEventListener('click', this.pick)
+        // document.addEventListener('mousemove', this.pick)
 
+        this.target = new RenderTarget(this.gl, {
+            width: innerWidth * devicePixelRatio,
+            height: innerHeight * devicePixelRatio
+        })
         this.clickCallstack = new Callstack()
         this.pickerProgam = new Program(this.gl, {
             vertex: basicVer,
@@ -40,6 +46,18 @@ export default class Picker {
                 uId: { value: [0, 0, 0, 0] }
             }
         })
+
+
+        const renderList = this.gl.renderer.getRenderList({
+            scene: this.node,
+            camera: this.camera
+        })
+
+        for (let index = 0; index < renderList.length; index++) {
+            const program = renderList[index].program
+            program.uniforms.uPicking = { value: false }
+            program.uniforms.uId = { value: getUId() }
+        }
     }
 
     onClick(callback: () => void) {
@@ -60,25 +78,26 @@ export default class Picker {
 
         this.gl.renderer.render({
             scene: this.node,
-            camera: this.camera
+            camera: this.camera,
+            // target: this.target
         })
 
         const data = new Uint8Array(4);
         this.gl.readPixels(
             mouse.x * this.dpr,
-            mouse.y * this.dpr,
+            (vh.value - mouse.y) * this.dpr,
             1,
             1,
             this.gl.RGBA,           // format
             this.gl.UNSIGNED_BYTE,  // type
             data);             // typed array to hold result
 
-        const index = data[0] + data[1] * 256 + data[2] * 256 * 256
+        const index = data[0] + data[1] * 256 + data[2] * 256 * 256 + data[3] * 256 * 256 * 256
+        console.log(index);
         this.indexPicked = index >= 0 ? index : null
 
         this.needUpdate = false
 
-        console.log({ id: index });
         for (let index = 0; index < renderList.length; index++) {
             const program = renderList[index].program
             program.uniforms.uPicking.value = false
