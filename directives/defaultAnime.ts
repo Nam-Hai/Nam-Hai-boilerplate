@@ -1,4 +1,4 @@
-import { EaseFunctionName } from "~/plugins/core/eases"
+import type { EaseFunctionName } from "~/plugins/core/eases";
 
 export const vDefaultAnime = {
     mounted: (el: HTMLElement, binding: { duration: number, delay: number, x: number, y: number, e: EaseFunctionName }) => {

@@ -3,7 +3,7 @@
     <NuxtLayout>
       <NuxtPage></NuxtPage>
     </NuxtLayout>
-    
+
   </div>
 </template>
 
@@ -16,7 +16,7 @@ const flowProvider = new FlowProvider()
 provideFlowProvider(flowProvider)
 
 flowProvider.registerPage('index', Index)
-flowProvider.registerPage('playground', Playground) 
+flowProvider.registerPage('playground', Playground)
 
 const flowRef = ref(flowProvider)
 flowProvider.addProps('flowRef', flowRef)
@@ -37,7 +37,11 @@ if (matcher.matches) {
 let waitBeforeMount = ref(false)
 
 onBeforeMount(() => {
-  useStore().init()
+  useStoreView().init()
+
+  const { vh } = useStoreView()
+  console.log(vh);
+
 
   waitBeforeMount.value = true
 })

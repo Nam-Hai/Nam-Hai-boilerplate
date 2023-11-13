@@ -30,54 +30,6 @@ export const usePin = ({
   })
 
   const resize = () => {
-    N.T(el.value, 0, 0, 'px')
-    let boundsRect = el.value.getBoundingClientRect()
-    bounds.y = boundsRect.top + window.scrollY
-    bounds.height = boundsRect.height
-  }
-
-  onMounted(() => {
-    let boundsRect = el.value.getBoundingClientRect()
-    bounds.y = boundsRect.top + window.scrollY
-    bounds.height = boundsRect.height
-  })
-
-  useLenisScroll((e) => {
-    const dist = window.scrollY - bounds.y + start * vh.value / 100 - bounds.height * eStart / 100
-    let offset = N.Clamp(dist, 0, end * vh.value / 100)
-    if (offset > 0) hasEnter.value = true
-
-    N.T(el.value, 0, offset, 'px')
-
-    const t = N.iLerp(offset, 0, end * vh.value / 100)
-    onProgress(t)
-  })
-
-  const { vh } = useResize(resize)
-
-  watch(hasEnter, () => {
-    onEnter()
-  })
-
-}
-
-
-// un petit bide
-export function useSmoothPin({
-  el,
-  duration,
-  force
-}: {
-  el: Ref<HTMLElement>,
-  duration: number,
-  force: number
-}) {
-  let bounds = reactive({
-    y: 0,
-    height: 0
-  })
-
-  const resize = () => {
 
     N.T(el.value, 0, 0, 'px')
     computeBounds()

@@ -1,10 +1,10 @@
 
-import { rafEvent } from '~/plugins/core/raf';
-import { ROR, ResizeEvent } from '~/plugins/core/resize';
+import type { rafEvent } from '~/plugins/core/raf';
+import type { ROR, ResizeEvent } from '~/plugins/core/resize';
 // @ts-ignore
 import { Program, Mesh, RenderTarget, Triangle } from 'ogl'
 import Callstack from './utils/Callstack';
-import { CanvasElement } from './utils/types';
+import type { CanvasElement } from './utils/types';
 
 type PostProcessorOptions = {
   width: number,

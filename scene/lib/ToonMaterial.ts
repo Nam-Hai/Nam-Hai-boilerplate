@@ -1,6 +1,6 @@
 // @ts-ignore
 import { Program, Texture, Color } from 'ogl'
-import { RampMap, RampMapOptions } from './RampMap'
+import { RampMap, type RampMapOptions } from './RampMap'
 
 type PaletteType = Array<{
   x: number,

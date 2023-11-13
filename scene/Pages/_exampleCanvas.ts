@@ -1,7 +1,7 @@
-import { RafR, rafEvent } from "~/plugins/core/raf"
-import { ROR, ResizeEvent } from "~/plugins/core/resize"
+import type { RafR, rafEvent } from "~/plugins/core/raf";
+import type { ROR, ResizeEvent } from "~/plugins/core/resize";
 import Callstack from "../utils/Callstack"
-import { CanvasPage } from "../utils/types";
+import type { CanvasPage } from "../utils/types";
 
 //@ts-ignore
 import { Transform } from "ogl";

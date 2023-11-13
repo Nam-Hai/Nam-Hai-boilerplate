@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang='ts'>
-import { shallowRef, watch, ref, Ref } from 'vue';
+import { shallowRef, watch, ref, type Ref } from 'vue';
 import { useFlowProvider } from '../FlowProvider';
 
 const bufferPage = shallowRef()

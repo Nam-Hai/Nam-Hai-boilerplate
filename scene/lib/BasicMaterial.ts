@@ -1,7 +1,7 @@
 // @ts-ignore
 import { Texture, Program, Color } from 'ogl'
 import { basicVer } from '../shaders/BasicVer'
-import { ProgramOptions } from './NormalMaterial'
+import type { ProgramOptions } from './NormalMaterial'
 import { loadTexture } from '../utils/WebGL.utils'
 
 export class BasicMaterial extends Program {

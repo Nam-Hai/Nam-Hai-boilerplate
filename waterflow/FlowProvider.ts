@@ -1,5 +1,5 @@
-import { RouteLocationNormalized, useRoute } from 'vue-router';
-import { DefineComponent, Ref, ShallowRef, nextTick, ref } from 'vue';
+import { type RouteLocationNormalized, useRoute } from 'vue-router';
+import { type DefineComponent, type Ref, type ShallowRef, nextTick, ref } from 'vue';
 import { createContext } from './util/apiInject';
 
 export type FlowProps = Record<string, any>

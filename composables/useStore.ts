@@ -5,6 +5,6 @@ export default function useStore() {
   return store
 }
 
-export function useCursorStore(){
+export function useCursorStore() {
   return cursorStore
 }

@@ -1,6 +1,6 @@
-import { MotionArg } from "~/plugins/core/motion"
-import { rafEvent } from "~/plugins/core/raf"
-import { ResizeEvent } from "~/plugins/core/resize"
+import type { MotionArg } from "~/plugins/core/motion"
+import type { rafEvent } from "~/plugins/core/raf"
+import type { ResizeEvent } from "~/plugins/core/resize"
 
 export function useManifest() {
     const { $manifest } = useNuxtApp()
@@ -8,7 +8,7 @@ export function useManifest() {
 }
 
 export function useLenis() {
-    const { lenis } = useStore()
+    const { lenis } = useStoreView()
     return lenis.value
 }
 

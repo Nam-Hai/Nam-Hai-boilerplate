@@ -1,5 +1,5 @@
-import { EaseFunctionName, Ease4Arg, Ease, Ease4 } from "./eases";
-import { Delay, rafEvent, RafR } from "./raf";
+import { type EaseFunctionName, type Ease4Arg, Ease, Ease4 } from "./eases";
+import { Delay, type rafEvent, RafR } from "./raf";
 import { BM, Select, Has, Svg, Is, Round, Clamp, Lerp } from "./utils";
 
 export interface svgProp {

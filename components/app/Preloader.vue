@@ -27,12 +27,14 @@ const killPreloader = ref(false)
 const percentageRef = ref(0)
 const route = useRoute()
 
+const canvas = useCanvas()
+
+
 watch(preloaderComplete, async () => {
   await nextTick()
 
   fromPreloader.value = false
 
-  const canvas = useCanvas()
   canvas.onChange(flowProvider.getRouteTo())
 
   useDelay(1000, () => {
@@ -61,7 +63,6 @@ onMounted(() => {
 })
 
 function endPreloader() {
-  const canvas = useCanvas()
 
   canvas.preloader()
 

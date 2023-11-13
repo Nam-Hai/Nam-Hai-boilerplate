@@ -1,6 +1,6 @@
-import { WatchCallback, WatchEffect, WatchSource } from "nuxt/dist/app/compat/capi";
-import { MultiWatchSources } from "nuxt/dist/app/composables/asyncData";
-import { CanvasPage } from "~/scene/utils/types";
+import type { WatchCallback, WatchSource } from "nuxt/dist/app/compat/capi";
+import type { MultiWatchSources } from "nuxt/dist/app/composables/asyncData";
+import type { CanvasPage } from "~/scene/utils/types";
 
 export function useRO(callback: (e: { vh: number, vw: number, scale: number, breakpoint: string }) => void, triggerCb?: () => void) {
   const { $ROR } = useNuxtApp()

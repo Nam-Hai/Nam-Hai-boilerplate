@@ -217,4 +217,5 @@ class ROR {
     }
 }
 
-export { ROR, ResizeEvent }
+export { ROR }
+export type { ResizeEvent }

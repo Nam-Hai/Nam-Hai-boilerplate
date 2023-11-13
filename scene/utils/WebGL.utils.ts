@@ -13,8 +13,7 @@ export function getUId() {
         Math.floor(id % 256) / 256,
         Math.floor((id % (256 * 256)) / (256)) / 256,
         Math.floor((id % (256 * 256 * 256)) / (256 * 256)),
-        // Math.floor((id % (256 * 256 * 256 * 256)) / (256 * 256 * 256)),
-        1
+        Math.floor((id % (256 * 256 * 256 * 256)) / (256 * 256 * 256))
     ]
     id++
     return uId

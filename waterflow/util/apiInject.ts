@@ -1,6 +1,12 @@
 import type { InjectionKey } from 'vue';
 import { inject, provide } from 'vue';
 
+// create a store
+// how to use it
+// export const [provideT, useT] = createContext<T>('key');
+// provideT(new T)
+// const t = useT()
+
 /**
  * Helper function around provide/inject to create a typed pair with a curried "key" and default values
  */

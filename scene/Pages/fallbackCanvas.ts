@@ -1,6 +1,6 @@
-import { RafR, rafEvent } from "~/plugins/core/raf"
-import { ROR, ResizeEvent } from "~/plugins/core/resize"
-import { CanvasPage } from "../utils/types"
+import type { RafR, rafEvent } from "~/plugins/core/raf"
+import type { ROR, ResizeEvent } from "~/plugins/core/resize"
+import type { CanvasPage } from "../utils/types"
 import Callstack from "../utils/Callstack"
 
 export class FallbackCanvas implements CanvasPage {

@@ -1,4 +1,4 @@
-import { RafR, rafEvent } from "../plugins/core/raf";
+import type { rafEvent } from "../plugins/core/raf";
 
 export const useRaf = (cb: (e: rafEvent) => void, options: { lastStack?: boolean, firstStack?: boolean } = { lastStack: false, firstStack: false }) => {
 

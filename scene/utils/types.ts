@@ -1,5 +1,5 @@
-import { RafR, rafEvent } from "~/plugins/core/raf";
-import { ROR, ResizeEvent } from "~/plugins/core/resize";
+import type { RafR, rafEvent } from "~/plugins/core/raf";
+import type { ROR, ResizeEvent } from "~/plugins/core/resize";
 import Callstack from "./Callstack";
 
 // @ts-ignore
@@ -27,37 +27,41 @@ export interface CanvasElement {
   destroy(): void
 }
 
-class NodeResolver {
-  gl: any;
-  group: Transform;
-  constructor(gl: any, options: { group?: Transform } = {}) {
-    this.gl = gl
-    this.group = options.group || new Transform()
-  }
-
-  addNode(node: CanvasNode) {
-    node.node.setParent(this.group)
-    node.onDestroy(() => {
-      node.node.setParent(null)
-    })
-    return node
-  }
-}
-
-
-class CanvasNode {
+export class CanvasNode {
   gl: any;
   private destroyStack: Callstack;
 
   node: Transform;
-  nodeResolver: NodeResolver;
+  parentNode: Transform;
+  // nodeResolver: NodeResolver;
   constructor(gl: any) {
     this.gl = gl
 
-    this.nodeResolver = new NodeResolver(this.gl, { group: this.node })
+    // this.nodeResolver = new NodeResolver(this.gl, { group: this.node })
     this.destroyStack = new Callstack()
+
+    this.mount()
+    this.init()
   }
 
+  mount() {
+    // place where you add new CanvasNode
+    // this.add(
+    //   new Welcome(this.gl)
+    // )
+
+  }
+  private init() {
+    this.node.setParent(this.node)
+    this.onDestroy(() => {
+      this.node.setParent(null)
+    })
+  }
+
+  add(canvasNode: CanvasNode) {
+    // besoin du node parent pour les PostProcesseur/Picker/etc
+    canvasNode.parentNode = this.node
+  }
 
   onDestroy(callback: () => void) {
     this.destroyStack.add(callback)

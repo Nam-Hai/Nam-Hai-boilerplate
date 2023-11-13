@@ -1,5 +1,5 @@
 import { getCurrentInstance, onMounted, onUnmounted, watch } from "vue";
-import { FlowProps, FlowProvider, useFlowProvider } from "../FlowProvider";
+import { type FlowProps, FlowProvider, useFlowProvider } from "../FlowProvider";
 import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
 
 export type FlowFunction<T> = (props: T, resolve: () => void, flowProps: FlowProps) => void

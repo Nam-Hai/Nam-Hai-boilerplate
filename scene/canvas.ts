@@ -1,11 +1,11 @@
-import { RouteLocationNormalized } from 'vue-router';
+import type { RouteLocationNormalized } from 'vue-router';
 // @ts-ignore
 import { Renderer, Camera, Transform } from 'ogl'
 import { FallbackCanvas } from './Pages/fallbackCanvas';
 import { ROR } from '~/plugins/core/resize';
 import { FlowProvider } from '~/waterflow/FlowProvider';
 import { PreloaderCanvas } from './Pages/PreloaderCanvas';
-import { CanvasPage } from './utils/types';
+import type { CanvasPage } from './utils/types';
 import { IndexCanvas } from './Pages/IndexCanvas';
 
 type routeMapType = 'index'
