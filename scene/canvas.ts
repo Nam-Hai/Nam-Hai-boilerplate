@@ -5,7 +5,7 @@ import { FallbackCanvas } from './Pages/fallbackCanvas';
 import { ROR } from '~/plugins/core/resize';
 import { FlowProvider } from '~/waterflow/FlowProvider';
 import { PreloaderCanvas } from './Pages/PreloaderCanvas';
-import type { CanvasElement, CanvasPage } from './utils/types';
+import type { CanvasPage } from './utils/types';
 import { IndexCanvas } from './Pages/IndexCanvas';
 
 type routeMapType = 'index'
@@ -105,11 +105,12 @@ export default class Canvas {
     }
 
     createIndexCanvas() {
-        this.index = new IndexCanvas({ gl: this.gl, scene: this.scene, camera: this.camera })
+        this.index = new IndexCanvas(this.gl, { camera: this.camera, scene: this.scene })
         return this.index
     }
     createFallbackCanvas() {
-        this.fallback = new FallbackCanvas({ gl: this.gl, scene: this.scene, camera: this.camera })
+        // this.fallback = new FallbackCanvas({ gl: this.gl, scene: this.scene, camera: this.camera })
+        this.fallback = new FallbackCanvas(this.gl, { camera: this.camera, scene: this.scene })
         return this.fallback
     }
 

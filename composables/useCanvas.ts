@@ -1,4 +1,4 @@
-import type { Picker } from "~/scene/Components/Picking"
+import type { Picker } from "~/scene/Components/Picker"
 
 export function useCanvas() {
     const { $canvas } = useNuxtApp()
@@ -7,11 +7,14 @@ export function useCanvas() {
 
 const canvasRecord = new Map()
 
+
 // TODO : 
 // could be cool to have the key/value be destroy on .destroy
 function canvasInject<T>(key: string, defaultValue?: T) {
     function provider(value: T) {
         canvasRecord.set(key, value)
+
+        return () => canvasRecord.delete(key)
     }
 
     function use(): T {

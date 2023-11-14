@@ -17,5 +17,18 @@ export function getUId() {
     ]
     id++
     return uId
+}
 
+// @ts-ignore
+import { Transform, Mesh, Camera, Program, Geometry, Plane, Sphere } from 'ogl'
+
+// fast object to get ogl class
+export const O = {
+    Transform,
+    Mesh,
+    Camera,
+    Program,
+    Geometry,
+    Plane,
+    Sphere
 }

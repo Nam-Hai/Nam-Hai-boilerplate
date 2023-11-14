@@ -1,10 +1,9 @@
 import type { RafR, rafEvent } from "~/plugins/core/raf"
 import type { ROR, ResizeEvent } from "~/plugins/core/resize"
-import type { CanvasPage } from "../utils/types"
+import { CanvasPage } from "../utils/types"
 import Callstack from "../utils/Callstack"
 
-export class FallbackCanvas implements CanvasPage {
-  gl: any
+export class FallbackCanvas extends CanvasPage {
   renderer: any
   scene: any
   camera: any
@@ -12,21 +11,21 @@ export class FallbackCanvas implements CanvasPage {
   ro: ROR
   raf: RafR
   once: boolean
-  destroyStack: Callstack
-  constructor({ gl, scene, camera }: { gl: any, scene: any, camera: any }) {
-    this.destroyStack = new Callstack();
-    this.gl = gl
+  constructor(gl: any, options: { scene: any, camera: any }) {
+    super(gl)
+
     this.renderer = this.gl.renderer
 
-    this.scene = scene
-    this.camera = camera
+    this.node = options.scene
+    this.scene = options.scene
+    this.camera = options.camera
 
     N.BM(this, ['render', 'resize'])
 
     this.ro = useROR(this.resize)
-    this.destroyStack.add(() => this.ro.off())
+    this.onDestroy(() => this.ro.off())
     this.raf = useRafR(this.render)
-    this.destroyStack.add(() => this.raf.kill())
+    this.onDestroy(() => this.raf.kill())
 
     this.once = false
   }
@@ -51,6 +50,6 @@ export class FallbackCanvas implements CanvasPage {
   }
 
   destroy() {
-    this.destroyStack.call()
+    super.destroy()
   }
 }

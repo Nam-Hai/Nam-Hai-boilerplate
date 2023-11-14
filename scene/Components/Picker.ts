@@ -33,6 +33,7 @@ export class Picker {
         N.BM(this, ['pick'])
         document.addEventListener('click', this.pick)
         // document.addEventListener('mousemove', this.pick)
+        console.log('picker init');
 
         this.target = new RenderTarget(this.gl, {
             width: innerWidth * devicePixelRatio,
@@ -70,6 +71,7 @@ export class Picker {
             scene: this.node,
             camera: this.camera
         })
+        console.log(renderList);
 
         for (let index = 0; index < renderList.length; index++) {
             const program = renderList[index].program

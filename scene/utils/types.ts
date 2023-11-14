@@ -3,45 +3,21 @@ import type { ROR, ResizeEvent } from "~/plugins/core/resize";
 import Callstack from "./Callstack";
 
 // @ts-ignore
-import { Renderer, Camera, Transform } from 'ogl'
-export interface CanvasPage extends CanvasElement {
-  gl: any,
-  scene: any,
-  camera: any,
-  renderer: any,
-
-  ro: ROR,
-  raf: RafR,
-  destroyStack: Callstack
-
-  init(): void
-  resize({ vh, vw, scale, breakpoint }: ResizeEvent): void
-  render(e: rafEvent): void
-  destroy(): void
-}
-
-export interface CanvasElement {
-  destroyStack: Callstack
-  init(): void
-
-  destroy(): void
-}
+import { type Transform } from 'ogl'
 
 export class CanvasNode {
   gl: any;
-  private destroyStack: Callstack;
+  destroyStack: Callstack;
+  killed: boolean = false;
 
-  node: Transform;
-  parentNode: Transform;
-  // nodeResolver: NodeResolver;
+  declare node: Transform;
+
   constructor(gl: any) {
     this.gl = gl
 
-    // this.nodeResolver = new NodeResolver(this.gl, { group: this.node })
+    N.BM(this, ["mount"])
     this.destroyStack = new Callstack()
 
-    this.mount()
-    this.init()
   }
 
   mount() {
@@ -51,16 +27,19 @@ export class CanvasNode {
     // )
 
   }
-  private init() {
-    this.node.setParent(this.node)
-    this.onDestroy(() => {
-      this.node.setParent(null)
-    })
+  init() {
   }
 
   add(canvasNode: CanvasNode) {
     // besoin du node parent pour les PostProcesseur/Picker/etc
-    canvasNode.parentNode = this.node
+    canvasNode.node.setParent(this.node)
+
+    this.onDestroy(() => {
+
+      canvasNode.destroy()
+    })
+
+    return this
   }
 
   onDestroy(callback: () => void) {
@@ -68,6 +47,11 @@ export class CanvasNode {
   }
 
   destroy() {
+    if (this.killed) return
+    this.killed = true
+    this.node.setParent(null)
     this.destroyStack.call()
   }
 }
+
+export class CanvasPage extends CanvasNode { }

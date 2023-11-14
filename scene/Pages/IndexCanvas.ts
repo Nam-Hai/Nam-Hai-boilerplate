@@ -1,73 +1,47 @@
 import type { RafR, rafEvent } from "~/plugins/core/raf";
 import type { ROR, ResizeEvent } from "~/plugins/core/resize";
-import Callstack from "../utils/Callstack"
-import type { CanvasPage } from "../utils/types";
 
-//@ts-ignore
-import { Transform } from "ogl";
 import { WelcomeGL } from "../Components/Welcome";
-import { Picker } from "../Components/Picking";
+import { Picker } from "../Components/Picker";
 import { providerPicker } from "~/composables/useCanvas";
+import { CanvasNode, CanvasPage } from "../utils/types";
+import { O } from "../utils/WebGL.utils";
+import { TransformNode } from "../Components/TransformNode";
 
-export class IndexCanvas implements CanvasPage {
-    gl: any
+export class IndexCanvas extends CanvasPage {
     renderer: any
-    scene: any
     camera: any
 
     ro: ROR
     raf: RafR
-    destroyStack: Callstack
     canvasScene: any
 
-    constructor({ gl, scene, camera }: { gl: any, scene: any, camera: any }) {
-        this.destroyStack = new Callstack();
-        const canvasWatch = plugWatch(this)
-        this.gl = gl
+    constructor(gl: any, options: { scene: any, camera: any }) {
+        super(gl)
+
+        this.node = options.scene
+
+        // const canvasWatch = plugWatch(this)
         this.renderer = this.gl.renderer
 
-        this.canvasScene = scene;
-        this.scene = new Transform();
-        this.scene.setParent(this.canvasScene);
+        this.camera = options.camera
 
-        this.camera = camera
+
+        this.onDestroy(() => {
+            this.node.setParent(null);
+        })
 
         N.BM(this, ["render", "resize", "init", "destroy"]);
 
         this.ro = useROR(this.resize)
-        this.destroyStack.add(() => this.ro.off())
+        this.onDestroy(() => this.ro.off())
         this.raf = useRafR(this.render)
-        this.destroyStack.add(() => this.raf.kill())
+        this.onDestroy(() => this.raf.kill())
 
-
-        for (let i = 0; i < 5; i++) {
-            const welcome = new WelcomeGL(this.gl)
-            welcome.mesh.setParent(this.scene)
-            this.destroyStack.add(() => welcome.destroy())
-            welcome.mesh.position.set(
-                Math.random() * 2 - 1,
-                Math.random() * 2 - 1,
-                Math.random() * 2 - 1,
-            )
-        }
-        const group = new Transform()
-        const welcome = new WelcomeGL(this.gl)
-        welcome.mesh.setParent(group)
-        this.destroyStack.add(() => welcome.destroy())
-        welcome.mesh.position.set(
-            Math.random() * 2 - 1,
-            Math.random() * 2 - 1,
-            Math.random() * 2 - 1,
-        )
-
-        const picker = new Picker(this.gl, {
-            node: this.scene,
-            camera: this.camera
-        })
-
-        providerPicker(picker)
+        this.mount()
     }
     init() {
+        super.init()
         this.raf.run()
         this.ro.on()
 
@@ -77,19 +51,55 @@ export class IndexCanvas implements CanvasPage {
         // }).run()
     }
 
+    mount() {
+
+        console.log('mount');
+        const welcome = new WelcomeGL(this.gl)
+        this.add(
+            welcome
+        )
+
+        for (let i = 0; i < 5; i++) {
+            const welcome = new WelcomeGL(this.gl)
+            this.add(welcome)
+            welcome.node.position.set(
+                Math.random() * 2 - 1,
+                Math.random() * 2 - 1,
+                Math.random() * 2 - 1,
+            )
+        }
+        const transformNode = new TransformNode(this.gl)
+
+        this.add(
+            transformNode.add(
+                welcome
+            )
+        )
+
+        useDelay(1000, () => {
+            transformNode.destroy()
+            console.log(transformNode.node);
+        })
+        const picker = new Picker(this.gl, {
+            node: this.node,
+            camera: this.camera
+        })
+
+        this.onDestroy(providerPicker(picker))
+    }
+
     resize({ vh, vw, scale, breakpoint }: ResizeEvent) {
     }
 
 
     render(e: rafEvent) {
         this.renderer.render({
-            scene: this.scene,
+            scene: this.node,
             camera: this.camera,
         })
     }
 
     destroy() {
-        this.scene.setParent(null);
-        this.destroyStack.call();
+        super.destroy()
     }
 }

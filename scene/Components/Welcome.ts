@@ -1,24 +1,31 @@
 import Callstack from "../utils/Callstack";
-import type { CanvasElement } from "../utils/types";
+import { CanvasNode, type CanvasElement } from "../utils/types";
 
 //@ts-ignore
 import { Plane, Box, Program, Mesh } from "ogl"
 import { cosinePalette } from "../shaders/color";
 import type { RafR, rafEvent } from "~/plugins/core/raf";
 
-export class WelcomeGL implements CanvasElement {
+export class WelcomeGL extends CanvasNode {
 
-    destroyStack: Callstack
-    gl: any;
-    mesh: any;
-    uTime: { value: number; };
+    uTime!: { value: number; }
     raf: RafR;
     constructor(gl: any, options?: {}) {
+        super(gl)
+
         N.BM(this, ["update"])
-        this.destroyStack = new Callstack()
-        this.gl = gl
+
+
+        this.raf = useRafR(this.update)
+        this.onDestroy(() => this.raf.kill())
+
+        this.mount()
+        this.init()
+    }
+    mount() {
 
         this.uTime = { value: 0 }
+
         const geometry = new Box(this.gl)
         const program = new Program(this.gl, {
             vertex,
@@ -27,16 +34,12 @@ export class WelcomeGL implements CanvasElement {
                 uTime: this.uTime,
             }
         })
+        this.node = new Mesh(this.gl, { program, geometry })
+        this.node.scale.set(0.5)
 
-        this.raf = useRafR(this.update)
-        this.destroyStack.add(() => this.raf.kill())
-
-        this.mesh = new Mesh(this.gl, { program, geometry })
-        this.mesh.scale.set(0.5)
-        this.init()
-
-        const p = usePicker()
-        console.log(p);
+        this.onDestroy(() => {
+            this.node.setParent(null)
+        })
     }
 
     init() {
@@ -45,11 +48,12 @@ export class WelcomeGL implements CanvasElement {
 
     update({ elapsed }: rafEvent) {
         this.uTime.value = elapsed / 4000
-        this.mesh.rotation.x = elapsed / 2000
-        this.mesh.rotation.y = elapsed / 2000
+        this.node.rotation.x = elapsed / 2000
+        this.node.rotation.y = elapsed / 2000
     }
 
     destroy() {
+        super.destroy()
     }
 }
 
