@@ -10,6 +10,8 @@ const canvasRecord = new Map()
 
 // TODO : 
 // could be cool to have the key/value be destroy on .destroy
+// Maybe that's not the best way to go
+// Might juste create Store/Service
 function canvasInject<T>(key: string, defaultValue?: T) {
     function provider(value: T) {
         canvasRecord.set(key, value)
