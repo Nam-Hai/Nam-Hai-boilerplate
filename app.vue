@@ -45,5 +45,7 @@ onBeforeMount(() => {
 })
 
 onMounted(() => {
+  const { count } = useCounterStore()
+  console.log({ count });
 })
 </script>

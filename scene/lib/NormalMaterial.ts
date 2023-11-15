@@ -1,4 +1,4 @@
-// @ts-ignore
+
 import { Program, Color } from 'ogl'
 
 export type ProgramOptions = {

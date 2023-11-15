@@ -1,4 +1,4 @@
-// @ts-ignore
+
 import { Text, Transform, Color, Texture, Program, Mesh, Geometry } from 'ogl'
 import { loadTexture } from '../utils/WebGL.utils'
 import { basicVer } from '../shaders/BasicVer'

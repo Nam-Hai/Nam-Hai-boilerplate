@@ -1,4 +1,4 @@
-// @ts-ignore
+
 import { Transform } from 'ogl'
 
 import { CanvasNode } from '../utils/types';

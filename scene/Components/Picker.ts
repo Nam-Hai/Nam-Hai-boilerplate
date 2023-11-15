@@ -1,28 +1,23 @@
-// @ts-ignore
+
 import { Transform, Camera, RenderTarget, Program } from 'ogl'
 
-import Callstack from "../utils/Callstack";
-import { basicVer } from '../shaders/BasicVer';
-import { getUId } from '../utils/WebGL.utils';
+import { CanvasNode } from '../utils/types';
 
 const { mouse, vh, vw } = useStoreView()
 
 // Drop frames with mousemove after 300 meshes
-export class Picker {
-    private gl: any;
+export class Picker extends CanvasNode {
     dpr: number;
-    node: Transform;
     camera: Camera;
 
     needUpdate: boolean;
     indexPicked: null | number;
 
-    private clickCallstack: Callstack;
+    // private clickCallstack: Callstack;
     pickerProgam: any;
     target: any;
     constructor(gl: any, options: { node: Transform, camera: Camera }) {
-        this.gl = gl
-        this.node = options.node
+        super(gl)
         this.camera = options.camera
 
         this.dpr = devicePixelRatio
@@ -34,20 +29,16 @@ export class Picker {
         // document.addEventListener('click', this.pick)
         document.addEventListener('mousemove', this.pick)
 
+
+
+
+    }
+    mount() {
         this.target = new RenderTarget(this.gl, {
             color: 2,
             width: innerWidth * devicePixelRatio,
             height: innerHeight * devicePixelRatio
         })
-        this.clickCallstack = new Callstack()
-        this.pickerProgam = new Program(this.gl, {
-            vertex: basicVer,
-            fragment: pickerFragment,
-            uniforms: {
-                uId: { value: [0, 0, 0, 0] }
-            }
-        })
-
 
         const renderList = this.gl.renderer.getRenderList({
             scene: this.node,
@@ -57,14 +48,25 @@ export class Picker {
         for (let index = 0; index < renderList.length; index++) {
             const program = renderList[index].program
             program.uniforms.uPicking = { value: false }
-            program.uniforms.uId = { value: getUId() }
-            // console.log(program.uniforms.uId.value);
         }
+    }
+    init() {
+        const ro = useROR(({ vw, vh }) => {
+            this.target.setSize(vw * devicePixelRatio, vh * devicePixelRatio)
+        })
+        ro.on()
+    }
+
+    add(canvasNode: CanvasNode) {
+        this.node = canvasNode.node
+
+        this.mount()
+        this.init()
+        return this
     }
 
     onClick(callback: () => void) {
         this.needUpdate = true
-        this.clickCallstack.add(callback)
     }
 
     private pick() {
@@ -75,7 +77,7 @@ export class Picker {
 
         for (let index = 0; index < renderList.length; index++) {
             const program = renderList[index].program
-            program.uniforms.uPicking.value = true
+            program.uniforms.uPicking = { value: true }
         }
 
         this.gl.renderer.render({
@@ -87,7 +89,6 @@ export class Picker {
         // Framebuffer is binded from render()
         // now read the right gl.COLOR_ATTACHMENT
         // in this pipeline, uIDs are drawn in FragColor[1]
-
         this.gl.readBuffer(this.gl.COLOR_ATTACHMENT1);
 
         const data = new Uint8Array(4);

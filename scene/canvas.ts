@@ -1,6 +1,6 @@
 import type { RouteLocationNormalized } from 'vue-router';
-// @ts-ignore
 import { Renderer, Camera, Transform } from 'ogl'
+
 import { FallbackCanvas } from './Pages/fallbackCanvas';
 import { ROR } from '~/plugins/core/resize';
 import { FlowProvider } from '~/waterflow/FlowProvider';

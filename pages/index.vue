@@ -9,7 +9,6 @@
 <script lang="ts" setup>
 import { usePageFlow } from '~/waterflow/composables/usePageFlow';
 import { defaultFlowIn, defaultFlowOut } from './default.transition';
-import { useEventListeneer } from '~/composables/useEventListener';
 
 
 const mainRef = ref()

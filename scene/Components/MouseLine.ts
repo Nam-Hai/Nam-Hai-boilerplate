@@ -1,4 +1,4 @@
-// @ts-ignore
+
 import { Geometry, Camera, Transform } from 'ogl'
 import { RafR } from "~/plugins/core/raf"
 import Line from "./Line"

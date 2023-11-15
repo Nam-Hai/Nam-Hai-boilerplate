@@ -1,4 +1,4 @@
-// @ts-ignore
+
 import { Geometry, Program, Mesh } from 'ogl'
 import { basicFrag } from '../shaders/BasicFrag.js'
 import { basicVer } from '../shaders/BasicVer.js'

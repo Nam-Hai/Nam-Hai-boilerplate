@@ -9,18 +9,17 @@ export function loadTexture(texture: any, src: string) {
 
 let id = 0
 export function getUId() {
+    id++
     const uId = [
         Math.floor(id % 256) / 256,
         Math.floor((id % (256 * 256)) / (256)) / 256,
         Math.floor((id % (256 * 256 * 256)) / (256 * 256)),
         Math.floor((id % (256 * 256 * 256 * 256)) / (256 * 256 * 256))
     ]
-    id++
-    console.log(id, uId);
-    return uId
+    return {id, uId}
 }
 
-// @ts-ignore
+
 import { Transform, RenderTarget, Mesh, Camera, Program, Geometry, Plane, Sphere } from 'ogl'
 
 // fast object to get ogl class

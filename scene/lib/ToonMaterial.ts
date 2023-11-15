@@ -1,4 +1,4 @@
-// @ts-ignore
+
 import { Program, Texture, Color } from 'ogl'
 import { RampMap, type RampMapOptions } from './RampMap'
 

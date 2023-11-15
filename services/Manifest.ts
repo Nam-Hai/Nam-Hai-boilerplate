@@ -1,4 +1,4 @@
-// @ts-ignore
+
 import { Texture } from "ogl";
 
 const MANIFEST = {

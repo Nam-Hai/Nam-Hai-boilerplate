@@ -1,4 +1,4 @@
-// @ts-ignore
+
 import { Texture, Program, Color } from 'ogl'
 import { basicVer } from '../shaders/BasicVer'
 import type { ProgramOptions } from './NormalMaterial'

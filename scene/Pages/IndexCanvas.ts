@@ -54,43 +54,36 @@ export class IndexCanvas extends CanvasPage {
 
     mount() {
 
-        console.log('mount');
         const welcome = new WelcomeGL(this.gl)
-        this.add(
-            welcome
-        )
 
-        for (let i = 0; i < 5; i++) {
-            const welcome = new WelcomeGL(this.gl)
-            this.add(welcome)
-            welcome.node.position.set(
-                Math.random() * 2 - 1,
-                Math.random() * 2 - 1,
-                Math.random() * 2 - 1,
-            )
-        }
         const transformNode = new TransformNode(this.gl)
 
-        this.add(
-            transformNode.add(
-                welcome
-            )
+        const picker = new Picker(this.gl, {
+            node: this.node,
+            camera: this.camera
+        }).add(
+            this.add([
+                transformNode.add(
+                    welcome
+                ),
+                ...N.Arr.create(5).map(() => {
+                    const welcome = new WelcomeGL(this.gl)
+                    welcome.node.position.set(
+                        Math.random() * 2 - 1,
+                        Math.random() * 2 - 1,
+                        Math.random() * 2 - 1,
+                    )
+                    return welcome
+                })
+            ])
         )
+
+        this.onDestroy(providerPicker(picker))
 
         useDelay(1000, () => {
             transformNode.destroy()
             console.log(transformNode.node);
         })
-        const picker = new Picker(this.gl, {
-            node: this.node,
-            camera: this.camera
-        })
-
-        // this.target = new O.RenderTarget(this.gl, {
-        //     color: 2
-        // })
-        // console.log(this.target);
-        this.onDestroy(providerPicker(picker))
     }
 
     resize({ vh, vw, scale, breakpoint }: ResizeEvent) {

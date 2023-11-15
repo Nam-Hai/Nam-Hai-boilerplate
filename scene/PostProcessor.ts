@@ -1,7 +1,6 @@
 
 import type { rafEvent } from '~/plugins/core/raf';
 import type { ROR, ResizeEvent } from '~/plugins/core/resize';
-// @ts-ignore
 import { Program, Mesh, RenderTarget, Triangle } from 'ogl'
 import Callstack from './utils/Callstack';
 

@@ -31,6 +31,7 @@ export class WelcomeGL extends CanvasNode {
             fragment,
             uniforms: {
                 uTime: this.uTime,
+                uId: { value: this.uId },
             }
         })
         this.node = new Mesh(this.gl, { program, geometry })

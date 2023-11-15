@@ -1,5 +1,5 @@
 import { Timer, RafR } from "./raf"
-// @ts-ignore
+
 import SassVars from '@/styles/sass/variables.module.scss'
 import { BM, Clamp } from "./utils"
 

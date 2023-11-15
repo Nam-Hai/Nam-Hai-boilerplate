@@ -1,4 +1,4 @@
-// @ts-ignore
+
 import { Color } from "ogl";
 
 export type RampMapOptions = {

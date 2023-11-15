@@ -10,15 +10,19 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "^0.6.0",
-    "@nuxtjs/prismic": "^3.0.0",
     "@types/node": "^20.3.1",
     "eslint": "^8.42.0",
-    "nuxt": "^3.5.3",
-    "prettier": "^2.8.8",
+    "nuxt": "^3.8.1",
+    "prettier": "3.1.0",
     "sass": "^1.63.4"
   },
   "dependencies": {
+    "@pinia/nuxt": "^0.5.1",
     "@studio-freight/lenis": "^1.0.16",
+    "@types/ogl": "npm:ogl-types",
     "ogl": "^0.0.117"
+  },
+  "overrides": {
+    "vue": "latest"
   }
 }

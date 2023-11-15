@@ -7,6 +7,10 @@ export default defineNuxtConfig({
         preset: "vercel",
     },
     css: ["@/styles/core.scss", "@/styles/app/index.scss"],
+    modules: ['@pinia/nuxt'],
+    pinia: {
+        storesDirs: ['./stores/**'],
+    },
 
     components: {
         global: true,

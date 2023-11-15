@@ -1,4 +1,4 @@
-// @ts-ignore
+
 import { Triangle, Transform, Mesh, Program, Plane, Vec2, RenderTarget } from 'ogl'
 import Callstack from '../utils/Callstack'
 import { Clock } from '../utils/Clock'
