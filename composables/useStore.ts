@@ -1,10 +1,26 @@
-import cursorStore from "~/services/CursorService"
-import store from "~/services/store"
+const useStore = createStore(() => {
 
-export default function useStore() {
-  return store
-}
+  const isMobile = ref(false);
 
-export function useCursorStore() {
-  return cursorStore
-}
+  const pageLoaded = ref(false);
+
+  const preventScroll = ref(false);
+
+  const fromPreloader = ref(true)
+
+  const manifestLoaded = ref(false);
+
+  const preloaderComplete = ref(false);
+  return { isMobile, pageLoaded, preventScroll, fromPreloader, manifestLoaded, preloaderComplete }
+})
+export default useStore
+
+const useCursorStore = createStore(() => {
+  const cursorState = ref('active')
+  toggleMouse = (active: boolean) => {
+    cursorState.value = active ? 'active' : 'default'
+  }
+  return { cursorState, toggleMouse }
+})
+
+export useCursorStore
