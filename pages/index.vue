@@ -9,6 +9,7 @@
 <script lang="ts" setup>
 import { usePageFlow } from '~/waterflow/composables/usePageFlow';
 import { defaultFlowIn, defaultFlowOut } from './default.transition';
+import { useEventListeneer } from '~/composables/useEventListener';
 
 
 const mainRef = ref()
@@ -21,10 +22,8 @@ useResetLenis({
 const fps = ref(0)
 useRaf(({ delta }) => {
     fps.value = Math.floor(1 / delta * 1000)
-    // if(fps.value < 40) console.error("Frame droped")
+    if(fps.value < 40) console.error("Frame droped")
 })
-
-
 
 usePageFlow({
     props: {},

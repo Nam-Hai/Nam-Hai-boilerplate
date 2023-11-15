@@ -16,14 +16,16 @@ export function getUId() {
         Math.floor((id % (256 * 256 * 256 * 256)) / (256 * 256 * 256))
     ]
     id++
+    console.log(id, uId);
     return uId
 }
 
 // @ts-ignore
-import { Transform, Mesh, Camera, Program, Geometry, Plane, Sphere } from 'ogl'
+import { Transform, RenderTarget, Mesh, Camera, Program, Geometry, Plane, Sphere } from 'ogl'
 
 // fast object to get ogl class
 export const O = {
+    RenderTarget,
     Transform,
     Mesh,
     Camera,

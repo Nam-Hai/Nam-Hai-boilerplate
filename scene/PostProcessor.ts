@@ -4,7 +4,6 @@ import type { ROR, ResizeEvent } from '~/plugins/core/resize';
 // @ts-ignore
 import { Program, Mesh, RenderTarget, Triangle } from 'ogl'
 import Callstack from './utils/Callstack';
-import type { CanvasElement } from './utils/types';
 
 type PostProcessorOptions = {
   width: number,
@@ -52,7 +51,7 @@ type PostRenderOptions = {
   frustumCull: boolean,
   beforePostCallbacks: (() => void)[]
 }
-export default class PostProcessor implements CanvasElement {
+export default class PostProcessor {
   gl: any;
   camera: any;
   sizePlaneCamera: { width: number; height: number; };

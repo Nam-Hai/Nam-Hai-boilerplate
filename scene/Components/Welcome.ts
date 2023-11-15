@@ -1,5 +1,4 @@
-import Callstack from "../utils/Callstack";
-import { CanvasNode, type CanvasElement } from "../utils/types";
+import { CanvasNode } from "../utils/types";
 
 //@ts-ignore
 import { Plane, Box, Program, Mesh } from "ogl"
@@ -70,7 +69,7 @@ uniform vec4 uId;
 in vec3 vNormal;
 in vec3 vPosition;
 in vec2 vUv;
-out vec4 FragColor;
+out vec4 FragColor[2];
 
 ${cosinePalette}
 
@@ -86,11 +85,8 @@ void main() {
     // vec3 color = cosinePalette(uTime + coord.y * 0.0004, vec3(0.5), vec3(0.5), vec3(0.9 , 1., 0.85), vec3(0., 0.1, 0.2));
     vec3 color = cosinePalette(uTime + brightness * coord.y * 0.0002, vec3(0.5), vec3(0.5), vec3(0.9 , 1., 0.85), vec3(0., 0.1, 0.2));
 
-    FragColor = vec4(color, 1.);
-
-    if(uPicking){
-        FragColor = uId;
-    }
+    FragColor[0] = vec4(color, 1.);
+    FragColor[1] = uId;
 }
 `
 

@@ -15,6 +15,7 @@ export class IndexCanvas extends CanvasPage {
     ro: ROR
     raf: RafR
     canvasScene: any
+    target: any;
 
     constructor(gl: any, options: { scene: any, camera: any }) {
         super(gl)
@@ -85,6 +86,10 @@ export class IndexCanvas extends CanvasPage {
             camera: this.camera
         })
 
+        // this.target = new O.RenderTarget(this.gl, {
+        //     color: 2
+        // })
+        // console.log(this.target);
         this.onDestroy(providerPicker(picker))
     }
 
@@ -93,6 +98,7 @@ export class IndexCanvas extends CanvasPage {
 
 
     render(e: rafEvent) {
+
         this.renderer.render({
             scene: this.node,
             camera: this.camera,

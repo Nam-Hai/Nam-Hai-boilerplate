@@ -31,11 +31,11 @@ export class Picker {
         this.indexPicked = null
 
         N.BM(this, ['pick'])
-        document.addEventListener('click', this.pick)
-        // document.addEventListener('mousemove', this.pick)
-        console.log('picker init');
+        // document.addEventListener('click', this.pick)
+        document.addEventListener('mousemove', this.pick)
 
         this.target = new RenderTarget(this.gl, {
+            color: 2,
             width: innerWidth * devicePixelRatio,
             height: innerHeight * devicePixelRatio
         })
@@ -58,6 +58,7 @@ export class Picker {
             const program = renderList[index].program
             program.uniforms.uPicking = { value: false }
             program.uniforms.uId = { value: getUId() }
+            // console.log(program.uniforms.uId.value);
         }
     }
 
@@ -71,7 +72,6 @@ export class Picker {
             scene: this.node,
             camera: this.camera
         })
-        console.log(renderList);
 
         for (let index = 0; index < renderList.length; index++) {
             const program = renderList[index].program
@@ -81,8 +81,14 @@ export class Picker {
         this.gl.renderer.render({
             scene: this.node,
             camera: this.camera,
-            // target: this.target
+            target: this.target
         })
+
+        // Framebuffer is binded from render()
+        // now read the right gl.COLOR_ATTACHMENT
+        // in this pipeline, uIDs are drawn in FragColor[1]
+
+        this.gl.readBuffer(this.gl.COLOR_ATTACHMENT1);
 
         const data = new Uint8Array(4);
         this.gl.readPixels(
