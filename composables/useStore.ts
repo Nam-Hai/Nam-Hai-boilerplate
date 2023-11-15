@@ -17,10 +17,11 @@ export default useStore
 
 const useCursorStore = createStore(() => {
   const cursorState = ref('active')
-  toggleMouse = (active: boolean) => {
+
+  function toggleMouse(active: boolean) {
     cursorState.value = active ? 'active' : 'default'
   }
   return { cursorState, toggleMouse }
 })
 
-export useCursorStore
+export { useCursorStore }
