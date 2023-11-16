@@ -8,15 +8,16 @@ export function loadTexture(texture: any, src: string) {
 }
 
 let id = 0
+type uIdType = [number, number, number, number]
 export function getUId() {
     id++
-    const uId = [
+    const uId: uIdType = [
         Math.floor(id % 256) / 256,
         Math.floor((id % (256 * 256)) / (256)) / 256,
         Math.floor((id % (256 * 256 * 256)) / (256 * 256)),
         Math.floor((id % (256 * 256 * 256 * 256)) / (256 * 256 * 256))
     ]
-    return {id, uId}
+    return { id, uId }
 }
 
 
@@ -32,4 +33,24 @@ export const O = {
     Geometry,
     Plane,
     Sphere
+}
+
+export class EventHandler {
+    callbacks: { [key: string]: ((e?: any) => void)[] }
+    constructor() {
+        this.callbacks = {}
+    }
+
+    on(event: string, cb: (e: any) => void) {
+        if (!this.callbacks[event]) this.callbacks[event] = [];
+        this.callbacks[event].push(cb)
+    }
+
+    emit(event: string, data?: any) {
+        const callbacks = this.callbacks[event]
+        if (!callbacks) return
+        for (const cb of callbacks) {
+            cb(data)
+        }
+    }
 }

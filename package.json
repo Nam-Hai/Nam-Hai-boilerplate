@@ -19,8 +19,7 @@
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",
     "@studio-freight/lenis": "^1.0.16",
-    "@types/ogl": "npm:ogl-types",
-    "ogl": "^0.0.117"
+    "ogl": "1.0.3"
   },
   "overrides": {
     "vue": "latest"

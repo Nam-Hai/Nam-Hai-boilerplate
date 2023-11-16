@@ -1,20 +1,15 @@
-import type { RafR, rafEvent } from "~/plugins/core/raf";
-import type { ROR, ResizeEvent } from "~/plugins/core/resize";
 import Callstack from "./Callstack";
-
-
-import { type Transform } from 'ogl'
+import { type OGLRenderingContext, type Transform } from 'ogl'
 import { getUId } from "./WebGL.utils";
 
 export class CanvasNode {
-  gl: any;
+  gl: OGLRenderingContext;
   destroyStack: Callstack;
   killed: boolean = false;
-  // uId: number;
 
   declare node: Transform;
-  uId: any;
-  id: any;
+  id: number;
+  uId: [number, number, number, number];
 
   constructor(gl: any) {
     this.gl = gl

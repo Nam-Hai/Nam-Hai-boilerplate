@@ -1,45 +1,51 @@
 import type { RafR, rafEvent } from "~/plugins/core/raf";
 import type { ROR, ResizeEvent } from "~/plugins/core/resize";
-import Callstack from "../utils/Callstack"
-import type { CanvasPage } from "../utils/types";
 
-//@ts-ignore
-import { Transform } from "ogl";
+import { CanvasNode, CanvasPage } from "../utils/types";
+import type { Camera, OGLRenderingContext, Renderer, Transform } from "ogl";
 
-
-export class ExampleCanvas implements CanvasPage {
-  gl: any
-  renderer: any
-  scene: any
-  camera: any
+export class IndexCanvas extends CanvasPage {
 
   ro: ROR
   raf: RafR
-  destroyStack: Callstack
   canvasScene: any
+  target: any;
+  renderer: Renderer;
+  camera: Camera;
 
-  constructor({ gl, scene, camera }: { gl: any, scene: any, camera: any }) {
-    this.destroyStack = new Callstack();
-    const canvasWatch = plugWatch(this)
-    this.gl = gl
+  constructor(gl: OGLRenderingContext, options: { scene: Transform, camera: Camera }) {
+    super(gl)
+
+    this.node = options.scene
+
+    // const canvasWatch = plugWatch(this)
     this.renderer = this.gl.renderer
 
-    this.canvasScene = scene;
-    this.scene = new Transform();
-    this.scene.setParent(this.canvasScene);
+    this.camera = options.camera
 
-    this.camera = camera
+
+    this.onDestroy(() => {
+      this.node.setParent(null);
+    })
 
     N.BM(this, ["render", "resize", "init", "destroy"]);
 
     this.ro = useROR(this.resize)
-    this.destroyStack.add(() => this.ro.off())
+    this.onDestroy(() => this.ro.off())
     this.raf = useRafR(this.render)
-    this.destroyStack.add(() => this.raf.kill())
+    this.onDestroy(() => this.raf.kill())
+
+    this.mount()
   }
   init() {
+    super.init()
     this.raf.run()
     this.ro.on()
+
+   
+  }
+
+  mount() {
   }
 
   resize({ vh, vw, scale, breakpoint }: ResizeEvent) {
@@ -47,14 +53,14 @@ export class ExampleCanvas implements CanvasPage {
 
 
   render(e: rafEvent) {
+
     this.renderer.render({
-      scene: this.scene,
+      scene: this.node,
       camera: this.camera,
     })
   }
 
   destroy() {
-    this.scene.setParent(null);
-    this.destroyStack.call();
+    super.destroy()
   }
 }

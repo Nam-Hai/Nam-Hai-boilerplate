@@ -5,19 +5,19 @@ import { WelcomeGL } from "../Components/Welcome";
 import { Picker } from "../Components/Picker";
 import { providerPicker } from "~/composables/useCanvas";
 import { CanvasNode, CanvasPage } from "../utils/types";
-import { O } from "../utils/WebGL.utils";
 import { TransformNode } from "../Components/TransformNode";
+import type { Camera, OGLRenderingContext, Renderer, Transform } from "ogl";
 
 export class IndexCanvas extends CanvasPage {
-    renderer: any
-    camera: any
 
     ro: ROR
     raf: RafR
     canvasScene: any
     target: any;
+    renderer: Renderer;
+    camera: Camera;
 
-    constructor(gl: any, options: { scene: any, camera: any }) {
+    constructor(gl: OGLRenderingContext, options: { scene: Transform, camera: Camera }) {
         super(gl)
 
         this.node = options.scene
@@ -42,26 +42,26 @@ export class IndexCanvas extends CanvasPage {
         this.mount()
     }
     init() {
-        super.init()
         this.raf.run()
         this.ro.on()
-
-        // useDelay(1000, () => {
-        //     const canvas = useCanvas()
-        //     console.log(canvas);
-        // }).run()
     }
 
     mount() {
+
+
+        const picker = new Picker(this.gl, {
+            node: this.node,
+            camera: this.camera
+        })
+        this.onDestroy(() => {
+            picker.destroy()
+        })
 
         const welcome = new WelcomeGL(this.gl)
 
         const transformNode = new TransformNode(this.gl)
 
-        const picker = new Picker(this.gl, {
-            node: this.node,
-            camera: this.camera
-        }).add(
+        picker.add(
             this.add([
                 transformNode.add(
                     welcome
@@ -78,11 +78,9 @@ export class IndexCanvas extends CanvasPage {
             ])
         )
 
-        this.onDestroy(providerPicker(picker))
 
         useDelay(1000, () => {
-            transformNode.destroy()
-            console.log(transformNode.node);
+            // transformNode.destroy()
         })
     }
 

@@ -3,31 +3,28 @@ import Callstack from "../utils/Callstack";
 import type { ROR, ResizeEvent } from "~/plugins/core/resize";
 
 //@ts-ignore
-import { Transform } from "ogl";
-import type { CanvasPage } from "../utils/types";
+import { Camera, Renderer, Transform, type OGLRenderingContext } from "ogl";
+import { CanvasPage } from "../utils/types";
 
-export class PreloaderCanvas implements CanvasPage {
-  gl: any;
-  renderer: any;
-  scene: any;
-  camera: any;
+export class PreloaderCanvas extends CanvasPage {
 
   ro: ROR;
   raf!: RafR;
   destroyStack: Callstack;
 
-  canvasScene: any;
+  renderer: Renderer;
+  camera: Camera;
+  canvasScene: Transform;
+  scene: Transform;
 
-  constructor({ gl, scene, camera }: { gl: any; scene: any; camera: any }) {
-    const canvasWatch = plugWatch(this)
+  constructor(gl: OGLRenderingContext, options: { scene: Transform, camera: Camera }) {
+    super(gl)
+    this.renderer = this.gl.renderer
 
-    this.gl = gl;
-    this.renderer = this.gl.renderer;
-
-    this.canvasScene = scene;
+    this.canvasScene = options.scene;
     this.scene = new Transform();
     this.scene.setParent(this.canvasScene);
-    this.camera = camera;
+    this.camera = options.camera;
 
     N.BM(this, ["render", "resize", "init"]);
 

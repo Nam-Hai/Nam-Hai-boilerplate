@@ -1,7 +1,8 @@
 
-import { Transform, Camera, RenderTarget, Program } from 'ogl'
+import { Transform, Camera, RenderTarget, Program, type OGLRenderingContext } from 'ogl'
 
 import { CanvasNode } from '../utils/types';
+import { EventHandler } from '../utils/WebGL.utils';
 
 const { mouse, vh, vw } = useStoreView()
 
@@ -10,29 +11,46 @@ export class Picker extends CanvasNode {
     dpr: number;
     camera: Camera;
 
-    needUpdate: boolean;
     indexPicked: null | number;
 
     // private clickCallstack: Callstack;
     pickerProgam: any;
     target: any;
-    constructor(gl: any, options: { node: Transform, camera: Camera }) {
+    eventHandler: EventHandler;
+    needUpdate: { click: boolean; hover: boolean; on: boolean; };
+    constructor(gl: OGLRenderingContext, options: { node: Transform, camera: Camera }) {
         super(gl)
         this.camera = options.camera
 
         this.dpr = devicePixelRatio
 
-        this.needUpdate = false
+        this.needUpdate = {
+            click: false,
+            hover: false,
+            on: false
+        }
         this.indexPicked = null
 
         N.BM(this, ['pick'])
-        // document.addEventListener('click', this.pick)
-        document.addEventListener('mousemove', this.pick)
+        const click = () => {
+            this.needUpdate.click = true
+            this.needUpdate.on = true
+        }
+        const hover = () => {
+            this.needUpdate.hover = true
+            this.needUpdate.on = true
+        }
+        document.addEventListener('click', click)
+        document.addEventListener('mousemove', hover)
 
-
-
-
+        this.onDestroy(() => {
+            document.removeEventListener('click', click)
+            document.removeEventListener('mousemove', hover)
+        })
+        this.eventHandler = new EventHandler()
+        this.onDestroy(providerPicker(this))
     }
+
     mount() {
         this.target = new RenderTarget(this.gl, {
             color: 2,
@@ -42,7 +60,9 @@ export class Picker extends CanvasNode {
 
         const renderList = this.gl.renderer.getRenderList({
             scene: this.node,
-            camera: this.camera
+            camera: this.camera,
+            frustumCull: false,
+            sort: false
         })
 
         for (let index = 0; index < renderList.length; index++) {
@@ -55,6 +75,11 @@ export class Picker extends CanvasNode {
             this.target.setSize(vw * devicePixelRatio, vh * devicePixelRatio)
         })
         ro.on()
+        this.onDestroy(() => ro.off())
+
+        const raf = useRafR(this.pick)
+        raf.run()
+        this.onDestroy(() => raf.kill())
     }
 
     add(canvasNode: CanvasNode) {
@@ -65,14 +90,21 @@ export class Picker extends CanvasNode {
         return this
     }
 
-    onClick(callback: () => void) {
-        this.needUpdate = true
+    onClick(id: number, callback: (e: number) => void) {
+        this.eventHandler.on("click-" + id, callback)
+    }
+    onHover(id: number, callback: (e: number) => void) {
+        this.eventHandler.on("hover-" + id, callback)
     }
 
     private pick() {
+        if (!this.needUpdate.on) return
+
         const renderList = this.gl.renderer.getRenderList({
             scene: this.node,
-            camera: this.camera
+            camera: this.camera,
+            frustumCull: false,
+            sort: false
         })
 
         for (let index = 0; index < renderList.length; index++) {
@@ -84,12 +116,17 @@ export class Picker extends CanvasNode {
             scene: this.node,
             camera: this.camera,
             target: this.target
-        })
+        });
+
+
+        if (!this.gl.renderer.isWebgl2) {
+            console.warn("Picking not allowed")
+        }
 
         // Framebuffer is binded from render()
         // now read the right gl.COLOR_ATTACHMENT
         // in this pipeline, uIDs are drawn in FragColor[1]
-        this.gl.readBuffer(this.gl.COLOR_ATTACHMENT1);
+        (this.gl as WebGL2RenderingContext).readBuffer((this.gl as WebGL2RenderingContext).COLOR_ATTACHMENT1);
 
         const data = new Uint8Array(4);
         this.gl.readPixels(
@@ -102,19 +139,22 @@ export class Picker extends CanvasNode {
             data);             // typed array to hold result
 
         const index = data[0] + data[1] * 256 + data[2] * 256 * 256 + data[3] * 256 * 256 * 256
-        console.log(index);
         this.indexPicked = index >= 0 ? index : null
-
-        this.needUpdate = false
 
         for (let index = 0; index < renderList.length; index++) {
             const program = renderList[index].program
             program.uniforms.uPicking.value = false
         }
+
+        this.eventHandling(index)
     }
 
-    destroy() {
-        document.removeEventListener('click', this.pick)
+    eventHandling(index: number) {
+        if (this.needUpdate.click) this.eventHandler.emit(`click-${index}`, index)
+        if (this.needUpdate.hover) this.eventHandler.emit(`hover-${index}`, index)
+        this.needUpdate.click = false
+        this.needUpdate.hover = false
+        this.needUpdate.on = false
     }
 }
 

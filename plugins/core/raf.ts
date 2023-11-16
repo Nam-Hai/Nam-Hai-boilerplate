@@ -83,7 +83,7 @@ const Raf = new class {
     add(rafItem: rafItem) {
         this.arr.push(rafItem)
         this.arr.sort((a, b) => -a.id + b.id)
-        if (this.arr.length > 10000) console.error("Warning Raf congested", this.arr.length)
+        if (this.arr.length > 10000) console.warn("Raf congested", this.arr.length)
     }
 
     remove(id: number): void {

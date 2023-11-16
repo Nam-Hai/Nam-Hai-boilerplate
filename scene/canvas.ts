@@ -1,5 +1,5 @@
 import type { RouteLocationNormalized } from 'vue-router';
-import { Renderer, Camera, Transform } from 'ogl'
+import { Renderer, Camera, Transform, type OGLRenderingContext } from 'ogl'
 
 import { FallbackCanvas } from './Pages/fallbackCanvas';
 import { ROR } from '~/plugins/core/resize';
@@ -11,10 +11,10 @@ import { IndexCanvas } from './Pages/IndexCanvas';
 type routeMapType = 'index'
 
 export default class Canvas {
-    renderer: any;
-    gl: any;
-    camera: any;
-    scene: any;
+    renderer: Renderer;
+    gl: OGLRenderingContext;
+    camera: Camera;
+    scene: Transform;
 
     ro: any;
 
@@ -59,7 +59,7 @@ export default class Canvas {
     }
 
     preloader() {
-        const preloader = new PreloaderCanvas({ gl: this.gl, scene: this.scene, camera: this.camera })
+        const preloader = new PreloaderCanvas(this.gl, { scene: this.scene, camera: this.camera })
         preloader.init()
     }
 

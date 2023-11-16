@@ -4,11 +4,13 @@ import { CanvasNode } from "../utils/types";
 import { Plane, Box, Program, Mesh } from "ogl"
 import { cosinePalette } from "../shaders/color";
 import type { RafR, rafEvent } from "~/plugins/core/raf";
+import Callstack from "../utils/Callstack";
 
 export class WelcomeGL extends CanvasNode {
 
     uTime!: { value: number; }
     raf: RafR;
+    clickCallstack: Callstack;
     constructor(gl: any, options?: {}) {
         super(gl)
 
@@ -20,7 +22,18 @@ export class WelcomeGL extends CanvasNode {
 
         this.mount()
         this.init()
+
+        this.clickCallstack = new Callstack()
+        const picker = usePicker()
+        picker.onClick(this.id, () => {
+            console.log('this id : ', this.id);
+        })
     }
+
+    onClick(id: number, callback: () => void) {
+
+    }
+
     mount() {
 
         this.uTime = { value: 0 }
