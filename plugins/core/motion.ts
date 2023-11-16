@@ -117,7 +117,7 @@ export interface MotionArgLine extends MotionArgBasics {
     update?: never
 }
 export interface MotionArgUpdate extends MotionArgBasics {
-    update?: (t: MotionUpdate) => void
+    update?: ({ prog, progE }: MotionUpdate) => void
     p?: never
     line?: never
     svg?: never
@@ -389,6 +389,13 @@ export class Timeline {
         for (const motion of this.arr) {
             motion.pause()
         }
+    }
+    reset() {
+        for (const motion of this.arr) {
+            motion.pause()
+        }
+
+        this.arr = []
     }
 }
 const TL = Timeline

@@ -1,7 +1,7 @@
 import { CanvasNode } from "../utils/types";
 
 //@ts-ignore
-import { Plane, Box, Program, Mesh } from "ogl"
+import { Plane, Box, Program, Mesh, Vec3 } from "ogl"
 import { cosinePalette } from "../shaders/color";
 import type { RafR, rafEvent } from "~/plugins/core/raf";
 import Callstack from "../utils/Callstack";
@@ -11,6 +11,7 @@ export class WelcomeGL extends CanvasNode {
     uTime!: { value: number; }
     raf: RafR;
     clickCallstack: Callstack;
+    position: any;
     constructor(gl: any, options?: {}) {
         super(gl)
 
@@ -23,11 +24,8 @@ export class WelcomeGL extends CanvasNode {
         this.mount()
         this.init()
 
+
         this.clickCallstack = new Callstack()
-        const picker = usePicker()
-        picker.onClick(this.id, () => {
-            console.log('this id : ', this.id);
-        })
     }
 
     onClick(id: number, callback: () => void) {
@@ -50,8 +48,35 @@ export class WelcomeGL extends CanvasNode {
         this.node = new Mesh(this.gl, { program, geometry })
         this.node.scale.set(0.5)
 
+        this.node.position.set(
+            Math.random() * 2 - 1,
+            Math.random() * 2 - 1,
+            Math.random() * 2 - 1,
+        )
+        this.position = this.node.position.clone()
+
         this.onDestroy(() => {
             this.node.setParent(null)
+        })
+
+        const picker = usePicker()
+        const tl = useTL()
+        picker.onHover(this.id, () => {
+            const newPos = new Vec3(
+                Math.random() * 2 - 1,
+                Math.random() * 2 - 1,
+                Math.random() * 2 - 1,
+            )
+            const pos = this.position
+            tl.reset()
+            tl.from({
+                d: 500,
+                e: 'io1',
+                update: ({ prog, progE }) => {
+                    this.position.lerp(newPos, progE)
+                    this.node.position.set(this.position)
+                },
+            }).play()
         })
     }
 

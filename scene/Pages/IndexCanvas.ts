@@ -68,11 +68,6 @@ export class IndexCanvas extends CanvasPage {
                 ),
                 ...N.Arr.create(5).map(() => {
                     const welcome = new WelcomeGL(this.gl)
-                    welcome.node.position.set(
-                        Math.random() * 2 - 1,
-                        Math.random() * 2 - 1,
-                        Math.random() * 2 - 1,
-                    )
                     return welcome
                 })
             ])
@@ -80,7 +75,7 @@ export class IndexCanvas extends CanvasPage {
 
 
         useDelay(1000, () => {
-            // transformNode.destroy()
+            transformNode.destroy()
         })
     }
 
