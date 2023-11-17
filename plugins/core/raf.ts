@@ -53,6 +53,26 @@ const Tab = new class {
 }
 
 
+function inverseBinarySearch(arr: { id: number }[], n: number): number {
+    let left = 0
+    let right = arr.length - 1
+
+    while (left <= right) {
+        const mid = Math.floor((right - left) / 2) + left
+        const m = arr[mid].id
+
+        if (n === m) {
+            return mid;
+        } else if (n > m) {
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
+    }
+
+    return left
+}
+
 const Raf = new class {
     arr: Array<{
         id: number,
@@ -88,9 +108,11 @@ const Raf = new class {
     }
 
     remove(id: number): void {
-        this.arr = this.arr.filter(el => {
-            return el.id != id
-        })
+        // this.arr = this.arr.filter(el => {
+        //     return el.id != id
+        // })
+        const i = inverseBinarySearch(this.arr, id)
+        this.arr.splice(i, 1)
     }
 
     update(t: number) {
