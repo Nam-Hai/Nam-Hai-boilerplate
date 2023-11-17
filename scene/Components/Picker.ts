@@ -18,11 +18,13 @@ export class Picker extends CanvasNode {
     target: any;
     eventHandler: EventHandler;
     needUpdate: { click: boolean; hover: number | null; on: boolean; };
-    constructor(gl: OGLRenderingContext, options: { node: Transform, camera: Camera }) {
+    renderTargetRatio: number;
+    constructor(gl: OGLRenderingContext, options: { node: Transform, camera: Camera, renderTargetRatio?: number }) {
         super(gl)
         this.camera = options.camera
 
         this.dpr = devicePixelRatio
+        this.renderTargetRatio = options.renderTargetRatio || 4
 
         this.needUpdate = {
             click: false,
@@ -54,8 +56,8 @@ export class Picker extends CanvasNode {
     mount() {
         this.target = new RenderTarget(this.gl, {
             color: 2,
-            width: innerWidth * devicePixelRatio / 2,
-            height: innerHeight * devicePixelRatio / 2
+            width: innerWidth * devicePixelRatio / this.renderTargetRatio,
+            height: innerHeight * devicePixelRatio / this.renderTargetRatio
         })
 
         const renderList = this.gl.renderer.getRenderList({
@@ -72,7 +74,7 @@ export class Picker extends CanvasNode {
     }
     init() {
         const ro = useROR(({ vw, vh }) => {
-            this.target.setSize(vw * devicePixelRatio / 2, vh * devicePixelRatio / 2)
+            this.target.setSize(vw * devicePixelRatio / this.renderTargetRatio, vh * devicePixelRatio / this.renderTargetRatio)
         })
         ro.on()
         this.onDestroy(() => ro.off())
@@ -134,8 +136,8 @@ export class Picker extends CanvasNode {
 
         const data = new Uint8Array(4);
         this.gl.readPixels(
-            mouse.x * this.dpr / 2,
-            (vh.value - mouse.y) * this.dpr / 2,
+            mouse.x * this.dpr / this.renderTargetRatio,
+            (vh.value - mouse.y) * this.dpr / this.renderTargetRatio,
             1,
             1,
             this.gl.RGBA,           // format

@@ -51,7 +51,8 @@ export class IndexCanvas extends CanvasPage {
 
         const picker = new Picker(this.gl, {
             node: this.node,
-            camera: this.camera
+            camera: this.camera,
+            renderTargetRatio: 20
         })
         this.onDestroy(() => {
             picker.destroy()
@@ -66,7 +67,7 @@ export class IndexCanvas extends CanvasPage {
                 transformNode.add(
                     welcome
                 ),
-                ...N.Arr.create(500).map(() => {
+                ...N.Arr.create(50).map(() => {
                     const welcome = new WelcomeGL(this.gl)
                     return welcome
                 })
