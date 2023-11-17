@@ -5,7 +5,7 @@ import { Plane, Box, Program, Mesh, Vec3 } from "ogl"
 import { cosinePalette } from "../shaders/color";
 import type { RafR, rafEvent } from "~/plugins/core/raf";
 import Callstack from "../utils/Callstack";
-import { canvasWatch, plugWatch } from "../utils/WebGL.utils";
+import { useCanvasReactivity } from "../utils/WebGL.utils";
 
 export class WelcomeGL extends CanvasNode {
 
@@ -84,7 +84,8 @@ export class WelcomeGL extends CanvasNode {
         })
 
         const tlScale = useTL()
-        canvasWatch(this, hover, (hover) => {
+        const { watch } = useCanvasReactivity(this)
+        watch(hover, (hover) => {
             tlScale.reset()
             const scale = this.node.scale.clone()
             const scaleTo = hover ? new Vec3(0.8) : new Vec3(0.5)
