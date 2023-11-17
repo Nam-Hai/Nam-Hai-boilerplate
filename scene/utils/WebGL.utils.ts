@@ -38,38 +38,34 @@ export const O = {
     Sphere
 }
 
+let EventID = 0
 export class EventHandler {
-    cbs: Map<string, Array<(e: any) => void>>
+     cbs: Map<number, Array<(e: any) => void>>
     constructor() {
         this.cbs = new Map()
     }
 
-    on(event: string, cb: (e: any) => void) {
-        if (this.cbs.has(event)) {
-            const array = this.cbs.get(event)!
+    on(id: number, cb: (e: any) => void) {
+        if (this.cbs.has(id)) {
+            const array = this.cbs.get(id)!
             array.push(cb)
-            this.cbs.set(event, array)
+            this.cbs.set(id, array)
         } else {
-            this.cbs.set(event, [cb])
+            this.cbs.set(id, [cb])
         }
     }
 
-    emit(event: string, data?: any) {
-        if (this.cbs.has(event)) {
-            const callbacks = this.cbs.get(event)!
+    emit(id: number, data?: any) {
+        if (this.cbs.has(id)) {
+            const callbacks = this.cbs.get(id)!
             for (const cb of callbacks) {
                 cb(data)
             }
         }
     }
 
-    remove(event: string) {
-        // this.callbacks.remove(event)
-        // this.callbacks.filter(el => {
-        //     return el.event != event
-        // })
-
-        this.cbs.delete(event)
+    remove(id: number) {
+        this.cbs.delete(id)
     }
 }
 

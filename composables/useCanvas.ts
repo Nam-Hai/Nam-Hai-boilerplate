@@ -35,7 +35,7 @@ export const usePick = (ctx: CanvasNode) => {
         const hover = picker.useHover(id)
 
         function stop() {
-            picker.eventHandler.remove(`hover-${id}`)
+            picker.hoverHandler.remove(id)
         }
 
         ctx.onDestroy(() => stop())
@@ -46,7 +46,7 @@ export const usePick = (ctx: CanvasNode) => {
     function onClick(id: number, callback: () => void) {
         picker.onClick(id, callback)
         function stop() {
-            picker.eventHandler.remove(`click-${id}`)
+            picker.clickHandler.remove(id)
         }
 
         ctx.onDestroy(() => stop())

@@ -7,6 +7,7 @@ import { providerPicker } from "~/composables/useCanvas";
 import { CanvasNode, CanvasPage } from "../utils/types";
 import { TransformNode } from "../Components/TransformNode";
 import type { Camera, OGLRenderingContext, Renderer, Transform } from "ogl";
+import { EventHandler } from "../utils/WebGL.utils";
 
 export class IndexCanvas extends CanvasPage {
 
@@ -47,8 +48,6 @@ export class IndexCanvas extends CanvasPage {
     }
 
     mount() {
-
-
         const picker = new Picker(this.gl, {
             node: this.node,
             camera: this.camera,

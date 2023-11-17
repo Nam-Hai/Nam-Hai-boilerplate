@@ -11,14 +11,15 @@ export class Picker extends CanvasNode {
     dpr: number;
     camera: Camera;
 
-    indexPicked: null | number;
+    indexPicked: number;
 
     // private clickCallstack: Callstack;
     pickerProgam: any;
     target: any;
-    eventHandler: EventHandler;
-    needUpdate: { click: boolean; hover: number | null; on: boolean; };
+    needUpdate: { click: boolean; hover: number; on: boolean; };
     renderTargetRatio: number;
+    hoverHandler: EventHandler;
+    clickHandler: EventHandler;
     constructor(gl: OGLRenderingContext, options: { node: Transform, camera: Camera, renderTargetRatio?: number }) {
         super(gl)
         this.camera = options.camera
@@ -28,10 +29,10 @@ export class Picker extends CanvasNode {
 
         this.needUpdate = {
             click: false,
-            hover: null,
+            hover: -1,
             on: false
         }
-        this.indexPicked = null
+        this.indexPicked = -1
 
         N.BM(this, ['pick'])
         const click = () => {
@@ -49,7 +50,9 @@ export class Picker extends CanvasNode {
             document.removeEventListener('click', click)
             // document.removeEventListener('mousemove', hover)
         })
-        this.eventHandler = new EventHandler()
+        // this.eventHandler = new EventHandler()
+        this.clickHandler = new EventHandler()
+        this.hoverHandler = new EventHandler()
         this.onDestroy(providerPicker(this))
     }
 
@@ -93,11 +96,11 @@ export class Picker extends CanvasNode {
     }
 
     onClick(id: number, callback: (e: number) => void) {
-        this.eventHandler.on("click-" + id, callback)
+        this.clickHandler.on(id, callback)
     }
     useHover(id: number) {
         const hover = ref(false)
-        this.eventHandler.on("hover-" + id, (e: { state: boolean }) => {
+        this.hoverHandler.on(id, (e: { state: boolean }) => {
             hover.value = e.state
         })
         return hover
@@ -157,15 +160,16 @@ export class Picker extends CanvasNode {
     }
 
     eventHandling(index: number) {
-        if (this.needUpdate.click) this.eventHandler.emit(`click-${index}`, index)
+        if (this.needUpdate.click) this.clickHandler.emit(index, index)
 
         if (this.needUpdate.hover != this.indexPicked) {
-            this.eventHandler.emit(`hover-${this.needUpdate.hover}`, { state: false })
-            this.eventHandler.emit(`hover-${index}`, { state: true })
+            this.hoverHandler.emit(this.needUpdate.hover, { state: false })
+            this.hoverHandler.emit(this.needUpdate.hover, { state: false })
+            this.hoverHandler.emit(index, { state: true })
             this.needUpdate.hover = this.indexPicked
         }
 
-        this.indexPicked = index >= 0 ? index : null
+        this.indexPicked = index >= 0 ? index : -1
         this.needUpdate.click = false
         // this.needUpdate.hover = false
         // this.needUpdate.on = false

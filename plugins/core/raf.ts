@@ -63,6 +63,7 @@ const Raf = new class {
     now: number = 0;
     constructor() {
         this.arr = []
+
         this.on = !0
         BM(this, ['update', 'stop', 'resume'])
         Tab.add({ stop: this.stop, start: this.resume })
