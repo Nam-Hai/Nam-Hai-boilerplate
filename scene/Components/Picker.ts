@@ -54,8 +54,8 @@ export class Picker extends CanvasNode {
     mount() {
         this.target = new RenderTarget(this.gl, {
             color: 2,
-            width: innerWidth * devicePixelRatio,
-            height: innerHeight * devicePixelRatio
+            width: innerWidth * devicePixelRatio / 2,
+            height: innerHeight * devicePixelRatio / 2
         })
 
         const renderList = this.gl.renderer.getRenderList({
@@ -72,7 +72,7 @@ export class Picker extends CanvasNode {
     }
     init() {
         const ro = useROR(({ vw, vh }) => {
-            this.target.setSize(vw * devicePixelRatio, vh * devicePixelRatio)
+            this.target.setSize(vw * devicePixelRatio / 2, vh * devicePixelRatio / 2)
         })
         ro.on()
         this.onDestroy(() => ro.off())
@@ -134,15 +134,17 @@ export class Picker extends CanvasNode {
 
         const data = new Uint8Array(4);
         this.gl.readPixels(
-            mouse.x * this.dpr,
-            (vh.value - mouse.y) * this.dpr,
+            mouse.x * this.dpr / 2,
+            (vh.value - mouse.y) * this.dpr / 2,
             1,
             1,
             this.gl.RGBA,           // format
             this.gl.UNSIGNED_BYTE,  // type
             data);             // typed array to hold result
 
-        const index = data[0] + data[1] * 256 + data[2] * 256 * 256 + data[3] * 256 * 256 * 256
+        // const index = data[0] + data[1] * 256 + data[2] * 256 * 256 + data[3] * 256 * 256 * 256
+        const index = data[0] + (data[1] << 8) + (data[2] << 16) + (data[3] << 24);
+
 
         for (let index = 0; index < renderList.length; index++) {
             const program = renderList[index].program
@@ -155,13 +157,16 @@ export class Picker extends CanvasNode {
     eventHandling(index: number) {
         if (this.needUpdate.click) this.eventHandler.emit(`click-${index}`, index)
 
-        if (this.needUpdate.hover != this.indexPicked) this.eventHandler.emit(`hover-${this.indexPicked}`, { state: false })
-        this.eventHandler.emit(`hover-${index}`, { state: true })
+        if (this.needUpdate.hover != this.indexPicked) {
+            this.eventHandler.emit(`hover-${this.needUpdate.hover}`, { state: false })
+            this.eventHandler.emit(`hover-${index}`, { state: true })
+            this.needUpdate.hover = this.indexPicked
+        }
 
+        this.indexPicked = index >= 0 ? index : null
         this.needUpdate.click = false
         // this.needUpdate.hover = false
         // this.needUpdate.on = false
-        this.indexPicked = index >= 0 ? index : null
     }
 }
 

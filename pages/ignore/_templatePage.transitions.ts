@@ -1,4 +1,4 @@
-import { FlowFunction } from "~/waterflow/composables/usePageFlow"
+import type { FlowFunction } from "~/waterflow/composables/usePageFlow"
 
 export type TemplateTransitionProps = {
   wrapperRef: Ref<HTMLElement>,

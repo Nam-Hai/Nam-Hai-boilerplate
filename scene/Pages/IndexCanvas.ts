@@ -66,7 +66,7 @@ export class IndexCanvas extends CanvasPage {
                 transformNode.add(
                     welcome
                 ),
-                ...N.Arr.create(5).map(() => {
+                ...N.Arr.create(500).map(() => {
                     const welcome = new WelcomeGL(this.gl)
                     return welcome
                 })

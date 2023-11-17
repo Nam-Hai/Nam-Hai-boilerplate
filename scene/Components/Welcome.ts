@@ -48,6 +48,7 @@ export class WelcomeGL extends CanvasNode {
                 uId: { value: this.uId },
             }
         })
+        // console.log(this.uId, this.id);
         this.node = new Mesh(this.gl, { program, geometry })
         this.node.scale.set(0.5)
 

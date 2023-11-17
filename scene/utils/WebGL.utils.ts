@@ -12,10 +12,14 @@ type uIdType = [number, number, number, number]
 export function getUId() {
     id++
     const uId: uIdType = [
-        Math.floor(id % 256) / 256,
-        Math.floor((id % (256 * 256)) / (256)) / 256,
-        Math.floor((id % (256 * 256 * 256)) / (256 * 256)),
-        Math.floor((id % (256 * 256 * 256 * 256)) / (256 * 256 * 256))
+        // Math.floor(id % 256) / 256,
+        // Math.floor((id % (256 * 256)) / (256)) / 256,
+        // Math.floor((id % (256 * 256 * 256)) / (256 * 256)),
+        // Math.floor((id % (256 * 256 * 256 * 256)) / (256 * 256 * 256))
+        ((id >>  0) & 0xFF) / 0xFF,
+        ((id >>  8) & 0xFF) / 0xFF,
+        ((id >> 16) & 0xFF) / 0xFF,
+        ((id >> 24) & 0xFF) / 0xFF,
     ]
     return { id, uId }
 }

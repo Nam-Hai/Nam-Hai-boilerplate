@@ -21,8 +21,8 @@ export default defineNuxtConfig({
     },
 
     ignore: [
-        '~/pages/_templatePage.vue',
-        '~/pages/_templatePage.transitions.ts',
+        '~/pages/ignore/',
+        '~/pages/ignore/_templatePage.transitions.ts',
     ],
 
     app: {
