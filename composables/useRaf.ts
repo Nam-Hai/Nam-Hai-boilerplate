@@ -1,9 +1,9 @@
-import type { rafEvent } from "../plugins/core/raf";
+import { RafPriority, type rafEvent } from "../plugins/core/raf";
 
-export const useRaf = (cb: (e: rafEvent) => void, options: { lastStack?: boolean, firstStack?: boolean } = { lastStack: false, firstStack: false }) => {
+export const useRaf = (cb: (e: rafEvent) => void, priority: RafPriority = RafPriority.NORMAL) => {
 
   const { $RafR } = useNuxtApp()
-  const raf = new $RafR(cb, options.lastStack, options.firstStack)
+  const raf = new $RafR(cb, priority)
 
   onMounted(() => {
     raf.run()

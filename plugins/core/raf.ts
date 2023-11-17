@@ -4,6 +4,11 @@ function Now() {
     return (typeof performance === 'undefined' ? Date : performance).now();
 }
 
+export enum RafPriority {
+    FIRST = 0,
+    NORMAL = 1,
+    LAST = 2
+}
 
 export type rafItem = {
     id: number,
@@ -53,7 +58,7 @@ const Tab = new class {
 }
 
 
-function inverseBinarySearch(arr: { id: number }[], n: number): number {
+function binarySearch(arr: { id: number }[], n: number): number {
     let left = 0
     let right = arr.length - 1
 
@@ -63,7 +68,7 @@ function inverseBinarySearch(arr: { id: number }[], n: number): number {
 
         if (n === m) {
             return mid;
-        } else if (n > m) {
+        } else if (n < m) {
             right = mid - 1;
         } else {
             left = mid + 1;
@@ -74,15 +79,17 @@ function inverseBinarySearch(arr: { id: number }[], n: number): number {
 }
 
 const Raf = new class {
-    arr: Array<{
-        id: number,
-        cb: (arg: { elapsed: number, delta: number }) => void,
-        startTime: number
-    } | rafItem>;
+    // arr: Array<{
+    //     id: number,
+    //     cb: (arg: { elapsed: number, delta: number }) => void,
+    //     startTime: number
+    // } | rafItem>[];
+    arr: [rafItem[], rafItem[], rafItem[]]
     on: boolean;
     now: number = 0;
     constructor() {
-        this.arr = []
+        // 3 stack for low, medium, high priority
+        this.arr = [[], [], []]
 
         this.on = !0
         BM(this, ['update', 'stop', 'resume'])
@@ -94,42 +101,43 @@ const Raf = new class {
         this.on = false
     }
     resume(delta: number) {
-        for (const el of this.arr) {
-            el.startTime! += delta
+        for (const arr of this.arr) {
+            for (const el of arr) {
+                el.startTime! += delta
+            }
         }
         this.now += delta
         this.on = true
     }
 
-    add(rafItem: rafItem) {
-        this.arr.push(rafItem)
-        this.arr.sort((a, b) => -a.id + b.id)
-        if (this.arr.length > 10000) console.warn("Raf congested", this.arr.length)
+    add(rafItem: rafItem, priority: RafPriority) {
+        this.arr[priority].push(rafItem)
+        if (this.arr[1].length > 10000) console.warn("Raf congested", this.arr.length)
     }
 
-    remove(id: number): void {
-        // this.arr = this.arr.filter(el => {
-        //     return el.id != id
-        // })
-        const i = inverseBinarySearch(this.arr, id)
-        this.arr.splice(i, 1)
+    // take advantage to the fact we sorted the rafscallbacks
+    remove(id: number, priority: RafPriority): void {
+        const i = binarySearch(this.arr[priority], id)
+        this.arr[priority].splice(i, 1)
     }
 
     update(t: number) {
         const d = t - this.now
         this.now = t
-        const arr = this.arr
+        const _arr = this.arr
 
         if (Math.floor(1 / d * 1000) < 20) {
             console.warn("frame droped")
         }
         if (this.on) {
-            for (const el of arr) {
-                if (!el.startTime) {
-                    el.startTime = t
+            for (const arr of _arr) {
+                for (const el of arr) {
+                    if (!el.startTime) {
+                        el.startTime = t
+                    }
+                    const s = t - el.startTime
+                    el.cb({ elapsed: s, delta: d })
                 }
-                const s = t - el.startTime
-                el.cb({ elapsed: s, delta: d })
             }
         }
         this.raf()
@@ -147,31 +155,26 @@ class RafR {
     on: boolean;
     id: number;
     killed: boolean;
-    constructor(callback: (arg: { elapsed: number, delta: number }) => void, lastStack = false, firstStack = false) {
-        // this.cb = (arg: rafEvent) => {
-        //     // if (!this.on) return
-        //     callback(arg)
-        // }
+    priority: RafPriority;
+    constructor(callback: (arg: { elapsed: number, delta: number }) => void, priority: RafPriority = RafPriority.NORMAL) {
         this.cb = callback
 
         this.on = false
         this.killed = false
         this.id = RafId
-        this.id += firstStack ? 2000000 : 0
-
-        this.id += lastStack ? -2000000 : 0
+        this.priority = priority
         RafId++
     }
 
     run() {
         if (this.on || this.killed) return
         this.on = true
-        Raf.add({ id: this.id, cb: this.cb })
+        Raf.add({ id: this.id, cb: this.cb }, this.priority)
     }
     stop() {
         if (!this.on) return
         this.on = false
-        Raf.remove(this.id)
+        Raf.remove(this.id, this.priority)
     }
     kill() {
         this.stop()
@@ -189,7 +192,7 @@ class Delay {
         BM(this, ["update"])
 
         // might want to have the delay callbacks be called after all the rafs callbacks
-        this.raf = new RafR(this.update, false, false)
+        this.raf = new RafR(this.update)
     }
 
     run() {

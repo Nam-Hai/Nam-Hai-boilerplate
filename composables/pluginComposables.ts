@@ -1,5 +1,5 @@
 import type { MotionArg } from "~/plugins/core/motion"
-import type { rafEvent } from "~/plugins/core/raf"
+import { RafPriority, type rafEvent } from "~/plugins/core/raf"
 import type { ResizeEvent } from "~/plugins/core/resize"
 
 export function useManifest() {
@@ -33,9 +33,9 @@ export function useDelay(delay: number, callback: () => void, options?: { immedi
     return d
 }
 
-export function useRafR(callback: (arg: rafEvent) => void, options?: { lastStack?: boolean, firstStack?: boolean }) {
+export function useRafR(callback: (arg: rafEvent) => void, priority: RafPriority = RafPriority.NORMAL) {
     const { $RafR } = useNuxtApp()
-    return new $RafR(callback, options?.lastStack, options?.firstStack)
+    return new $RafR(callback, priority)
 }
 
 export function useROR(callback: (arg: ResizeEvent) => void) {

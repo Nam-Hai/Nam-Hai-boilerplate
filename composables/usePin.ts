@@ -59,7 +59,7 @@ export const usePin = ({
     onProgress(t)
 
     on = false
-  }, { lastStack: false })
+  })
 
   useLenisScroll((e) => {
     on = true
