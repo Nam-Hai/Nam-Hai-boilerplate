@@ -142,7 +142,7 @@ void main() {
 
     // color = vec3(brightness + 1.)/ 2.;
     // vec3 color = cosinePalette(uTime + coord.y * 0.0004, vec3(0.5), vec3(0.5), vec3(0.9 , 1., 0.85), vec3(0., 0.1, 0.2));
-    vec3 color = cosinePalette(uTime + uId.x * 20. + brightness * coord.y * 0.0002, vec3(0.5), vec3(0.5), vec3(0.9 , 1., 0.85), vec3(0., 0.1, 0.2));
+    vec3 color = cosinePalette(uTime + uId.x * 20. + brightness * coord.y * 0.0002, vec3(0.5, 0.2, .5), vec3(0.5, 0.6, 0.5), vec3(0.9 , .5, 0.85), vec3(0.5, 0.1, -0.9));
 
     FragColor[0] = vec4(color, 1.);
     FragColor[1] = uId;

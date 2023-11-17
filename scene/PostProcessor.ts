@@ -246,8 +246,8 @@ const defaultFragment = /* glsl */ `#version 300 es
     in vec2 vUv;
     out vec4 glColor;
     void main() {
-        // glColor = texture(tMap, vUv);
-        glColor = vec4(1., 0.,0., 1.);
+        glColor = texture(tMap, vUv);
+        // glColor = vec4(1., 0.,0., 1.);
     }
 `;
 
