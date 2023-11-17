@@ -18,7 +18,6 @@ export class IndexCanvas extends CanvasPage {
 
     this.node = options.scene
 
-    // const canvasWatch = plugWatch(this)
     this.renderer = this.gl.renderer
 
     this.camera = options.camera

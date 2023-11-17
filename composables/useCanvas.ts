@@ -1,4 +1,5 @@
 import type { Picker } from "~/scene/Components/Picker"
+import type { CanvasNode } from "~/scene/utils/types"
 
 export function useCanvas() {
     const { $canvas } = useNuxtApp()
@@ -26,3 +27,35 @@ function canvasInject<T>(key: string, defaultValue?: T) {
 
 // example
 export const [providerPicker, usePicker] = canvasInject<Picker>('picker')
+
+export const usePick = (ctx: CanvasNode) => {
+    const picker = usePicker()
+
+    function useHover(id: number) {
+        const hover = picker.useHover(id)
+
+        function stop() {
+            picker.eventHandler.remove(`hover-${id}`)
+        }
+
+        ctx.onDestroy(() => stop())
+
+        return { hover, stop }
+    }
+
+    function onClick(id: number, callback: () => void) {
+        picker.onClick(id, callback)
+        function stop() {
+            picker.eventHandler.remove(`click-${id}`)
+        }
+
+        ctx.onDestroy(() => stop())
+
+        return { stop }
+    }
+
+    return {
+        useHover,
+        onClick
+    }
+}

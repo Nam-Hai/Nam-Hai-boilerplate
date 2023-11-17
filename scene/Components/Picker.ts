@@ -17,7 +17,7 @@ export class Picker extends CanvasNode {
     pickerProgam: any;
     target: any;
     eventHandler: EventHandler;
-    needUpdate: { click: boolean; hover: boolean; on: boolean; };
+    needUpdate: { click: boolean; hover: number | null; on: boolean; };
     constructor(gl: OGLRenderingContext, options: { node: Transform, camera: Camera }) {
         super(gl)
         this.camera = options.camera
@@ -26,7 +26,7 @@ export class Picker extends CanvasNode {
 
         this.needUpdate = {
             click: false,
-            hover: false,
+            hover: null,
             on: false
         }
         this.indexPicked = null
@@ -37,15 +37,15 @@ export class Picker extends CanvasNode {
             this.needUpdate.on = true
         }
         const hover = () => {
-            this.needUpdate.hover = true
+            // this.needUpdate.hover = true
             this.needUpdate.on = true
         }
         document.addEventListener('click', click)
-        document.addEventListener('mousemove', hover)
+        // document.addEventListener('mousemove', hover)
 
         this.onDestroy(() => {
             document.removeEventListener('click', click)
-            document.removeEventListener('mousemove', hover)
+            // document.removeEventListener('mousemove', hover)
         })
         this.eventHandler = new EventHandler()
         this.onDestroy(providerPicker(this))
@@ -93,12 +93,16 @@ export class Picker extends CanvasNode {
     onClick(id: number, callback: (e: number) => void) {
         this.eventHandler.on("click-" + id, callback)
     }
-    onHover(id: number, callback: (e: number) => void) {
-        this.eventHandler.on("hover-" + id, callback)
+    useHover(id: number) {
+        const hover = ref(false)
+        this.eventHandler.on("hover-" + id, (e: { state: boolean }) => {
+            hover.value = e.state
+        })
+        return hover
     }
 
     private pick() {
-        if (!this.needUpdate.on) return
+        // if (!this.needUpdate.on) return
 
         const renderList = this.gl.renderer.getRenderList({
             scene: this.node,
@@ -139,7 +143,6 @@ export class Picker extends CanvasNode {
             data);             // typed array to hold result
 
         const index = data[0] + data[1] * 256 + data[2] * 256 * 256 + data[3] * 256 * 256 * 256
-        this.indexPicked = index >= 0 ? index : null
 
         for (let index = 0; index < renderList.length; index++) {
             const program = renderList[index].program
@@ -151,10 +154,14 @@ export class Picker extends CanvasNode {
 
     eventHandling(index: number) {
         if (this.needUpdate.click) this.eventHandler.emit(`click-${index}`, index)
-        if (this.needUpdate.hover) this.eventHandler.emit(`hover-${index}`, index)
+
+        if (this.needUpdate.hover != this.indexPicked) this.eventHandler.emit(`hover-${this.indexPicked}`, { state: false })
+        this.eventHandler.emit(`hover-${index}`, { state: true })
+
         this.needUpdate.click = false
-        this.needUpdate.hover = false
-        this.needUpdate.on = false
+        // this.needUpdate.hover = false
+        // this.needUpdate.on = false
+        this.indexPicked = index >= 0 ? index : null
     }
 }
 

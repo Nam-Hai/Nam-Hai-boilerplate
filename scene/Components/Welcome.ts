@@ -5,6 +5,7 @@ import { Plane, Box, Program, Mesh, Vec3 } from "ogl"
 import { cosinePalette } from "../shaders/color";
 import type { RafR, rafEvent } from "~/plugins/core/raf";
 import Callstack from "../utils/Callstack";
+import { canvasWatch, plugWatch } from "../utils/WebGL.utils";
 
 export class WelcomeGL extends CanvasNode {
 
@@ -59,22 +60,38 @@ export class WelcomeGL extends CanvasNode {
             this.node.setParent(null)
         })
 
-        const picker = usePicker()
+        const picker = usePick(this)
         const tl = useTL()
-        picker.onHover(this.id, () => {
+        const { hover } = picker.useHover(this.id);
+        picker.onClick(this.id, () => {
+            console.log('onClick');
+            tl.reset()
             const newPos = new Vec3(
                 Math.random() * 2 - 1,
                 Math.random() * 2 - 1,
                 Math.random() * 2 - 1,
             )
-            const pos = this.position
-            tl.reset()
             tl.from({
                 d: 500,
                 e: 'io1',
                 update: ({ prog, progE }) => {
                     this.position.lerp(newPos, progE)
                     this.node.position.set(this.position)
+                },
+            }).play()
+        })
+
+        const tlScale = useTL()
+        canvasWatch(this, hover, (hover) => {
+            tlScale.reset()
+            const scale = this.node.scale.clone()
+            const scaleTo = hover ? new Vec3(0.8) : new Vec3(0.5)
+            tlScale.from({
+                d: 500,
+                e: 'io1',
+                update: ({ prog, progE }) => {
+                    scale.lerp(scaleTo, progE)
+                    this.node.scale.set(scale)
                 },
             }).play()
         })
