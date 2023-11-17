@@ -16,8 +16,6 @@ export const useStoreView = createStore(() => {
     lenis.value = new Lenis();
 
     const ro = useROR((e) => {
-      mouse.x = e.vw / 2;
-      mouse.y = e.vh / 2;
       vh.value = e.vh;
       vw.value = e.vw;
       scale.value = e.scale;

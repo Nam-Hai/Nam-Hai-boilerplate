@@ -20,7 +20,9 @@ export class WelcomeGL extends CanvasNode {
 
 
         this.raf = useRafR(this.update)
-        this.onDestroy(() => this.raf.kill())
+        this.onDestroy(() => {
+            this.raf.kill()
+        })
 
         this.mount()
         this.init()
@@ -64,7 +66,6 @@ export class WelcomeGL extends CanvasNode {
         const tl = useTL()
         const { hover } = picker.useHover(this.id);
         picker.onClick(this.id, () => {
-            console.log('onClick');
             tl.reset()
             const newPos = new Vec3(
                 Math.random() * 2 - 1,
@@ -139,7 +140,7 @@ void main() {
 
     // color = vec3(brightness + 1.)/ 2.;
     // vec3 color = cosinePalette(uTime + coord.y * 0.0004, vec3(0.5), vec3(0.5), vec3(0.9 , 1., 0.85), vec3(0., 0.1, 0.2));
-    vec3 color = cosinePalette(uTime + brightness * coord.y * 0.0002, vec3(0.5), vec3(0.5), vec3(0.9 , 1., 0.85), vec3(0., 0.1, 0.2));
+    vec3 color = cosinePalette(uTime + uId.x * 20. + brightness * coord.y * 0.0002, vec3(0.5), vec3(0.5), vec3(0.9 , 1., 0.85), vec3(0., 0.1, 0.2));
 
     FragColor[0] = vec4(color, 1.);
     FragColor[1] = uId;

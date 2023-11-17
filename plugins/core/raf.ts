@@ -160,7 +160,9 @@ class Delay {
         this.cb = callback
         this.delay = delay
         BM(this, ["update"])
-        this.raf = new RafR(this.update)
+
+        // might want to have the delay callbacks be called after all the rafs callbacks
+        this.raf = new RafR(this.update, false, false)
     }
 
     run() {
