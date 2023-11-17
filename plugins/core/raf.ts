@@ -96,6 +96,10 @@ const Raf = new class {
         const d = t - this.now
         this.now = t
         const arr = this.arr
+
+        if (Math.floor(1 / d * 1000) < 20) {
+            console.warn("frame droped")
+        }
         if (this.on) {
             for (const el of arr) {
                 if (!el.startTime) {

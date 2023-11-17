@@ -24,7 +24,7 @@ onUnmounted(() => {
 
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .wrapper-scene {
   position: relative;
   z-index: 8;
