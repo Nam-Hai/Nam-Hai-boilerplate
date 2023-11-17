@@ -1,8 +1,8 @@
-import { getCurrentInstance, onMounted, onUnmounted, watch } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { type FlowProps, FlowProvider, useFlowProvider } from "../FlowProvider";
-import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 
-export type FlowFunction<T> = (props: T, resolve: () => void, flowProps: FlowProps) => void
+export type FlowFunction<T> = (props: T, resolve: () => void) => void
 
 // TODO cancel animation if a new route is taken early
 type PageFlowOptions<T> = {
@@ -39,7 +39,7 @@ export function usePageFlow<T>({
 
 
   const flowCrossfade = async () => {
-    await createFlow<T>(provider, flowInCrossfadeMap, flowInCrossfade, props, flowProps)
+    await createFlow<T>(provider, flowInCrossfadeMap, flowInCrossfade, props)
     provider.releaseHijackFlow()
   }
 
@@ -55,7 +55,7 @@ export function usePageFlow<T>({
 
     crossfade && provider.setCrossfadeMode(crossfade)
 
-    let promiseOut = createFlow<T>(provider, flowOutMap, flowOut, props, flowProps)
+    let promiseOut = createFlow<T>(provider, flowOutMap, flowOut, props)
     let flowPromise = crossfade ? provider.hijackFlow() : null
     await Promise.all([promiseOut, flowPromise])
     provider.unMountBufferPage()
@@ -74,7 +74,7 @@ export function usePageFlow<T>({
   })
 }
 
-function createFlow<T>(provider: FlowProvider, flowMap: Map<string, FlowFunction<T>> | undefined, flow: FlowFunction<T> | undefined, props: T, flowProps: FlowProps): Promise<void> {
+function createFlow<T>(provider: FlowProvider, flowMap: Map<string, FlowFunction<T>> | undefined, flow: FlowFunction<T> | undefined, props: T): Promise<void> {
   const from = provider.getRouteFrom();
   const to = provider.getRouteTo();
 
@@ -83,7 +83,7 @@ function createFlow<T>(provider: FlowProvider, flowMap: Map<string, FlowFunction
   let FlowFunction = getFlowFunction(key, flowMap, flow)
   return new Promise<void>(cb => {
     if (!FlowFunction) cb()
-    else FlowFunction(props, cb, flowProps)
+    else FlowFunction(props, cb)
   })
 }
 

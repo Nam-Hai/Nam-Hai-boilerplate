@@ -4,7 +4,7 @@ import type { FlowFunction } from "~/waterflow/composables/usePageFlow"
 export type TemplateTransitionProps = {
 }
 
-export const defaultFlowOut: FlowFunction<TemplateTransitionProps> = (props: {}, resolve, { }) => {
+export const defaultFlowOut: FlowFunction<TemplateTransitionProps> = (props: {}, resolve) => {
 
     const tl = useTL()
     const canvas = useCanvas()
@@ -16,7 +16,7 @@ export const defaultFlowOut: FlowFunction<TemplateTransitionProps> = (props: {},
 
 }
 
-export const defaultFlowIn: FlowFunction<TemplateTransitionProps> = ({ }, resolve, { }) => {
+export const defaultFlowIn: FlowFunction<TemplateTransitionProps> = ({ }, resolve,) => {
     resolve()
 }
 
