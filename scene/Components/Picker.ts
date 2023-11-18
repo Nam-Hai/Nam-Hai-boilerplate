@@ -150,7 +150,6 @@ export class Picker extends CanvasNode {
         // const index = data[0] + data[1] * 256 + data[2] * 256 * 256 + data[3] * 256 * 256 * 256
         const index = data[0] + (data[1] << 8) + (data[2] << 16) + (data[3] << 24);
 
-
         for (let index = 0; index < renderList.length; index++) {
             const program = renderList[index].program
             program.uniforms.uPicking.value = false

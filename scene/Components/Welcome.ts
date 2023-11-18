@@ -1,11 +1,11 @@
 import { CanvasNode } from "../utils/types";
 
 //@ts-ignore
-import { Plane, Box, Program, Mesh, Vec3, GPGPU, Transform } from "ogl"
+import { Plane, Box, Program, Mesh, Vec3, GPGPU, Transform, Sphere } from "ogl"
 import { cosinePalette } from "../shaders/color";
 import type { RafR, rafEvent } from "~/plugins/core/raf";
 import Callstack from "../utils/Callstack";
-import { useCanvasReactivity } from "../utils/WebGL.utils";
+import { getUId, useCanvasReactivity } from "../utils/WebGL.utils";
 import PostProcessor from "../PostProcessor";
 import { basicVer } from "../shaders/BasicVer";
 import { basicFrag } from "../shaders/BasicFrag";
@@ -50,11 +50,12 @@ export class WelcomeGL extends CanvasNode {
     }
 
     mountGPGPU() {
-        const numParticles = 2000;
+        const numParticles = 500;
 
         // Create the initial data arrays for position and velocity. 4 values for RGBA channels in texture.
         const data = new Float32Array(numParticles * 4);
         const random = new Float32Array(numParticles * 4);
+        const ids = new Float32Array(numParticles * 4);
         for (let i = 0; i < numParticles; i++) {
             data.set(
                 [
@@ -66,6 +67,7 @@ export class WelcomeGL extends CanvasNode {
                 i * 4
             );
             random.set([Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1], i * 4);
+            ids.set(getUId().uId, i * 4)
         }
         this.gpgpu = new GPGPU(this.gl, { data })
 
@@ -81,7 +83,8 @@ export class WelcomeGL extends CanvasNode {
             attributes: {
                 // coord of the data in texture
                 coords: { instanced: 1, size: 2, data: this.gpgpu.coords },
-                random: { instanced: 1, size: 4, data: random }
+                random: { instanced: 1, size: 4, data: random },
+                id: { instanced: 1, size: 4, data: ids }
             }
         })
         const program = new Program(this.gl, {
@@ -95,6 +98,7 @@ export class WelcomeGL extends CanvasNode {
         })
         console.log(geometry);
         const mesh = new Mesh(this.gl, { program, geometry })
+        mesh.scale.set(0.2, 0.2, 0.2);
         mesh.setParent(this.node)
 
     }
@@ -105,8 +109,8 @@ export class WelcomeGL extends CanvasNode {
 
     update(e: rafEvent) {
         this.uTime.value = e.elapsed / 1000
-        // this.node.rotation.x = elapsed / 2000
-        // this.node.rotation.y = elapsed / 2000
+        // this.node.rotation.x = e.elapsed / 2000
+        // this.node.rotation.y = e.elapsed / 2000
 
         const canvas = useCanvas()
         this.gpgpu.render()
@@ -129,8 +133,9 @@ uniform float uTime;
 uniform mat4 modelMatrix;
 uniform mat3 normalMatrix;
 uniform bool uPicking;
-uniform vec4 uId;
+// uniform vec4 uId;
 
+in vec4 vId;
 in vec4 vRand;
 in vec3 vNormal;
 in vec3 vPosition;
@@ -147,17 +152,18 @@ void main() {
     vec3 lightVector = normalize( vec3(-2., 3., 6.) - worldPosition );
     float brightness = dot( worldNormal, lightVector );
 
-    // color = vec3(brightness + 1.)/ 2.;
-    // vec3 color = cosinePalette(uTime + coord.y * 0.0004, vec3(0.5), vec3(0.5), vec3(0.9 , 1., 0.85), vec3(0., 0.1, 0.2));
-    vec3 color = cosinePalette(uTime + vRand.x + uId.x * 20. + brightness * coord.y * 0.0002, vec3(0.5, 0.2, .5), vec3(0.5, 0.6, 0.5), vec3(0.9 , .5, 0.85), vec3(0.5, 0.1, -0.9));
+    vec3 color = cosinePalette(uTime + vRand.x + vId.x * .1 + brightness * coord.y * 0.0002, vec3(0.5, 0.2, .5), vec3(0.5, 0.6, 0.5), vec3(0.9 , .5, 0.85), vec3(0.5, 0.1, -0.9));
 
     FragColor[0] = vec4(color, 1.);
-    FragColor[1] = uId;
+    // FragColor[1] = uId;
+    FragColor[1] = vId;
 }
 `
 
 const vertex = /* glsl */`#version 300 es
 precision highp float;
+#define R 5.0
+#define PI 3.1415
 
 in vec2 coords;
 
@@ -165,6 +171,7 @@ in vec3 position;
 in vec2 uv;
 in vec3 normal;
 in vec4 random;
+in vec4 id;
 
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
@@ -172,6 +179,7 @@ uniform mat3 normalMatrix;
 
 uniform sampler2D tPosition;
 
+out vec4 vId;
 out vec4 vRand;
 out vec3 vNormal;
 out vec3 vPosition;
@@ -179,16 +187,19 @@ out vec2 vUv;
 
 void main() {
 
+    vId = id;
     vUv = uv;
     vRand = random;
     vNormal = normal;
     vPosition = position;
     vec4 tposition = texture(tPosition, coords);
+    float theta = tposition.x + random.x;
+    theta = mod(theta, 1.) - 0.5;
+    float phi = tposition.y + random.y;
+    vec3 data = vec3(R * cos(theta * PI) * cos(phi * PI), R * sin(theta * PI), R * cos(theta * PI) * sin(phi * PI));
+    vec3 pos = position.xyz + data;
 
-    tposition.xyz += position.xyz + random.xyz;
-    // gl_Position = vec4(position.xyz, 1.);
-    // gl_Position = vec4(0.);
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(tposition.xyz, 1.);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.);
 }`;
 
 const fragmentGPGPU = /* glsl */`#version 300 es
@@ -201,8 +212,10 @@ in vec2 vUv;
 out vec4 FragColor;
 
 void main() {
-    vec4 data = texture(tMap, vUv);
-    data = vec4(sin(uTime + vUv.x * 5. + vUv.y * 5.), cos(uTime + vUv.y * 20.), sin(uTime + 0.2) , 1.);
+    // vec4 data = texture(tMap, vUv);
+    // data = vec4(sin(uTime + vUv.x * 5. + vUv.y * 5.), cos(uTime + vUv.y * 20.), sin(uTime + 0.2) , 1.);
+
+    vec4 data = vec4(uTime * 0.1, uTime * 0.6, 0.,1.);
     data.w = 1.;
     FragColor = data;
 }`;
