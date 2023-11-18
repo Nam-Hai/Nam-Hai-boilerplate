@@ -24,7 +24,7 @@ onUnmounted(() => {
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .wrapper-scene {
   position: relative;
   z-index: 8;
@@ -33,14 +33,14 @@ onUnmounted(() => {
   &.BOTTOM {
     z-index: 6;
   }
-}
 
-canvas {
-  // background-color: white;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  canvas {
+    // background-color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

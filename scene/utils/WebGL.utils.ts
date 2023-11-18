@@ -20,23 +20,10 @@ export function getUId() {
     return { id, uId }
 }
 
-
-import { Transform, RenderTarget, Mesh, Camera, Program, Geometry, Plane, Sphere } from 'ogl'
 import type { CanvasNode, CanvasPage } from './types'
 import type { WatchSource, WatchCallback, ComputedGetter, DebuggerOptions } from 'nuxt/dist/app/compat/capi'
 import type { MultiWatchSources } from 'nuxt/dist/app/composables/asyncData'
 
-// fast object to get ogl class
-export const O = {
-    RenderTarget,
-    Transform,
-    Mesh,
-    Camera,
-    Program,
-    Geometry,
-    Plane,
-    Sphere
-}
 
 let EventID = 0
 export class EventHandler {

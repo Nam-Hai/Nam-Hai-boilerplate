@@ -1,13 +1,13 @@
 import type { RafR, rafEvent } from "~/plugins/core/raf";
 import type { ROR, ResizeEvent } from "~/plugins/core/resize";
 
-import { WelcomeGL } from "../Components/Welcome";
 import { Picker } from "../Components/Picker";
 import { providerPicker } from "~/composables/useCanvas";
 import { CanvasNode, CanvasPage } from "../utils/types";
 import { TransformNode } from "../Components/TransformNode";
 import type { Camera, OGLRenderingContext, Renderer, Transform } from "ogl";
 import { EventHandler } from "../utils/WebGL.utils";
+import { WelcomeGL } from "../Components/Welcome";
 
 export class IndexCanvas extends CanvasPage {
 
@@ -43,7 +43,7 @@ export class IndexCanvas extends CanvasPage {
         this.mount()
     }
     init() {
-        this.raf.run()
+        // this.raf.run()
         this.ro.on()
     }
 
@@ -53,30 +53,17 @@ export class IndexCanvas extends CanvasPage {
             camera: this.camera,
             renderTargetRatio: 20
         })
+
         this.onDestroy(() => {
             picker.destroy()
         })
 
-        const welcome = new WelcomeGL(this.gl)
-
-        const transformNode = new TransformNode(this.gl)
-
         picker.add(
             this.add([
-                transformNode.add(
-                    welcome
-                ),
-                ...N.Arr.create(50).map(() => {
-                    const welcome = new WelcomeGL(this.gl)
-                    return welcome
-                })
+                new WelcomeGL(this.gl)
             ])
         )
 
-
-        useDelay(1000, () => {
-            transformNode.destroy()
-        })
     }
 
     resize({ vh, vw, scale, breakpoint }: ResizeEvent) {
@@ -84,7 +71,6 @@ export class IndexCanvas extends CanvasPage {
 
 
     render(e: rafEvent) {
-
         this.renderer.render({
             scene: this.node,
             camera: this.camera,
