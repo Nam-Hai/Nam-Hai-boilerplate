@@ -71,10 +71,10 @@ export class IndexCanvas extends CanvasPage {
 
 
     render(e: rafEvent) {
-        this.renderer.render({
-            scene: this.node,
-            camera: this.camera,
-        })
+        // this.renderer.render({
+        //     scene: this.node,
+        //     camera: this.camera,
+        // })
     }
 
     destroy() {

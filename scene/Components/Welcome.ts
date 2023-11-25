@@ -9,6 +9,7 @@ import { getUId, useCanvasReactivity } from "../utils/WebGL.utils";
 import PostProcessor from "../PostProcessor";
 import { basicVer } from "../shaders/BasicVer";
 import { basicFrag } from "../shaders/BasicFrag";
+import { rotationMatrix, scaleMatrix } from "../shaders/matrixRotation";
 
 export class WelcomeGL extends CanvasNode {
 
@@ -50,7 +51,7 @@ export class WelcomeGL extends CanvasNode {
     }
 
     mountGPGPU() {
-        const numParticles = 500;
+        const numParticles = 400;
 
         // Create the initial data arrays for position and velocity. 4 values for RGBA channels in texture.
         const data = new Float32Array(numParticles * 4);
@@ -66,8 +67,19 @@ export class WelcomeGL extends CanvasNode {
                 ],
                 i * 4
             );
-            random.set([Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1], i * 4);
+            // random.set([Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1], i * 4);
             ids.set(getUId().uId, i * 4)
+        }
+        const L = 20
+        const l = numParticles / L
+        console.log(l, l * L);
+        for (let i = 0; i < L; i++) {
+            for (let j = 0; j < l; j++) {
+                const phi = Math.PI * 2 * i / L
+
+                const theta = Math.PI * j / l - Math.PI / 2
+                random.set([theta, phi, Math.random() * 2 - 1, 1.], (i * l + j) * 4)
+            }
         }
         this.gpgpu = new GPGPU(this.gl, { data })
 
@@ -98,7 +110,7 @@ export class WelcomeGL extends CanvasNode {
         })
         console.log(geometry);
         const mesh = new Mesh(this.gl, { program, geometry })
-        mesh.scale.set(0.2, 0.2, 0.2);
+        mesh.scale.set(0.2);
         mesh.setParent(this.node)
 
     }
@@ -185,6 +197,9 @@ out vec3 vNormal;
 out vec3 vPosition;
 out vec2 vUv;
 
+${rotationMatrix}
+${scaleMatrix}
+
 void main() {
 
     vId = id;
@@ -194,12 +209,23 @@ void main() {
     vPosition = position;
     vec4 tposition = texture(tPosition, coords);
     float theta = tposition.x + random.x;
-    theta = mod(theta, 1.) - 0.5;
+    theta = mod(theta, PI) - PI * 0.5;
+    // theta *= PI;
     float phi = tposition.y + random.y;
-    vec3 data = vec3(R * cos(theta * PI) * cos(phi * PI), R * sin(theta * PI), R * cos(theta * PI) * sin(phi * PI));
-    vec3 pos = position.xyz + data;
+    // phi *= PI;
+    vec3 data = vec3(R * cos(theta ) * cos(phi ), R * sin(theta ), R * cos(theta ) * sin(phi ));
 
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.);
+    mat4 rotY = rotationY(phi);
+    mat4 rotZ = rotationZ(-theta);
+    mat4 rot = rotY * rotZ;
+    mat4 scale = scaleMatrix(0.8, 0.8, 0.2);
+
+    vec4 pos = rot * scale * vec4(position.xyz, 1.) + vec4(data, 0.);
+
+    // vec4 pos = rot * vec4(position.xyz, 1.);
+
+
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos.xyzw);
 }`;
 
 const fragmentGPGPU = /* glsl */`#version 300 es
