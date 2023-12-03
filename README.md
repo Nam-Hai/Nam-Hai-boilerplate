@@ -1,19 +1,12 @@
 # Nam Hai Boilerplate
 
-Nuxt + WebGL the boilerplate
-Inhouse animation library is shared but you can plug GSAP
+Everything you'll ever need to build powerfull website.
 
-## Setup
+Nuxt + WebG + Waterflow + Utils
 
-```bash
-# npm
-npm install
-npm run dev
+# CREDIT
 
-# pnpm
-pnpm install
-pnpm run dev
-```
+Thanks to Aristide Benoist. A great part of the utils come from his codebase that I reversed 🥸
 
 # HOW TO USE PRISMIC, LEGACY PRISMIC
 https://v3.prismic.nuxtjs.org/guides/basics/fetching-content
