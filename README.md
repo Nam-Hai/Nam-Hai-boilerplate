@@ -2,12 +2,8 @@
 
 Everything you'll ever need to build powerfull website.
 
-Nuxt + WebG + Waterflow + Utils
+Nuxt + WebG + Waterflow + Built-in Animation engine
 
 # CREDIT
 
-Thanks to Aristide Benoist. A great part of the utils come from his codebase that I reversed 🥸
-
-# HOW TO USE PRISMIC, LEGACY PRISMIC
-https://v3.prismic.nuxtjs.org/guides/basics/fetching-content
-https://prismic.io/docs/technical-reference/prismicio-client?utm_campaign=devexp&utm_source=nuxt3doc&utm_medium=doc
+Thanks to Aristide Benoist. A great part of the Motion engine is based off his codebase. Reversing it from his production work was harsh 🥸
