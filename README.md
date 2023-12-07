@@ -2,7 +2,7 @@
 
 Everything you'll ever need to build powerfull website.
 
-Nuxt + WebG + Waterflow + Built-in Animation engine
+Nuxt + WebG + [Waterflow](https://github.com/Nam-Hai/Waterflow) + Built-in Animation engine
 
 # CREDIT
 
