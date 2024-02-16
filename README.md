@@ -4,6 +4,7 @@ Everything you'll ever need to build powerfull website.
 
 Nuxt + WebGL + [Waterflow](https://github.com/Nam-Hai/Waterflow) + Built-in Animation engine
 
-# CREDIT
+# TODO
 
-Thanks to Aristide Benoist. A great part of the Motion engine is based off his codebase. Reversing it from his production work was harsh 🥸
+- bugs with the animation engine
+- Page transition API
