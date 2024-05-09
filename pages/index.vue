@@ -27,11 +27,6 @@ usePageFlow({
 <style lang="scss" scoped>
 @use "@/styles/shared.scss" as *;
 
-.fps {
-    font-size: 10rem;
-    line-height: 100%;
-}
-
 main {
     top: 0;
     line-height: 100%;

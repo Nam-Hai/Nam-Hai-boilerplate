@@ -3,7 +3,8 @@
     <WebGLScene />
     <div class="page__wrapper">
       <Preloader>
-        <BufferPage />
+        <!-- <BufferPage /> -->
+        <slot />
       </Preloader>
     </div>
   </div>
