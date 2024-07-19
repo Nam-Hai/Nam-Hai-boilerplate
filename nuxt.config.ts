@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 export default defineNuxtConfig({
-    ssr: false,
+    ssr: true,
 
     nitro: {
         preset: "vercel",
@@ -89,11 +89,6 @@ export default defineNuxtConfig({
                 //     href: "/favicon/safari-pinned-tab.svg",
                 //     color: "#292929"
                 // }
-            ],
-            script: [
-                {
-                    src: "/init.js",
-                },
             ],
         },
     },

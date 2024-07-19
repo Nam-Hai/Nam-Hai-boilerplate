@@ -1,27 +1,11 @@
 <template>
     <main ref="mainRef">
+        index page
+        <NuxtLink to="/playground">playground</NuxtLink>
     </main>
 </template>
 
 <script lang="ts" setup>
-import { usePageFlow } from '~/waterflow/composables/usePageFlow';
-import { defaultFlowIn, defaultFlowOut } from './default.transition';
-
-const mainRef = ref()
-
-useResetLenis({
-    infinite: false,
-    direction: "vertical"
-})
-
-
-usePageFlow({
-    props: {},
-    flowOut: defaultFlowOut,
-    flowInCrossfade: defaultFlowIn,
-    enableCrossfade: 'BOTTOM'
-})
-
 </script>
 
 <style lang="scss" scoped>
@@ -30,5 +14,12 @@ usePageFlow({
 main {
     top: 0;
     line-height: 100%;
+    font-size: 20rem;
+
+    a {
+        font-size: 5rem;
+        line-height: 100%;
+        padding: 2rem;
+    }
 }
 </style>

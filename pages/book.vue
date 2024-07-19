@@ -1,6 +1,6 @@
 <template>
     <div class="playground__wrapper">
-        playground page
+        book page
         <NuxtLink to="/">home</NuxtLink>
     </div>
 
