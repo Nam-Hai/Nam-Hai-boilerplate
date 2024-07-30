@@ -11,6 +11,8 @@ export default defineComponent({
 
         const componentLeft: Ref<RouteComponent | null> = shallowRef(null)
         const componentRight: Ref<RouteComponent | null> = shallowRef(null)
+        const vLeft = shallowRef(false)
+        const vRight = shallowRef(true)
 
         componentRight.value = await getComponent(router.currentRoute.value)
         console.log(componentRight.value);
@@ -20,12 +22,12 @@ export default defineComponent({
                 console.log("test delay");
 
                 componentLeft.value = await getComponent(to)!
-
+                vLeft.value = true
                 console.log(componentLeft.value);
 
-
                 useDelay(1000, () => {
-                    componentRight.value = null
+                    // componentRight.value = null
+                    vRight.value = false
                     res()
                 })
             })
@@ -45,10 +47,10 @@ export default defineComponent({
                 <>
                     <div class={'page-a'}>
                         {componentLeft.value}
-                        {componentLeft.value && h(componentLeft.value)}
+                        {(vLeft.value && !!componentLeft.value) ? h(componentLeft.value) : "test"}
                     </div>
                     <div class={'page-b'}>
-                        {componentRight.value && h(componentRight.value)}
+                        {(vRight.value && !!componentRight.value) ? h(componentRight.value) : "rrrrrrrrrrr"}
                     </div>
                 </>
             );
