@@ -243,9 +243,9 @@ class Delay {
     }
 }
 
-const delay = async (cb: () => void, delay: number) => {
+const delay = async (delay: number, cb?: () => void) => {
     await new Promise<void>(resolve => {
-        (new Delay(() => { cb(); resolve() }, delay)).run()
+        (new Delay(() => { cb && cb(); resolve() }, delay)).run()
     })
 }
 

@@ -1,30 +1,27 @@
 import type { InjectionKey } from 'vue';
 import { inject, provide } from 'vue';
 
-// create a store
-// how to use it
-// export const [provideT, useT] = createContext<T>('key');
-// provideT(new T)
-// const t = useT()
-
 /**
  * Helper function around provide/inject to create a typed pair with a curried "key" and default values
  */
-export function createContext<T>(
-  key: InjectionKey<T> | string,
-  defaultValue?: T,
-): readonly [
-  (value?: T) => void,
-  // eslint-disable-next-line no-shadow
-  (defaultValue?: T | (() => T), treatDefaultAsFactory?: boolean) => T,
-] {
-  const provideContext = (value?: T): void => {
-    provide(key, value || defaultValue);
+// export function createContext<T extends string | number | symbol, R>(
+export function createContext<A extends string | number | symbol, B, T extends Record<A, B>>(
+  defaultValue: () => T,
+) {
+  const key = Symbol() as InjectionKey<T>
+
+  const provideContext = (value?: Partial<T>): T => {
+    const defaultVal = defaultValue();
+    const constructedVal = Object.assign(defaultVal, value)
+    provide(key, constructedVal);
+    return constructedVal
   };
 
-  // eslint-disable-next-line no-shadow
-  const useContext = (defaultValue?: T | (() => T), treatDefaultAsFactory?: boolean): T =>
+  const useContext = (value?: T | (() => T), treatDefaultAsFactory?: boolean): T => {
+    if(!value) return inject(key) as T
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    inject(key, defaultValue, treatDefaultAsFactory as any) as T;
-  return [provideContext, useContext] as const;
+    return inject(key, value, treatDefaultAsFactory as any) as T;
+  }
+
+  return [provideContext, useContext, key] as const;
 }
