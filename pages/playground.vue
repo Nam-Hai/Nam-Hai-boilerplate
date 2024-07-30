@@ -1,5 +1,5 @@
 <template>
-    <div class="playground__wrapper">
+    <div class="playground__wrapper" ref="wrapperRef">
         playground page
         <NuxtLink to="/">home</NuxtLink>
     </div>
@@ -8,13 +8,7 @@
 </template>
 
 <script lang="ts" setup>
-
-// function raf() {
-
-//     console.log('test');
-//     requestAnimationFrame(raf)
-// }
-// raf()
+const wrapperRef = shallowRef()
 </script>
 
 <style lang="scss" scoped>
@@ -26,6 +20,7 @@
         font-size: 5rem;
         line-height: 100%;
         padding: 2rem;
+        color: red;
     }
 }
 </style>

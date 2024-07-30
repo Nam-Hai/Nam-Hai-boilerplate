@@ -44,7 +44,7 @@ html {
 html,
 body {
   margin: 0;
-  line-height: 0 !important;
+  // line-height: 0 !important;
 }
 
 body {
@@ -221,4 +221,12 @@ body.flowIsHijacked {
   a {
     pointer-events: none;
   }
+}
+
+.page-a {
+  width: 50vw;
+}
+
+.page-b {
+  width: 50vw;
 }

@@ -6,6 +6,8 @@
 </template>
 
 <script lang="ts" setup>
+const mainRef = shallowRef()
+
 </script>
 
 <style lang="scss" scoped>

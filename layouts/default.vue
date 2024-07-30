@@ -2,22 +2,26 @@
   <div class="app__wrapper">
     <WebGLScene />
     <div class="page__wrapper">
-      <!-- <Preloader> -->
-        <!-- <BufferPage /> -->
-        <slot />
-      <!-- </Preloader> -->
+      <slot />
+      <!-- <CustomRouter /> -->
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+// import CustomRouter from '../waterflow/CustomRouter';
 </script>
 
 <style lang="scss" scoped>
 @use "@/styles/shared.scss" as *;
+
 a {
   font-size: 5rem;
   line-height: 100%;
   padding: 2rem;
+}
+
+.page__wrapper {
+  display: flex;
 }
 </style>
