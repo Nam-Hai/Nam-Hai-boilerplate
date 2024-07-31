@@ -22,7 +22,10 @@ const routerGuard = router.beforeEach(async (to, _from, next) => {
     routeFrom.value = routeTo.value
     routeTo.value = to
 
+    const hijackPromise = hijackFlow()
+
     pageObject.bufferPage.value = await getComponent(to)!
+
     next()
 })
 

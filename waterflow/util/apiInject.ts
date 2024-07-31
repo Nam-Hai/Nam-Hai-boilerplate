@@ -18,7 +18,8 @@ export function createContext<A extends string | number | symbol, B, T extends R
   };
 
   const useContext = (value?: T | (() => T), treatDefaultAsFactory?: boolean): T => {
-    if(!value) return inject(key) as T
+    console.log(key);
+    if (!value) return inject(key) as T
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return inject(key, value, treatDefaultAsFactory as any) as T;
   }

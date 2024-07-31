@@ -12,21 +12,32 @@ export const [provideFlowProvider, useFlowProvider] = createContext(() => {
   const crossfadeMode: ShallowRef<CrossFadeMode> = shallowRef("TOP")
 
 
-  const flowIsHijacked = shallowRef(false)
+  const flowIsHijackedPromise: Ref<Promise<void> | undefined> = shallowRef()
   let flowHijackResolver: (() => void) | undefined
 
   function releaseHijackFlow() {
     if (!flowHijackResolver) return
     flowHijackResolver()
-    flowIsHijacked.value = false
+    flowIsHijackedPromise.value = undefined
     flowHijackResolver = undefined
   }
 
   function hijackFlow() {
-    flowIsHijacked.value = true
-    return new Promise<void>((resolve) => {
+    flowIsHijackedPromise.value = new Promise<void>((resolve) => {
       flowHijackResolver = resolve;
     });
+
+    return flowIsHijackedPromise.value
+  }
+
+  const flowInPromise: Ref<Promise<void> | undefined> = shallowRef()
+  function startFlowIn(): undefined | (() => void) {
+    let resolver: ((() => void) | undefined) = undefined
+
+    flowInPromise.value = new Promise<void>((resolve) => {
+      resolver = resolve;
+    });
+    return resolver
   }
 
   return {
@@ -35,9 +46,11 @@ export const [provideFlowProvider, useFlowProvider] = createContext(() => {
     routeFrom,
     crossfadeMode,
 
-    flowIsHijacked,
-
+    flowIsHijackedPromise,
     hijackFlow,
-    releaseHijackFlow
+    releaseHijackFlow,
+
+    flowInPromise,
+    startFlowIn,
   }
 });

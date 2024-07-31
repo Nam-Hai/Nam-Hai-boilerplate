@@ -8,7 +8,15 @@
 </template>
 
 <script lang="ts" setup>
+import { usePageFlow } from '~/waterflow/composables/usePageFlow';
+
 const wrapperRef = shallowRef()
+
+usePageFlow({
+    props: {
+        wrapperRef
+    }
+})
 </script>
 
 <style lang="scss" scoped>
