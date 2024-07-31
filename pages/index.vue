@@ -6,7 +6,22 @@
 </template>
 
 <script lang="ts" setup>
+import { delay } from '~/plugins/core/raf';
+
 const mainRef = shallowRef()
+
+const router = useRouter()
+
+const routerGuard = router.beforeEach(async (to, from, next) => {
+
+    console.log("index beforeEach");
+    await delay(1500)
+    next()
+})
+
+onUnmounted(() => {
+    routerGuard()
+})
 
 </script>
 

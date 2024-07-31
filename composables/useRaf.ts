@@ -1,16 +1,16 @@
-import { RafPriority, type rafEvent } from "../plugins/core/raf";
+import { type rafEvent, RafPriority } from "~/plugins/core/raf"
 
 export const useRaf = (cb: (e: rafEvent) => void, priority: RafPriority = RafPriority.NORMAL) => {
 
   const { $RafR } = useNuxtApp()
-  const raf = new $RafR(cb, priority)
+  const raf = process.client ? new $RafR(cb, priority) : undefined
 
   onMounted(() => {
-    raf.run()
+    raf && raf.run()
   })
 
   onBeforeUnmount(() => {
-    raf.kill()
+    raf && raf.kill()
   })
 
   return raf

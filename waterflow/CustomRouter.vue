@@ -4,30 +4,38 @@ import { delay } from '~/plugins/core/raf';
 import { provideFlowProvider, useFlowProvider } from './FlowProvider';
 
 const nuxtApp = useNuxtApp()
-
 const router = useRouter()
 const routes = router.getRoutes()
 
-const { currentRoute } = useFlowProvider()
+const { currentRoute, routeTo, routeFrom, crossfadeMode, hijackFlow } = useFlowProvider()
 
-const componentLeft: Ref<RouteComponent | undefined> = shallowRef(undefined)
-const componentRight: Ref<RouteComponent | undefined> = shallowRef(undefined)
+const currentPage: Ref<RouteComponent | undefined> = shallowRef(undefined)
+const bufferPage: Ref<RouteComponent | undefined> = shallowRef(undefined)
 
-componentRight.value = await getComponent(currentRoute.value)
+const pageObject = {
+    currentPage,
+    bufferPage
+}
+pageObject.currentPage.value = await getComponent(currentRoute.value)
 
-let leftRight = true
 const routerGuard = router.beforeEach(async (to, _from, next) => {
-    // mount next page
-    console.log("test delay");
+    routeFrom.value = routeTo.value
+    routeTo.value = to
 
-    if (leftRight) componentLeft.value = await getComponent(to)!
-    else componentRight.value = await getComponent(to)!
-    leftRight = !leftRight
-
-    await delay(1000)
-    if (leftRight) componentLeft.value = undefined
-    else componentRight.value = undefined
+    pageObject.bufferPage.value = await getComponent(to)!
     next()
+})
+
+router.afterEach(async (to, from, failure) => {
+    currentRoute.value = routeTo.value
+
+    const temp = pageObject.currentPage
+
+    pageObject.currentPage = pageObject.bufferPage
+    pageObject.bufferPage = temp
+    pageObject.bufferPage.value = undefined
+
+    swapClass()
 })
 
 async function getComponent(route: RouteLocationNormalized) {
@@ -37,13 +45,24 @@ async function getComponent(route: RouteLocationNormalized) {
 
     return typeof comp === "function" ? (comp as Function)() : comp
 }
+
+const wrapperA = shallowRef()
+const wrapperB = shallowRef()
+
+const swapClass = () => {
+    wrapperA.value.classList.toggle('buffer-page')
+    wrapperA.value.classList.toggle('current-page')
+
+    wrapperB.value.classList.toggle('buffer-page')
+    wrapperB.value.classList.toggle('current-page')
+}
 </script>
 
 <template>
-    <div class='page-a'>
-        <component :is="componentLeft" />
+    <div class='page-a current-page' ref="wrapperA">
+        <component :is="currentPage" />
     </div>
-    <div class='page-b'>
-        <component :is="componentRight" />
+    <div class='page-b buffer-page' ref="wrapperB">
+        <component :is="bufferPage" />
     </div>
 </template>
