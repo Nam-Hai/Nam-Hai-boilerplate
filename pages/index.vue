@@ -21,6 +21,37 @@ onLeave(() => {
 usePageFlow({
     props: {
         mainRef
+    },
+    flowIn: (props, res) => {
+
+        const tl = useTL()
+        tl.from({
+            el: props.mainRef.value,
+            d: 1000,
+            e: "o4",
+            p: {
+                y: [100, 0]
+            },
+            cb() {
+                res()
+            },
+        })
+        tl.play()
+    },
+    flowOut: (props, res) => {
+        const tl = useTL()
+        tl.from({
+            el: props.mainRef.value,
+            d: 1000,
+            e: "i4",
+            p: {
+                y: [0, 100]
+            },
+            cb() {
+                res()
+            },
+        })
+        tl.play()
     }
 })
 
