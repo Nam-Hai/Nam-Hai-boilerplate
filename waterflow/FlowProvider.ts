@@ -12,7 +12,7 @@ export const [provideFlowProvider, useFlowProvider] = createContext(() => {
   const crossfadeMode: ShallowRef<CrossFadeMode> = shallowRef("TOP")
 
 
-  const flowIsHijackedPromise: Ref<Promise<void> | undefined> = shallowRef()
+  const flowIsHijackedPromise: Ref<Promise<void> | undefined> = shallowRef(undefined)
   let flowHijackResolver: (() => void) | undefined
 
   function releaseHijackFlow() {

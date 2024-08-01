@@ -6,10 +6,18 @@
 </template>
 
 <script lang="ts" setup>
+import { onFlow, onLeave } from '~/waterflow/composables/onFlow';
 import { usePageFlow } from '~/waterflow/composables/usePageFlow';
 
 const mainRef = shallowRef()
 
+onFlow(() => {
+    console.log("on flow");
+})
+
+onLeave(() => {
+    console.log("on leave");
+})
 usePageFlow({
     props: {
         mainRef

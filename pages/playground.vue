@@ -12,11 +12,11 @@ import { usePageFlow } from '~/waterflow/composables/usePageFlow';
 
 const wrapperRef = shallowRef()
 
-usePageFlow({
-    props: {
-        wrapperRef
-    }
-})
+// usePageFlow({
+//     props: {
+//         wrapperRef
+//     }
+// })
 </script>
 
 <style lang="scss" scoped>

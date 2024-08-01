@@ -1,22 +1,18 @@
 import { onMounted, watch } from "vue"
 import { useFlowProvider } from "../FlowProvider"
 
-// To trigger onMount only for the "real" page
-export function onFlow(mountedCallback: () => void) {
-  const flowProvider = useFlowProvider()
+export function onFlow(cb: () => void) {
+  const { flowIsHijackedPromise } = useFlowProvider()
   const flow = ref(false)
 
-  watch(flowProvider.flowIsHijacked, isHijacked => {
-    if (!isHijacked && !flow.value) {
-      mountedCallback()
-      flow.value = true
-    }
+  flowIsHijackedPromise.value && flowIsHijackedPromise.value.then(() => {
+    flow.value = true
+    cb && cb()
   })
   onMounted(() => {
-    if (!flowProvider.flowIsHijacked.value && !flow.value) {
-      mountedCallback()
-      flow.value = true
-    }
+    if(!!flowIsHijackedPromise.value) return
+    flow.value = true
+    cb && cb()
   })
 
   return flow
@@ -24,9 +20,9 @@ export function onFlow(mountedCallback: () => void) {
 
 
 export function onLeave(callback: () => void) {
-  const { flowIsHijacked } = useFlowProvider()
-  watch(flowIsHijacked, flow => {
-    if (flow) {
+  const { flowIsHijackedPromise } = useFlowProvider()
+  watch(flowIsHijackedPromise, flow => {
+    if (!!flow) {
       callback()
     }
   })

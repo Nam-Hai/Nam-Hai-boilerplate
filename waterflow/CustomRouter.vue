@@ -7,7 +7,7 @@ const nuxtApp = useNuxtApp()
 const router = useRouter()
 const routes = router.getRoutes()
 
-const { currentRoute, routeTo, routeFrom, crossfadeMode, hijackFlow } = useFlowProvider()
+const { currentRoute, routeTo, routeFrom, hijackFlow, releaseHijackFlow, flowInPromise } = useFlowProvider()
 
 const currentPage: Ref<RouteComponent | undefined> = shallowRef(undefined)
 const bufferPage: Ref<RouteComponent | undefined> = shallowRef(undefined)
@@ -22,10 +22,13 @@ const routerGuard = router.beforeEach(async (to, _from, next) => {
     routeFrom.value = routeTo.value
     routeTo.value = to
 
-    const hijackPromise = hijackFlow()
+    hijackFlow()
 
     pageObject.bufferPage.value = await getComponent(to)!
 
+    await nextTick()
+    console.log(flowInPromise.value);
+    await Promise.all([flowInPromise.value])
     next()
 })
 
@@ -39,6 +42,8 @@ router.afterEach(async (to, from, failure) => {
     pageObject.bufferPage.value = undefined
 
     swapClass()
+
+    releaseHijackFlow()
 })
 
 async function getComponent(route: RouteLocationNormalized) {

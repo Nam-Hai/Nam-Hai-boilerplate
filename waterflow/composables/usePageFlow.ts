@@ -10,35 +10,31 @@ type PageFlowOptions<T> = {
   props: T,
   flowOut?: FlowFunction<T>,
   flowOutMap?: Map<string, FlowFunction<T>>,
-  flowInCrossfade?: FlowFunction<T>,
-  flowInCrossfadeMap?: Map<string, FlowFunction<T>>,
+  flowIn?: FlowFunction<T>,
+  flowInMap?: Map<string, FlowFunction<T>>,
 }
 
 export function usePageFlow<T>({
   props,
   flowOutMap,
   flowOut,
-  flowInCrossfade,
-  flowInCrossfadeMap,
+  flowIn,
+  flowInMap,
 }: PageFlowOptions<T>) {
 
   const router = useRouter()
 
-  const { flowInPromise, startFlowIn } = useFlowProvider()
+  const { flowInPromise, startFlowIn, routeFrom, routeTo } = useFlowProvider()
 
   onMounted(async () => {
     const resolver = startFlowIn()
-    console.log("flow in", resolver);
     await delay(Math.random() * 2000)
+    await createFlow<T>(routeFrom.value, routeTo.value, flowInMap, flowIn, props)
     resolver && resolver()
   })
 
   const routerGuard = router.beforeEach(async (to, from, next) => {
-
-    let promiseOut = createFlow<T>(from, to, flowOutMap, flowOut, props)
-
-    await Promise.all([promiseOut, flowInPromise.value])
-    // mount next page
+    await createFlow<T>(from, to, flowOutMap, flowOut, props)
 
     next()
   })
