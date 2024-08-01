@@ -28,7 +28,6 @@ export function usePageFlow<T>({
 
   onMounted(async () => {
     const resolver = startFlowIn()
-    // await delay(Math.random() * 2000)
     await createFlow<T>(routeFrom.value, routeTo.value, flowInMap, flowIn, props)
     resolver && resolver()
   })

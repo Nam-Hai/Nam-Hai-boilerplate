@@ -67,10 +67,39 @@ const swapClass = () => {
 </script>
 
 <template>
-    <div class='page-a current-page' ref="wrapperA">
-        <component :is="currentPage" />
-    </div>
-    <div class='page-b buffer-page' ref="wrapperB">
-        <component :is="bufferPage" />
+    <div class="custom-router__wrapper">
+        <div class='page-a current-page' ref="wrapperA">
+            <component :is="currentPage" />
+        </div>
+        <div class='page-b buffer-page' ref="wrapperB">
+            <component :is="bufferPage" />
+        </div>
     </div>
 </template>
+
+<style lang="scss">
+.custom-router__wrapper {
+    position: relative;
+    overflow: scroll;
+    height: 100vh;
+}
+
+.page-a {
+    left: 0;
+}
+
+.page-b {
+    right: 0;
+}
+
+.page-a,
+.page-b {
+    position: absolute;
+    top: 0;
+    // height: 100vh;
+}
+
+.current-page {
+    // position: relative;
+}
+</style>

@@ -2,6 +2,12 @@
     <main ref="mainRef">
         index page
         <NuxtLink to="/playground">playground</NuxtLink>
+
+        <div class="d" v-for="i in 15">
+            <div class="a"></div>
+            <div class="b"></div>
+            <div class="c"></div>
+        </div>
     </main>
 </template>
 
@@ -69,6 +75,23 @@ main {
         font-size: 5rem;
         line-height: 100%;
         padding: 2rem;
+    }
+
+    .d div {
+        height: 4rem;
+        width: 100%;
+
+        &.a {
+            background-color: red;
+        }
+
+        &.b {
+            background-color: blue;
+        }
+
+        &.c {
+            background: black;
+        }
     }
 }
 </style>

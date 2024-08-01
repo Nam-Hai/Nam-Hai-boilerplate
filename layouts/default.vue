@@ -3,7 +3,6 @@
     <WebGLScene />
     <div class="page__wrapper">
       <slot />
-      <!-- <CustomRouter /> -->
     </div>
   </div>
 </template>
@@ -21,6 +20,5 @@ a {
 }
 
 .page__wrapper {
-  display: flex;
 }
 </style>
