@@ -32,7 +32,7 @@ const Is = {
     und: (t: any): t is undefined => t === undefined
 }
 
-const Select = (t: string | NodeList | Element[] | Element) => {
+const Select = (t: string | NodeList | HTMLElement[] | HTMLElement) => {
     return Is.str(t) ? getAll(t) : (t instanceof window.NodeList || Array.isArray(t)) ? t : [t];
 }
 
@@ -147,14 +147,32 @@ const Svg = {
 }
 
 const Class = {
-    add: (el: Element, name: string)=>{
+    add: (el: Element, name: string) => {
         el.classList.add(name)
     },
-    remove: (el: Element, name: string) =>{
+    remove: (el: Element, name: string) => {
         el.classList.remove(name)
     },
-    toggle: (el: Element, name: string)=>{
+    toggle: (el: Element, name: string) => {
         el.classList.toggle(name)
+    }
+}
+export class OrderedMap<K extends number, V> extends Map<number, V> {
+    orderedKeys: K[];
+    constructor() {
+        super()
+
+        this.orderedKeys = []
+    }
+
+    set(key: K, value: V) {
+        if (!this.has(key)) {
+            this.orderedKeys.push(key)
+            this.orderedKeys.sort((a, b) => { return a - b })
+        }
+        super.set(key, value)
+
+        return this
     }
 }
 export { Is, Lerp, iLerp, map, Clamp, get, getAll, Select, Cr, Round, random, Rand, Arr, Has, O, PE, Snif, T, BM, Ga, PD, ZL, Svg, Class }

@@ -1,4 +1,25 @@
 export type EaseFunctionName = 'linear' | 'i1' | 'o1' | 'i2' | 'o2' | 'i3' | 'o3' | 'i4' | 'o4' | 'i5' | 'o5' | 'i6' | 'o6' | 'io1' | 'io2' | 'io3' | 'io4' | 'io5' | 'io6'
+export enum EaseEnum {
+    linear = 'linear',
+    i1 = "i1",
+    i2 = "i2",
+    i3 = "i3",
+    i4 = "i4",
+    i5 = "i5",
+    i6 = "i6",
+    o1 = "o1",
+    o2 = "o2",
+    o3 = "o3",
+    o4 = "o4",
+    o5 = "o5",
+    o6 = "o6",
+    io1 = "io1",
+    io2 = "io2",
+    io3 = "io3",
+    io4 = "io4",
+    io5 = "io5",
+    io6 = "io6",
+}
 type EaseFunctionMap = {
     [K in EaseFunctionName]: (t: number) => number;
 }

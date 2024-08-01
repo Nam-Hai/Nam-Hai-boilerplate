@@ -223,10 +223,25 @@ body.flowIsHijacked {
   }
 }
 
-.page-a {
-  width: 50vw;
+
+.stop-motion__translate {
+  // transform: translate3d(var(--stop-motion-x), var(--stop-motion-y), 0) scale(var(--stop-motion-scale));
+  --stop-motion-x: 0;
+  --stop-motion-y: 0;
+  translate: var(--stop-motion-x) var(--stop-motion-y);
 }
 
-.page-b {
-  width: 50vw;
+.stop-motion__scale {
+  --stop-motion-scaleX: 0;
+  --stop-motion-scaleY: 0;
+  scale: var(--stop-motion-scaleX) var(--stop-motion-scaleY)
+}
+
+.stop-motion__rotate {
+  rotate: var(--stop-motion-rotate);
+  // transform: rotate3d(1, 1, 0, var(--stop-motion-rotate));
+}
+
+.stop-motion__opacity {
+  opacity: var(--stop-motion-opacity);
 }

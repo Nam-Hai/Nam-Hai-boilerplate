@@ -97,6 +97,7 @@ const swapClass = () => {
     position: absolute;
     top: 0;
     // height: 100vh;
+    width: 50vw;
 }
 
 .current-page {

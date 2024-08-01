@@ -1,6 +1,7 @@
 import type { MotionArg } from "~/plugins/core/motion"
 import { RafPriority, type rafEvent } from "~/plugins/core/raf"
 import type { ResizeEvent } from "~/plugins/core/resize"
+import type { StopMotionOption } from "~/plugins/core/stopMotion"
 
 export function useManifest() {
     const { $manifest } = useNuxtApp()
@@ -24,6 +25,11 @@ export function useTimer(callback: () => void, delay: number) {
 export function useMotion(arg: MotionArg) {
     const { $Motion } = useNuxtApp()
     return new $Motion(arg)
+}
+
+export function useSM(arg: StopMotionOption) {
+    const { $StopMotion } = useNuxtApp()
+    return new $StopMotion(arg)
 }
 
 export function useDelay(delay: number, callback: () => void, options?: { immediate?: boolean }) {
