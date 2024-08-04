@@ -92,8 +92,17 @@ const Snif = {
     }
 }
 
-const T = (el: HTMLElement, x: number, y: number, unite = '%') => {
-    el.style.transform = "translate3d(" + x + unite + "," + y + unite + ",0)"
+const T = (el: HTMLElement, x: number, y: number, options: { unit: string, soft: boolean }) => {
+    const unit = options.unit || "%"
+    const soft = !!options.soft
+
+    if (soft) {
+        N.Class.add(el, "stop-motion__translate")
+        el.style.setProperty("--stop-motion-x", x + unit)
+        el.style.setProperty("--stop-motion-y", y + unit)
+    } else {
+        el.style.transform = "translate3d(" + x + unit + "," + y + unit + ",0)"
+    }
 }
 const BM = (context: any, methodArray: string[]) => {
     for (const methodString of methodArray) {

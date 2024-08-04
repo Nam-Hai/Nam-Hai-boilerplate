@@ -18,7 +18,6 @@
     "sass": "^1.63.4"
   },
   "dependencies": {
-    "@pinia/nuxt": "^0.5.1",
     "@studio-freight/lenis": "^1.0.16",
     "ogl": "1.0.3",
     "stats.js": "^0.17.0"
