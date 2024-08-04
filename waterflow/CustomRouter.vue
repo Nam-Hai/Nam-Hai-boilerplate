@@ -82,6 +82,7 @@ const swapClass = () => {
     position: relative;
     overflow: scroll;
     height: 100vh;
+    width: 100vw;
 }
 
 .page-a {
@@ -96,11 +97,9 @@ const swapClass = () => {
 .page-b {
     position: absolute;
     top: 0;
-    // height: 100vh;
-    width: 50vw;
+    width: 100%;
+    height: 100%;
 }
 
-.current-page {
-    // position: relative;
-}
+.current-page {}
 </style>

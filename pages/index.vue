@@ -1,13 +1,5 @@
 <template>
     <main ref="mainRef">
-        index page
-        <NuxtLink to="/playground">playground</NuxtLink>
-
-        <div class="d" v-for="i in 15">
-            <div class="a"></div>
-            <div class="b"></div>
-            <div class="c"></div>
-        </div>
     </main>
 </template>
 
@@ -16,48 +8,15 @@ import { onFlow, onLeave } from '~/waterflow/composables/onFlow';
 import { usePageFlow } from '~/waterflow/composables/usePageFlow';
 
 const mainRef = shallowRef()
-
-onFlow(() => {
-    console.log("on flow");
-})
-
-onLeave(() => {
-    console.log("on leave");
-})
 usePageFlow({
     props: {
         mainRef
     },
     flowIn: (props, res) => {
-
-        const tl = useTL()
-        tl.from({
-            el: props.mainRef.value,
-            d: 1000,
-            e: "o4",
-            p: {
-                y: [100, 0]
-            },
-            cb() {
-                res()
-            },
-        })
-        tl.play()
+        res()
     },
     flowOut: (props, res) => {
-        const tl = useTL()
-        tl.from({
-            el: props.mainRef.value,
-            d: 1000,
-            e: "i4",
-            p: {
-                y: [0, 100]
-            },
-            cb() {
-                res()
-            },
-        })
-        tl.play()
+        res()
     }
 })
 
@@ -69,7 +28,16 @@ usePageFlow({
 main {
     top: 0;
     line-height: 100%;
-    font-size: 20rem;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    h1 {
+        font-size: 5;
+    }
 
     a {
         font-size: 5rem;

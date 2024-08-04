@@ -195,7 +195,7 @@ class ROR {
         vw: number,
         scale: number,
         breakpoint: string
-    }) => void, triggerCb?: ()=> void) {
+    }) => void, triggerCb?: () => void) {
         this.triggerCb = triggerCb
         this.cb = cb
         this.id = RoId
@@ -212,7 +212,7 @@ class ROR {
     }
 
     trigger() {
-        if(this.triggerCb) this.triggerCb()
+        if (this.triggerCb) this.triggerCb()
         this.cb(Ro.callbackArg)
     }
 }

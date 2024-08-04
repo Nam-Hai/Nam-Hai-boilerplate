@@ -22,7 +22,9 @@ function onClick(bol: boolean) {
     const motion = useSM({
         el: boxRef.value,
         p: {
-            x: [0, Math.random() * 80, "rem"]
+            x: [0, Math.random() * 80, "rem"],
+            o: [1, Math.random()],
+            y: [0, Math.random() * 700]
         },
         override: bol,
         d: 1500,

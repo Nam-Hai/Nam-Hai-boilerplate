@@ -30,7 +30,7 @@ interface StopMotionOptionPrimitiveI extends StopMotionOptionPrimitive {
 }
 
 type FromTo = [number, number]
-type DOMProp = "x" | "y" | "o" | "s" | "scaleX" | "scaleY" | "r"
+type DOMPropName = "x" | "y" | "o" | "s" | "scaleX" | "scaleY" | "r"
 interface StopMotionOptionBasicDOMAnimation extends StopMotionOptionPrimitive {
     el: HTMLElement,
     p: {
@@ -47,7 +47,7 @@ interface StopMotionOptionBasicDOMAnimation extends StopMotionOptionPrimitive {
 }
 interface StopMotionUpdatePropsOption extends StopMotionOptionPrimitive {
     p?: {
-        [K in DOMProp]?: {
+        [K in DOMPropName]?: {
             start?: number,
             end?: number
         }
@@ -76,12 +76,15 @@ const MotionManager = new class {
 
     motions: MotionItem[]
     frame: Frame;
+    tickerStore: Map<number, Record<string, number>>
     constructor() {
         N.BM(this, ["raf"])
         this.motions = []
 
         this.frame = new Frame(this.raf, FramePriority.MOTION)
         this.frame.run()
+
+        this.tickerStore = new Map()
     }
 
     add(ticker: Ticker) {
@@ -95,7 +98,13 @@ const MotionManager = new class {
             console.warn("Motion remove jammed : id not in stack")
             return
         }
-        this.motions.splice(i, 1)
+
+        const motions = this.motions.splice(i, 1)
+        if (motions.length === 0) return
+        const { ticker } = motions[0]
+        const vars = ticker.vars
+
+        this.tickerStore.set(ticker.id, vars)
     }
 
     raf(e: FrameEvent) {
@@ -206,6 +215,7 @@ class Ticker implements TickerI {
 
     id: number
 
+    vars: { [key: string]: number } = {}
     constructor(props: StopMotionOptionPrimitive) {
         this.d = props.d || 0
         this.delay = props.delay || 0
@@ -250,52 +260,48 @@ class Ticker implements TickerI {
     }
 }
 
+type DOMProp = {
+    curr: number,
+    start: number,
+    end: number,
+    unit: string
+}
+
 class TickerDOMAnimation extends Ticker implements TickerI {
-    props: {
-        name: DOMProp & string,
-        curr: number,
-        start: number,
-        end: number,
-        unit: string
-    }[] = [];
-    propsTable = new Map<DOMProp, number>()
+
+    props = new Map<DOMPropName, DOMProp>()
     el: HTMLElement;
     override: boolean | undefined;
     constructor(props: StopMotionOptionBasicDOMAnimation) {
         super(props)
 
         this.el = props.el
-        let index = 0
 
         this.override = props.override || false
         for (const [key, value] of Object.entries(props.p)) {
-            const k = key as DOMProp & string;
+            const k = key as DOMPropName & string;
 
             const from = value[0]
             const to = value[1]
             const unit = value[2] || "%"
 
 
-            this.props.push({
-                name: k,
+            this.props.set(k, {
                 curr: this.reverse ? to : from,
                 start: from,
                 end: to,
                 unit
             })
-
-            this.propsTable.set(k, index)
-            index++
         }
     }
 
     update(e: MotionEvent) {
         super.update(e)
-        if (this.props.length === 0) return
-        for (const prop of this.props) {
+        for (const [key, prop] of this.props.entries()) {
             prop.curr = N.Lerp(prop.start, prop.end, e.easeProgress)
+            this.vars[key] = prop.curr
         }
-        const table = this.propsTable;
+        const table = this.props;
 
         const x = table.has("x"), y = table.has("y")
         const translate = x || y
@@ -310,32 +316,39 @@ class TickerDOMAnimation extends Ticker implements TickerI {
 
         if (translate) {
             N.Class.add(element, "stop-motion__translate")
-            x && element.style.setProperty("--stop-motion-x", this.props[table.get("x")!].curr + this.props[table.get("x")!].unit)
-            y && element.style.setProperty("--stop-motion-y", this.props[table.get("y")!].curr + this.props[table.get("y")!].unit)
+            if (x) {
+                const value = this.props.get("x")!
+                element.style.setProperty("--stop-motion-x", value.curr + value.unit)
+            }
+            if (y) {
+                const value = this.props.get("y")!
+                element.style.setProperty("--stop-motion-y", value.curr + value.unit)
+            }
         }
 
         if (opacity) {
             N.Class.add(element, "stop-motion__opacity")
-            element.style.setProperty("--stop-motion-opacity", this.props[table.get("o")!].curr + "")
+            const value = this.props.get("o")!
+            element.style.setProperty("--stop-motion-opacity", value.curr + "")
         }
 
         if (scale || scaleX || scaleY) N.Class.add(element, "stop-motion__scale")
         if (scale) {
-            const scaleValue = this.props[table.get("s")!].curr + ""
+            const scaleValue = this.props.get("s")!.curr + ""
             element.style.setProperty("--stop-motion-scaleX", scaleValue)
             element.style.setProperty("--stop-motion-scaleY", scaleValue)
         } else if (scaleX) {
-            const scaleValue = this.props[table.get("scaleX")!].curr + ""
+            const scaleValue = this.props.get("scaleX")!.curr + ""
             element.style.setProperty("--stop-motion-scaleX", scaleValue)
         } else if (scaleY) {
-            const scaleValue = this.props[table.get("scaleY")!].curr + ""
+            const scaleValue = this.props.get("scaleY")!.curr + ""
             element.style.setProperty("--stop-motion-scaleY", scaleValue)
 
         }
 
         if (rotate) {
             N.Class.add(element, "stop-motion__rotate")
-            const prop = this.props[table.get("r")!]
+            const prop = this.props.get("r")!
             const rotateValue = prop.curr + (prop.unit === "%" ? "deg" : prop.unit)
             element.style.setProperty("--stop-motion-rotate", rotateValue)
         }
@@ -345,32 +358,30 @@ class TickerDOMAnimation extends Ticker implements TickerI {
     updateProps(arg?: StopMotionUpdatePropsOption) {
         const id = N.Ga(this.el, "data-stop-motion")
         !!id && MotionManager.remove(+id)
-
+        const currProps = !!id && MotionManager.tickerStore.get(+id) || {}
+        !!id && MotionManager.tickerStore.delete(+id)
         super.updateProps(arg)
 
         this.override = arg?.override || this.override
 
         this.el.setAttribute("data-stop-motion", `${this.id}`)
 
-        const style = window.getComputedStyle(this.el)
-
-        for (const prop of this.props) {
+        for (const [key, prop] of this.props.entries()) {
             prop.end = this.reverse ? prop.start : prop.end
 
-            console.log(this.override);
             if (!this.override) {
-                const value = style.getPropertyValue(STYLE_MAP[prop.name])
-                prop.curr = +value.slice(0, -prop.unit.length)
+                const value = currProps[key]
+                if (value) prop.curr = value
             }
             prop.start = prop.curr
 
-            if (arg && arg.p && arg.p[prop.name]) {
-                if (!!arg.p[prop.name]?.end) {
-                    const end = arg.p[prop.name]!.end!
+            if (arg && arg.p && arg.p[key]) {
+                if (!!arg.p[key]?.end) {
+                    const end = arg.p[key]!.end!
                     prop.end = end
                 }
-                if (arg.p[prop.name]?.start) {
-                    const start = arg.p[prop.name]!.start!
+                if (arg.p[key]?.start) {
+                    const start = arg.p[key]!.start!
                     prop.start = start
                 }
             }
@@ -473,18 +484,13 @@ class Film {
     }
 
     getPromise() {
-        return this.stopMotions[this.stopMotions.length - 1].promise
+        return Promise.all(this.stopMotions.map(motion => motion.promise))
     }
 
     play(props?: StopMotionUpdatePropsOption) {
+        const promises = this.stopMotions.map(motion => motion.play(props))
 
-        const promise = this.stopMotions[this.stopMotions.length - 1].play(props)
-        for (let i = this.stopMotions.length - 2; i >= 0; i--) {
-            const stopMotion = this.stopMotions[i]
-            stopMotion.play(props)
-        }
-        // WARNING : promise returned is the last motion's, but it is not necessarily the last one to end
-        return promise
+        return Promise.all(promises)
     }
 
     pause() {
