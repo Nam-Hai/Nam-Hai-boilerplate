@@ -1,21 +1,32 @@
 <template>
     <main ref="mainRef">
+        <p>
+            hey this is my boilerplate™<br>
+            I use Nuxt and a lot custom tools. Some of this is a bit useless maybe. Maybe you should not use my
+            animation engine as there are more robust already existing tools like gsap or animejs. The frame manager and
+            the resize manager are cool tho.<br>
+            <NuxtLink to="https://github.com/Nam-Hai/Nam-Hai-boilerplate" target="_blank" rel="noopener noreferrer">
+                Click here
+            </NuxtLink>
+        </p>
     </main>
 </template>
 
 <script lang="ts" setup>
-import { onFlow, onLeave } from '~/waterflow/composables/onFlow';
 import { usePageFlow } from '~/waterflow/composables/usePageFlow';
 
 const mainRef = shallowRef()
+
 usePageFlow({
     props: {
         mainRef
     },
     flowIn: (props, res) => {
         res()
+        res()
     },
     flowOut: (props, res) => {
+        res()
         res()
     }
 })
@@ -26,40 +37,13 @@ usePageFlow({
 @use "@/styles/shared.scss" as *;
 
 main {
-    top: 0;
-    line-height: 100%;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    font-size: 2rem;
 
-    h1 {
-        font-size: 5;
-    }
-
-    a {
-        font-size: 5rem;
-        line-height: 100%;
-        padding: 2rem;
-    }
-
-    .d div {
-        height: 4rem;
-        width: 100%;
-
-        &.a {
-            background-color: red;
-        }
-
-        &.b {
-            background-color: blue;
-        }
-
-        &.c {
-            background: black;
-        }
+    p {
+        position: absolute;
+        top: 14.2rem;
+        left: 75rem;
+        width: 41rem;
     }
 }
 </style>

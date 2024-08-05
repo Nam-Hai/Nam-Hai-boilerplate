@@ -25,15 +25,9 @@ html {
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: none;
   font-size: 10px;
-  // overscroll-behavior: contain
-  // touch-action: manipulation
-  // touch-action: none
 
   @include rem-scale();
 
-  // font-family: "Plus Jakarta Sans";
-  // font-family: "GT America";
-  font-family: "Circular";
   font-weight: 500;
 
   &.remlock {
@@ -122,7 +116,9 @@ button {
   background: none;
 }
 
-img, video, svg {
+img,
+video,
+svg {
   user-select: none;
   pointer-events: none;
   -webkit-user-drag: none;
