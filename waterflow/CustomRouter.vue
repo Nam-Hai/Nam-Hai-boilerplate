@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { RouteComponent, RouteLocationNormalized } from '#vue-router';
-import { delay } from '~/plugins/core/raf';
 import { provideFlowProvider, useFlowProvider } from './FlowProvider';
 
 const nuxtApp = useNuxtApp()
@@ -80,7 +79,7 @@ const swapClass = () => {
 <style lang="scss">
 .custom-router__wrapper {
     position: relative;
-    overflow: scroll;
+    // overflow: scroll;
     height: 100vh;
     width: 100vw;
 }

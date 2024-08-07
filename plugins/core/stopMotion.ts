@@ -133,7 +133,7 @@ const MotionManager = new class {
 }
 
 
-class StopMotion {
+class Motion {
     ticker: Ticker[];
     delay!: Delay;
     promise: Promise<void>;
@@ -430,7 +430,7 @@ const Svg = {
 
 class Film {
 
-    stopMotions: StopMotion[]
+    stopMotions: Motion[]
     on: boolean
     start?: number;
     end: number = 0;
@@ -449,7 +449,7 @@ class Film {
         this.start = props.delay || 0
         this.end = this.start + (props.d || 0)
 
-        const stopMotion = new StopMotion(props)
+        const stopMotion = new Motion(props)
         this.stopMotions.push(stopMotion)
         return this
     }
@@ -460,7 +460,7 @@ class Film {
     then(props: StopMotionOption) {
         props.delay = this.end + (props.delay || 0)
 
-        const stopMotion = new StopMotion(props)
+        const stopMotion = new Motion(props)
         this.stopMotions.push(stopMotion)
 
         this.end = props.delay + (props.d || 0)
@@ -475,7 +475,7 @@ class Film {
         // tricks to start stagger from 0 if no other motion has been created yet
         props.delay = this.start === undefined ? 0 : this.start + (props.delay || 0)
 
-        const stopMotion = new StopMotion(props)
+        const stopMotion = new Motion(props)
         this.stopMotions.push(stopMotion)
 
         this.start = props.delay
@@ -509,5 +509,5 @@ class Film {
     }
 }
 
-export { StopMotion, Film }
+export { Motion , Film }
 export type { MotionEvent }

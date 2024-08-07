@@ -1,5 +1,6 @@
 <template>
-  <div class="app__wrapper">
+  <div class="app__wrapper" :class="{ flowIsHijacked }">
+    <!-- <OGLRenderer /> -->
     <WebGLScene />
     <Menu />
     <div class="page__wrapper">
@@ -9,6 +10,11 @@
 </template>
 
 <script setup lang="ts">
+import OGLRenderer from '~/ogl.renderer/OGLRenderer.vue';
+import { useFlowProvider } from '~/waterflow/FlowProvider';
+
+const { flowIsHijacked } = useFlowProvider()
+console.log(flowIsHijacked);
 </script>
 
 <style lang="scss" scoped>

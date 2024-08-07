@@ -1,18 +1,14 @@
-import { Frame } from './core/frame'
-import { Motion, TL } from './core/motion'
-import { RafR, Delay, Timer } from './core/raf'
+import { Delay, Frame, Timer } from './core/frame'
 import { ROR } from './core/resize'
-import { StopMotion } from './core/stopMotion'
+import { Film, Motion } from './core/stopMotion'
 
 const N = {
   Delay,
   Timer,
-  RafR,
   Motion,
-  TL,
+  Film,
   ROR,
   Frame,
-  StopMotion
 }
 
 export default defineNuxtPlugin(nuxtApp => {

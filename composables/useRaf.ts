@@ -1,9 +1,11 @@
-import { type rafEvent, RafPriority } from "~/plugins/core/raf"
+import { FramePriority, type FrameEvent } from "~/plugins/core/frame"
 
-export const useRaf = (cb: (e: rafEvent) => void, priority: RafPriority = RafPriority.NORMAL) => {
+export const useRaf = (cb: (e: FrameEvent) => void, priority: FramePriority = FramePriority.MAIN) => {
 
-  const { $RafR } = useNuxtApp()
-  const raf = process.client ? new $RafR(cb, priority) : undefined
+  const { $Frame } = useNuxtApp()
+  console.log($Frame);
+  const raf = process.client ? new $Frame(cb, priority) : undefined
+  console.log(raf);
 
   onMounted(() => {
     raf && raf.run()

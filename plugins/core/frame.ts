@@ -1,5 +1,7 @@
 import { OrderedMap } from "~/plugins/core/utils"
 
+const isClient = typeof window !== "undefined"
+
 enum FramePriority {
     FIRST = 0,
 
@@ -32,7 +34,7 @@ const Tab = new class {
         this.pause = 0
         N.BM(this, ["v"])
 
-        document.addEventListener("visibilitychange", this.v)
+        isClient && document.addEventListener("visibilitychange", this.v)
     }
     add(arg: { stop: () => void, resume: (delta: number) => void }) {
         this.array.push(arg)
@@ -83,7 +85,7 @@ const FrameManager = new class {
 
         this._on = true
         Tab.add({ stop: this.stop, resume: this.resume })
-        this.raf()
+        isClient && this.raf()
     }
 
     resume(delta = 0) {

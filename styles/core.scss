@@ -241,3 +241,15 @@ body.flowIsHijacked {
 .stop-motion__opacity {
   opacity: var(--stop-motion-opacity);
 }
+
+main {
+  overflow: hidden;
+}
+
+.flowIsHijacked {
+  pointer-events: none;
+
+  * {
+    pointer-events: none;
+  }
+}

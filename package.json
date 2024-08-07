@@ -20,7 +20,8 @@
   "dependencies": {
     "@studio-freight/lenis": "^1.0.16",
     "ogl": "1.0.3",
-    "stats.js": "^0.17.0"
+    "stats.js": "^0.17.0",
+    "vue-demi": "^0.14.10"
   },
   "overrides": {
     "vue": "latest"

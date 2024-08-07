@@ -3,7 +3,6 @@ import { Renderer, Camera, Transform, type OGLRenderingContext } from 'ogl'
 
 import { FallbackCanvas } from './Pages/fallbackCanvas';
 import { ROR } from '~/plugins/core/resize';
-import { FlowProvider } from '~/waterflow/FlowProvider';
 import { PreloaderCanvas } from './Pages/PreloaderCanvas';
 import type { CanvasPage } from './utils/types';
 import { IndexCanvas } from './Pages/IndexCanvas';

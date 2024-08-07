@@ -1,5 +1,4 @@
-import type { MotionArg } from "~/plugins/core/motion"
-import { RafPriority, type rafEvent } from "~/plugins/core/raf"
+import { FramePriority, type FrameEvent } from "~/plugins/core/frame"
 import type { ResizeEvent } from "~/plugins/core/resize"
 import type { StopMotionOption } from "~/plugins/core/stopMotion"
 
@@ -13,35 +12,30 @@ export function useLenis() {
     return lenis.value
 }
 
-export function useTL() {
-    const { $TL } = useNuxtApp()
-    return new $TL
+export function useFilm() {
+    const { $Film } = useNuxtApp()
+    return new $Film
 }
 export function useTimer(callback: () => void, delay: number) {
     const { $Timer } = useNuxtApp()
     return new $Timer(callback, delay)
 }
 
-export function useMotion(arg: MotionArg) {
+export function useMotion(arg: StopMotionOption) {
     const { $Motion } = useNuxtApp()
     return new $Motion(arg)
 }
 
-export function useSM(arg: StopMotionOption) {
-    const { $StopMotion } = useNuxtApp()
-    return new $StopMotion(arg)
-}
-
 export function useDelay(delay: number, callback: () => void, options?: { immediate?: boolean }) {
     const { $Delay } = useNuxtApp()
-    const d = new $Delay(callback, delay)
+    const d = new $Delay(delay, callback)
     d.run()
     return d
 }
 
-export function useRafR(callback: (arg: rafEvent) => void, priority: RafPriority = RafPriority.NORMAL) {
-    const { $RafR } = useNuxtApp()
-    return new $RafR(callback, priority)
+export function useFrame(callback: (arg: FrameEvent) => void, priority: FramePriority = FramePriority.MAIN) {
+    const { $Frame } = useNuxtApp()
+    return new $Frame(callback, priority)
 }
 
 export function useROR(callback: (arg: ResizeEvent) => void) {

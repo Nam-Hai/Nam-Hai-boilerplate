@@ -1,6 +1,5 @@
 import { onUnmounted } from "vue";
 import { useRouter } from "vue-router";
-import { delay } from "~/plugins/core/raf";
 import { useFlowProvider } from "../FlowProvider";
 import type { RouteLocationNormalized } from "#vue-router";
 

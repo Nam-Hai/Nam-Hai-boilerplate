@@ -28,8 +28,28 @@ usePageFlow({
         animeRef
     },
     flowIn: (props, res) => {
-        const tl = useTL()
-        res()
+        const film = useFilm()
+        film.from({
+            el: mainRef.value,
+            p: {
+                x: [100, 0]
+            },
+            d: 1000,
+            e: "o2"
+        })
+        film.from({
+            el: props.animeRef.value,
+            p: {
+                r: [360, 0, "deg"]
+            },
+            d: 2000,
+            e: "o2",
+            cb() {
+                res()
+            },
+        })
+
+        film.play()
     },
     flowOut: (props, res) => {
         res()
@@ -47,6 +67,10 @@ main {
     background: red;
 
     .wrapper {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
         display: flex;
         flex-direction: column;
 

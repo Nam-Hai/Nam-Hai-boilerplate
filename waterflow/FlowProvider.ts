@@ -1,10 +1,8 @@
-import type { RouteLocationNormalized } from '#vue-router';
 import type { ShallowRef } from 'nuxt/dist/app/compat/capi';
-import { createContext } from './util/apiInject';
 
 
 type CrossFadeMode = "TOP" | "BOTTOM"
-export const [provideFlowProvider, useFlowProvider] = createContext(() => {
+export const [provideFlowProvider, useFlowProvider, flowKey] = createContext("flow-provider", () => {
   const route = useRoute()
   const currentRoute = shallowRef(route)
   const routeTo = shallowRef(route)
@@ -13,6 +11,9 @@ export const [provideFlowProvider, useFlowProvider] = createContext(() => {
 
 
   const flowIsHijackedPromise: Ref<Promise<void> | undefined> = shallowRef(undefined)
+  const flowIsHijacked = computed(() => {
+    return !!flowIsHijackedPromise.value
+  })
   let flowHijackResolver: (() => void) | undefined
 
   function releaseHijackFlow() {
@@ -47,6 +48,7 @@ export const [provideFlowProvider, useFlowProvider] = createContext(() => {
     crossfadeMode,
 
     flowIsHijackedPromise,
+    flowIsHijacked,
     hijackFlow,
     releaseHijackFlow,
 

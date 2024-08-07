@@ -31,7 +31,7 @@ export const usePin = ({
 
   const resize = () => {
 
-    N.T(el.value, 0, 0, 'px')
+    N.T(el.value, 0, 0, { unit: "px" })
     computeBounds()
   }
 
@@ -52,7 +52,7 @@ export const usePin = ({
     let offset = N.Clamp(dist, 0, end * screenSize / 100 + endPx)
     if (offset > 0) hasEnter.value = true
 
-    if (el.value) direction == "vertical" ? N.T(el.value, 0, offset, 'px') : N.T(el.value, offset, 0, 'px')
+    if (el.value) direction == "vertical" ? N.T(el.value, 0, offset, { unit: "px" }) : N.T(el.value, offset, 0, { unit: "px" })
 
     const t = N.iLerp(offset, 0, end * screenSize / 100 + endPx)
     progress.value = t

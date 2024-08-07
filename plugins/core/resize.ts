@@ -1,7 +1,6 @@
-import { Timer, RafR } from "./raf"
-
 import SassVars from '@/styles/sass/variables.module.scss'
 import { BM, Clamp } from "./utils"
+import { Timer } from './frame'
 
 
 type BreakpointType = {

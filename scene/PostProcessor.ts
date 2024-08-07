@@ -1,8 +1,8 @@
 
-import type { rafEvent } from '~/plugins/core/raf';
 import type { ROR, ResizeEvent } from '~/plugins/core/resize';
 import { Program, Mesh, RenderTarget, Triangle } from 'ogl'
 import Callstack from './utils/Callstack';
+import type { FrameEvent } from '~/plugins/core/frame';
 
 type PostProcessorOptions = {
   width: number,
@@ -23,7 +23,7 @@ type PassOptions = {
   textureUniform: string,
   uniforms: any,
   enabled: boolean,
-  beforePass: (e: rafEvent, { scene, texture, camera }: { scene: any, texture: any, camera: any }) => void
+  beforePass: (e: FrameEvent, { scene, texture, camera }: { scene: any, texture: any, camera: any }) => void
 }
 
 type PassObject = {
@@ -32,7 +32,7 @@ type PassObject = {
   textureUniform: string,
   uniforms: any,
   enabled: boolean,
-  beforePass?: (e: rafEvent, { scene, texture, camera }: { scene: any, texture: any, camera: any }) => void
+  beforePass?: (e: FrameEvent, { scene, texture, camera }: { scene: any, texture: any, camera: any }) => void
 }
 export interface PassEffect {
   render: () => void,
@@ -176,7 +176,7 @@ export default class PostProcessor {
   }
 
   // Uses same arguments as renderer.render, with addition of optional texture passed in to avoid scene render
-  render(e: rafEvent, { scene, camera, texture, target = null, update = true, sort = true, frustumCull = true, beforePostCallbacks }: Partial<PostRenderOptions>) {
+  render(e: FrameEvent, { scene, camera, texture, target = null, update = true, sort = true, frustumCull = true, beforePostCallbacks }: Partial<PostRenderOptions>) {
     const enabledPasses = this.passes.filter((pass) => pass.enabled);
 
     if (!texture) {
