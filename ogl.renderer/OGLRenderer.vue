@@ -5,6 +5,7 @@ import { provideOGL, type OGLContext } from './useOGL';
 import { nodeOps } from './CustomRenderer';
 import { provideFlowProvider, useFlowProvider } from '~/waterflow/FlowProvider';
 import { provideStoreView } from '~/composables/useStoreView';
+import { provideStoreCursor, useStoreCursor } from '~/composables/useStore';
 
 const canvasRef = shallowRef() as Ref<HTMLCanvasElement>
 
@@ -17,6 +18,7 @@ const scene = shallowRef<Transform>(new Transform())
 
 const flowProvider = useFlowProvider()
 const storeView = useStoreView()
+const storeCursor = useStoreCursor()
 
 const createInternalComponent = (context: OGLContext) =>
     defineComponent({
@@ -27,6 +29,7 @@ const createInternalComponent = (context: OGLContext) =>
             provide('ogl', context)
             provideFlowProvider(flowProvider)
             provideStoreView(storeView)
+            provideStoreCursor(storeCursor)
 
             const slot = slots?.default ? slots.default() : []
             return () => h(Fragment, null, slot)

@@ -13,18 +13,13 @@ const useStore = createStore(() => {
   const preloaderComplete = ref(false);
   return { isMobile, pageLoaded, preventScroll, fromPreloader, manifestLoaded, preloaderComplete }
 })
+
 export default useStore
 
-const useCursorStore = createStore(() => {
-  const cursorState = ref('active')
-
-  function toggleMouse(active: boolean) {
-    cursorState.value = active ? 'active' : 'default'
-  }
-  return { cursorState, toggleMouse }
+export const [provideStoreCursor, useStoreCursor] = createContext(() => {
+  const cursorState = ref(0)
+  return { cursorState }
 })
-
-export { useCursorStore }
 
 export const useCounterStore = defineStore('counter', () => {
   const count = ref(0)

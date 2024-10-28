@@ -2,7 +2,7 @@
   <div class="app__wrapper" :class="{ flowIsHijacked }">
     <!-- <OGLRenderer /> -->
     <WebGLScene />
-    <Menu />
+    <!-- <Menu /> -->
     <Cursor />
     <div class="page__wrapper">
       <slot />

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { RenderTarget } from 'ogl';
 import { useEventListener } from '~/composables/useEventListener';
+import { useStoreCursor } from '~/composables/useStore';
 import { useStoreView } from '~/composables/useStoreView';
 import { useCamera, useOGL } from '~/ogl.renderer/useOGL';
 import { getNodeTree } from '~/scene/utils/WebGL.utils';
@@ -31,6 +32,7 @@ useEventListener(document, "click", () => {
 })
 
 const { mouse, vh, vw, dpr } = useStoreView()
+const { cursorState } = useStoreCursor()
 
 useRaf((e) => {
     gl.renderer.render({
@@ -50,6 +52,7 @@ useRaf((e) => {
     (gl as WebGL2RenderingContext).readBuffer((gl as WebGL2RenderingContext).COLOR_ATTACHMENT1);
 
     const data = new Uint8Array(4);
+    const data2 = new Uint8Array(4);
     gl.readPixels(
         mouse.value.x * dpr.value / renderTargetRatio,
         (vh.value - mouse.value.y) * dpr.value / renderTargetRatio,
@@ -59,11 +62,23 @@ useRaf((e) => {
         gl.UNSIGNED_BYTE,  // type
         data);             // typed array to hold result
 
+    gl.readPixels(
+        ((mouse.value.x + vw.value / 2) % vw.value) * dpr.value / renderTargetRatio,
+        (vh.value - mouse.value.y) * dpr.value / renderTargetRatio,
+        1,
+        1,
+        gl.RGBA,           // format
+        gl.UNSIGNED_BYTE,  // type
+        data2);             // typed array to hold result
+
+    const dataToIndex = (data: Uint8Array) => data[0] + (data[1] << 8) + (data[2] << 16) + (data[3] << 24);
     // const index = data[0] + data[1] * 256 + data[2] * 256 * 256 + data[3] * 256 * 256 * 256
-    const index = data[0] + (data[1] << 8) + (data[2] << 16) + (data[3] << 24);
+    const index = dataToIndex(data)
+    const index2 = dataToIndex(data2)
 
     pickedIndex.value = index
-    console.log(pickedIndex.value);
+    // console.log(pickedIndex.value, index2);
+    cursorState.value = !!index2 ? 2 : !!index ? 1 : 0
 
     // for (let index = 0; index < renderList.length; index++) {
     //     const program = renderList[index].program
