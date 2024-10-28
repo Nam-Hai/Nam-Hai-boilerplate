@@ -1,10 +1,8 @@
-
 import { Transform, Camera, RenderTarget, Program, type OGLRenderingContext } from 'ogl'
-
 import { CanvasNode } from '../utils/types';
 import { EventHandler } from '../utils/WebGL.utils';
 
-const { mouse, vh, vw } = useStoreView()
+// const { mouse, vh, vw } = useStoreView()
 
 // Drop frames with mousemove after 300 meshes
 export class Picker extends CanvasNode {
@@ -82,9 +80,9 @@ export class Picker extends CanvasNode {
         ro.on()
         this.onDestroy(() => ro.off())
 
-        const raf = useRafR(this.pick)
-        raf.run()
-        this.onDestroy(() => raf.kill())
+        // const raf = useRafR(this.pick)
+        // raf.run()
+        // this.onDestroy(() => raf.kill())
     }
 
     add(canvasNode: CanvasNode) {
@@ -138,6 +136,8 @@ export class Picker extends CanvasNode {
         (this.gl as WebGL2RenderingContext).readBuffer((this.gl as WebGL2RenderingContext).COLOR_ATTACHMENT1);
 
         const data = new Uint8Array(4);
+        const mouse = { x: 0, y: 0 }
+        const vh = { value: 1 }
         this.gl.readPixels(
             mouse.x * this.dpr / this.renderTargetRatio,
             (vh.value - mouse.y) * this.dpr / this.renderTargetRatio,

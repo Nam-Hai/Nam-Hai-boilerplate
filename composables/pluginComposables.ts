@@ -8,8 +8,9 @@ export function useManifest() {
 }
 
 export function useLenis() {
-    const { lenis } = useStoreView()
-    return lenis.value
+    // const { lenis } = useStoreView()
+    // return lenis.value
+    return {}
 }
 
 export function useFilm() {

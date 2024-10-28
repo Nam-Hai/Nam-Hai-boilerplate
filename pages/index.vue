@@ -23,10 +23,8 @@ usePageFlow({
     },
     flowIn: (props, res) => {
         res()
-        res()
     },
     flowOut: (props, res) => {
-        res()
         res()
     }
 })

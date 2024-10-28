@@ -1,13 +1,15 @@
-export function useRO(callback: (e: { vh: number, vw: number, scale: number, breakpoint: string }) => void, triggerCb?: () => void) {
+import type { Breakpoints } from "~/plugins/core/resize";
+
+export function useRO(callback: (e: { vh: number, vw: number, scale: number, breakpoint: Breakpoints }) => void, triggerCb?: () => void) {
   const { $ROR } = useNuxtApp()
-  const ro = new $ROR(callback, triggerCb)
+  const ro = process.client ? new $ROR(callback, triggerCb) : undefined
 
   onMounted(() => {
-    ro.on()
+    ro && ro.on()
   });
 
   onBeforeUnmount(() => {
-    ro.off()
+    ro && ro.off()
   });
 
 

@@ -3,6 +3,7 @@
     <!-- <OGLRenderer /> -->
     <WebGLScene />
     <Menu />
+    <Cursor />
     <div class="page__wrapper">
       <slot />
     </div>
@@ -13,8 +14,12 @@
 import OGLRenderer from '~/ogl.renderer/OGLRenderer.vue';
 import { useFlowProvider } from '~/waterflow/FlowProvider';
 
-const { flowIsHijacked } = useFlowProvider()
+const { flowIsHijacked, currentRoute } = useFlowProvider()
 console.log(flowIsHijacked);
+
+watch(currentRoute, val => {
+  console.log(val.name);
+}, { immediate: true })
 </script>
 
 <style lang="scss" scoped>

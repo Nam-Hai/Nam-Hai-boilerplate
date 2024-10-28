@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import OGLRenderer from '~/ogl.renderer/OGLRenderer.vue';
-import Mesh from '~/ogl.renderer/OGLWrapper/Mesh.vue';
 import Renderer from '~/ogl.renderer/OGLWrapper/Renderer.vue';
 
 </script>
 <template>
     <OGLRenderer>
         <Renderer>
-            <Mesh>
-            </Mesh>
+            <Picker>
+                <Plane :coord="{ x: -0.5, y: 0.5 }" />
+                <Plane :coord="{ x: 0.5, y: -0.5 }" />
+            </Picker>
         </Renderer>
     </OGLRenderer>
 </template>

@@ -2,7 +2,7 @@ import type { ShallowRef } from 'nuxt/dist/app/compat/capi';
 
 
 type CrossFadeMode = "TOP" | "BOTTOM"
-export const [provideFlowProvider, useFlowProvider, flowKey] = createContext("flow-provider", () => {
+export const [provideFlowProvider, useFlowProvider, flowKey] = createContext(() => {
   const route = useRoute()
   const currentRoute = shallowRef(route)
   const routeTo = shallowRef(route)

@@ -27,7 +27,7 @@ import type { MultiWatchSources } from 'nuxt/dist/app/composables/asyncData'
 
 let EventID = 0
 export class EventHandler {
-     cbs: Map<number, Array<(e: any) => void>>
+    cbs: Map<number, Array<(e: any) => void>>
     constructor() {
         this.cbs = new Map()
     }
@@ -66,4 +66,17 @@ export function useCanvasReactivity(ctx: CanvasNode) {
     return {
         watch: canvasWatch
     }
+}
+
+export function getNodeTree() {
+    const instance = getCurrentInstance();
+    const parent = shallowRef()
+    const el = shallowRef()
+
+    onMounted(() => {
+        if (!instance) return
+        parent.value = instance.parent?.vnode.el
+        el.value = instance.vnode.el
+    });
+    return { parent, el }
 }

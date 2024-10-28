@@ -1,25 +1,22 @@
-import type { InjectionKey } from 'vue';
 import { inject, provide } from 'vue';
 
 /**
  * Helper function around provide/inject to create a typed pair with a curried "key" and default values
  */
 // export function createContext<T extends string | number | symbol, R>(
-export function createContext<Args extends any, A extends string | number | symbol, B, T extends Record<A, B>>(
-  k: string,
+export function createContext<Args, T extends Record<string | number | symbol, any>, Values = Omit<T, "init">>(
   defaultValue: (args: Args) => T,
 ) {
 
   const key = Symbol()
-  const provideContext = (value: Args): T => {
+  const provideContext = (value: Args): any => {
     const defaultVal = defaultValue(value);
     const constructedVal = Object.assign(defaultVal, value)
     provide(key, constructedVal);
-    return constructedVal
   };
 
-  const useContext = (value?: T | (() => T), treatDefaultAsFactory?: boolean): T => {
-    return inject(key) as T
+  const useContext = (value?: Values | (() => Values), treatDefaultAsFactory?: boolean): Values => {
+    return inject(key) as Values
   }
 
   return [provideContext, useContext, key] as const;

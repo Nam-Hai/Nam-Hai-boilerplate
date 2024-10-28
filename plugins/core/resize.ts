@@ -19,11 +19,12 @@ type DeviceTypes = {
     }
 }
 
+export type Breakpoints = "desktop" | "mobile"
 type ResizeEvent = {
     vh: number,
     vw: number,
     scale: number,
-    breakpoint: string
+    breakpoint: Breakpoints
 }
 
 const Ro = new class {
@@ -39,7 +40,7 @@ const Ro = new class {
     scale!: number
     vh!: number
     vw!: number
-    private breakpoint!: string
+    private breakpoint!: Breakpoints
     mode: 'fit' | 'width' | 'height'
     // raf: RafR
 
@@ -87,6 +88,7 @@ const Ro = new class {
             scale: this.scale,
             breakpoint: this.breakpoint
         }
+        console.log(arg);
         t.cb(arg)
         this.arr.push(t)
     }
@@ -139,9 +141,9 @@ const Ro = new class {
     private updateBreakpoint() {
         const bps = this.breakpoints
 
-        let device = 'mobile'
+        let device: Breakpoints = 'mobile'
 
-        for (const k of ['mobile', 'desktop']) {
+        for (const k of ['mobile', 'desktop'] as const) {
             if (this.vw >= bps[k].width) {
                 device = k
             }
@@ -193,7 +195,7 @@ class ROR {
         vh: number,
         vw: number,
         scale: number,
-        breakpoint: string
+        breakpoint: Breakpoints
     }) => void, triggerCb?: () => void) {
         this.triggerCb = triggerCb
         this.cb = cb

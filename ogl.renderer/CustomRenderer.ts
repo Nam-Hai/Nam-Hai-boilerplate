@@ -52,9 +52,19 @@ export const nodeOps = (context: OGLContext): RendererOptions<Transform, Transfo
 
                 const oglProps = omit(props)
                 if (target === Transform) {
-                    instance = new target(oglProps)
+                    instance = new target()
                 } else {
                     instance = new target(gl, oglProps)
+                }
+
+                if (N.Has(oglProps, "position")) {
+                    instance.position.set(oglProps.position)
+                }
+                if (N.Has(oglProps, "rotation")) {
+                    instance.position.set(oglProps.rotation)
+                }
+                if (N.Has(oglProps, "scale")) {
+                    instance.position.set(oglProps.scale)
                 }
             } else {
                 // TODO Primitives ?
@@ -63,21 +73,27 @@ export const nodeOps = (context: OGLContext): RendererOptions<Transform, Transfo
             return instance
         },
         insert(el, parent, anchor) {
-            if (!el) { return }
+            if (!el) {
+                if (!parent) return
+                el = parent
+                return el
+            }
+            console.log("insert", el, parent, anchor);
 
             if (el.setParent && !!parent) {
                 el.setParent(parent)
             }
 
-            return
+            return el
         },
         remove(el) {
             el.setParent(null)
         },
         patchProp(el, key, prevValue, nextValue, namespace, parentComponent) {
-            // console.error("patchProp", el, key, prevValue, nextValue, namespace, parentComponent);
+            // console.error("patchProp", "el", el, "key", key, prevValue, nextValue, namespace, parentComponent);
         },
         parentNode(node) {
+            console.log("custome renderer parent node : ", node);
             return node?.parent || null
         },
         createText: (text: string) => {

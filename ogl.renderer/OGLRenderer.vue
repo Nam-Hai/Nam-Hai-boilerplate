@@ -3,25 +3,30 @@ import { Transform } from 'ogl';
 import { createRenderer, Fragment, type App } from 'vue-demi';
 import { provideOGL, type OGLContext } from './useOGL';
 import { nodeOps } from './CustomRenderer';
-import { provideFlowProvider } from '~/waterflow/FlowProvider';
+import { provideFlowProvider, useFlowProvider } from '~/waterflow/FlowProvider';
+import { provideStoreView } from '~/composables/useStoreView';
 
 const canvasRef = shallowRef() as Ref<HTMLCanvasElement>
 
 const instance = getCurrentInstance()?.appContext.app
-console.log("instance : ", instance);
+
 const slots = defineSlots<{
     default: () => any
 }>()
 const scene = shallowRef<Transform>(new Transform())
+
+const flowProvider = useFlowProvider()
+const storeView = useStoreView()
 
 const createInternalComponent = (context: OGLContext) =>
     defineComponent({
         setup() {
             const ctx = getCurrentInstance()?.appContext
             if (ctx) { ctx.app = instance as App }
-            provide('ogl', context)
 
-            provideFlowProvider({})
+            provide('ogl', context)
+            provideFlowProvider(flowProvider)
+            provideStoreView(storeView)
 
             const slot = slots?.default ? slots.default() : []
             return () => h(Fragment, null, slot)
@@ -33,6 +38,7 @@ const mountCustomRenderer = (context: OGLContext) => {
     const { render, createApp } = createRenderer(nodeOps(context))
 
     const component = h(InternalComponent)
+    render(component, scene.value)
     const app = createApp(component)
     app.mount(scene.value)
 }
@@ -73,7 +79,6 @@ onMounted(() => {
         })
     }
 })
-const wrapperRef = shallowRef() as Ref<HTMLElement>
 
 </script>
 
@@ -85,5 +90,10 @@ const wrapperRef = shallowRef() as Ref<HTMLElement>
 .canvas__wrapper {
     position: fixed;
     inset: 0;
+}
+
+canvas {
+    height: 100%;
+    width: 100%;
 }
 </style>
