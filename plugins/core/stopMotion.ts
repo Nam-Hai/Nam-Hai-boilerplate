@@ -1,8 +1,6 @@
-import { EaseEnum, type Ease4Arg, type EaseFunctionName, Ease, Ease4 } from "~/plugins/core/eases";
-import { binarySearch, Delay, Frame, FramePriority, type FrameEvent } from "./frame";
 
-// type Without<T> = { [P in keyof T]?: undefined };
-// type XOR<A, B, C> = (Without<A> & Without<B> & C) | (Without<A> & Without<C> & B) | (Without<B> & Without<C> & A);
+import { EaseEnum, type Ease4Arg, type EaseFunctionName, Ease, Ease4 } from "~/plugins/core/eases";
+import { Frame, FramePriority, type FrameEvent, Delay, FrameFactory } from "./frame";
 
 const STYLE_MAP = {
     o: "--stop-motion-opacity",
@@ -72,16 +70,20 @@ type MotionItem = {
     ticker: Ticker
     startTime?: number
 }
-const MotionManager = new class {
+export class MotionManager {
 
     motions: MotionItem[]
     frame: Frame;
     tickerStore: Map<number, Record<string, number>>
-    constructor() {
+    frameFactory: FrameFactory;
+    constructor(frameFactory: FrameFactory) {
+
+        this.frameFactory = frameFactory;
+
         N.BM(this, ["raf"])
         this.motions = []
 
-        this.frame = new Frame(this.raf, FramePriority.MOTION)
+        this.frame = this.frameFactory.Frame({ callback: this.raf, priority: FramePriority.MOTION })
         this.frame.run()
 
         this.tickerStore = new Map()
@@ -92,7 +94,7 @@ const MotionManager = new class {
     }
 
     remove(id: number) {
-        const i = binarySearch(this.motions.map(el => { return { id: el.ticker.id } }), id)
+        const i = N.binarySearch(this.motions.map(el => { return { id: el.ticker.id } }), id)
 
         if (i == -1) {
             console.warn("Motion remove jammed : id not in stack")
@@ -132,16 +134,32 @@ const MotionManager = new class {
     }
 }
 
+export class MotionFactory {
+    motionManager: MotionManager;
+    constructor(motionManager: MotionManager) {
+        this.motionManager = motionManager
+        N.BM(this, ["Motion", "Film"])
+    }
 
-class Motion {
+    Motion(options: StopMotionOption) {
+        return new Motion(options, this.motionManager)
+    }
+    Film() {
+        return new Film(this.motionManager)
+    }
+}
+
+export class Motion {
     ticker: Ticker[];
     delay!: Delay;
     promise: Promise<void>;
     promiseRelease!: (value: void | PromiseLike<void>) => void;
     id?: number;
+    motionManager: MotionManager;
 
-    constructor(option: StopMotionOption) {
-        this.ticker = TickerFactory.createTicker(option)
+    constructor(option: StopMotionOption, motionManager: MotionManager) {
+        this.motionManager = motionManager
+        this.ticker = TickerFactory.createTicker(option, this.motionManager)
 
         this.promise = new Promise<void>(res => {
             this.promiseRelease = res
@@ -151,7 +169,7 @@ class Motion {
     pause() {
         this.delay && this.delay.stop()
         for (const ticker of this.ticker) {
-            MotionManager.remove(ticker.id)
+            this.motionManager.remove(ticker.id)
         }
 
         // this.id = undefined
@@ -165,9 +183,12 @@ class Motion {
         }
 
         const delay = this.ticker[0].delay || 0
-        this.delay = new Delay(delay, () => {
-            for (const ticker of this.ticker) {
-                MotionManager.add(ticker)
+        this.delay = this.motionManager.frameFactory.Delay({
+            delay,
+            callback: () => {
+                for (const ticker of this.ticker) {
+                    this.motionManager.add(ticker)
+                }
             }
         })
         this.delay.run()
@@ -181,16 +202,16 @@ class Motion {
 }
 
 class TickerFactory {
-    static createTicker(props: StopMotionOption) {
+    static createTicker(props: StopMotionOption, motionManager: MotionManager) {
         let ticker: Ticker[]
         if (props.svg && false) {
             props.svg
             // TODO
         } else if (props.p) {
             const elements = N.Select(props.el)
-            ticker = Object.values(elements as HTMLElement[]).map(el => new TickerDOMAnimation({ ...props, el: el }))
+            ticker = Object.values(elements as HTMLElement[]).map(el => new TickerDOMAnimation({ ...props, el: el }, motionManager))
         } else {
-            ticker = [new Ticker(props)]
+            ticker = [new Ticker(props, motionManager)]
         }
 
         return ticker
@@ -216,7 +237,9 @@ class Ticker implements TickerI {
     id: number
 
     vars: { [key: string]: number } = {}
-    constructor(props: StopMotionOptionPrimitive) {
+    motionManager: MotionManager;
+    constructor(props: StopMotionOptionPrimitive, motionManager: MotionManager) {
+        this.motionManager = motionManager
         this.d = props.d || 0
         this.delay = props.delay || 0
         this.cb = props.cb
@@ -272,8 +295,8 @@ class TickerDOMAnimation extends Ticker implements TickerI {
     props = new Map<DOMPropName, DOMProp>()
     el: HTMLElement;
     override: boolean | undefined;
-    constructor(props: StopMotionOptionBasicDOMAnimation) {
-        super(props)
+    constructor(props: StopMotionOptionBasicDOMAnimation, motionManager: MotionManager) {
+        super(props, motionManager)
 
         this.el = props.el
 
@@ -295,7 +318,7 @@ class TickerDOMAnimation extends Ticker implements TickerI {
         }
     }
 
-    update(e: MotionEvent) {
+    override update(e: MotionEvent) {
         super.update(e)
         for (const [key, prop] of this.props.entries()) {
             prop.curr = N.Lerp(prop.start, prop.end, e.easeProgress)
@@ -355,11 +378,11 @@ class TickerDOMAnimation extends Ticker implements TickerI {
     }
 
 
-    updateProps(arg?: StopMotionUpdatePropsOption) {
+    override updateProps(arg?: StopMotionUpdatePropsOption) {
         const id = N.Ga(this.el, "data-stop-motion")
-        !!id && MotionManager.remove(+id)
-        const currProps = !!id && MotionManager.tickerStore.get(+id) || {}
-        !!id && MotionManager.tickerStore.delete(+id)
+        !!id && this.motionManager.remove(+id)
+        const currProps = !!id && this.motionManager.tickerStore.get(+id) || {}
+        !!id && this.motionManager.tickerStore.delete(+id)
         super.updateProps(arg)
 
         this.override = arg?.override || this.override
@@ -428,14 +451,16 @@ const Svg = {
     }
 }
 
-class Film {
+export class Film {
 
     stopMotions: Motion[]
     on: boolean
     start?: number;
     end: number = 0;
+    motionManager: MotionManager;
 
-    constructor() {
+    constructor(motionManager: MotionManager) {
+        this.motionManager = motionManager
         this.stopMotions = []
         this.on = false
     }
@@ -449,37 +474,8 @@ class Film {
         this.start = props.delay || 0
         this.end = this.start + (props.d || 0)
 
-        const stopMotion = new Motion(props)
+        const stopMotion = new Motion(props, this.motionManager)
         this.stopMotions.push(stopMotion)
-        return this
-    }
-
-    /**
-     * Start at the end of the last Motion
-     */
-    then(props: StopMotionOption) {
-        props.delay = this.end + (props.delay || 0)
-
-        const stopMotion = new Motion(props)
-        this.stopMotions.push(stopMotion)
-
-        this.end = props.delay + (props.d || 0)
-        this.start = this.end - (props.d || 0)
-        return this
-    }
-
-    /**
-     * Start at the begining of the last Motion
-     */
-    stagger(props: StopMotionOption) {
-        // tricks to start stagger from 0 if no other motion has been created yet
-        props.delay = this.start === undefined ? 0 : this.start + (props.delay || 0)
-
-        const stopMotion = new Motion(props)
-        this.stopMotions.push(stopMotion)
-
-        this.start = props.delay
-        this.end = this.start + (props.d || 0)
         return this
     }
 
@@ -508,6 +504,3 @@ class Film {
         this.stopMotions = []
     }
 }
-
-export { Motion , Film }
-export type { MotionEvent }

@@ -7,20 +7,13 @@ export default defineNuxtConfig({
     //     preset: "vercel",
     // },
     css: ["@/styles/core.scss", "@/styles/app/index.scss"],
+
     modules: ['@pinia/nuxt'],
+
     pinia: {
         storesDirs: ['./stores/**'],
     },
 
-    components: {
-        global: true,
-        dirs: [
-            "~/components/lib/",
-            "~/components/app/",
-            "~/components/index/",
-            "~/components/webGL/",
-        ],
-    },
 
     ignore: [
         '~/pages/ignore/',
@@ -94,4 +87,6 @@ export default defineNuxtConfig({
             ],
         },
     },
+
+    compatibilityDate: "2024-11-23",
 });

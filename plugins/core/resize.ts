@@ -1,5 +1,5 @@
 import SassVars from '@/styles/sass/variables.module.scss'
-import { BM, Clamp } from "./utils"
+import { N } from "../../utils/namhai"
 import { Timer } from './frame'
 
 
@@ -48,8 +48,8 @@ const Ro = new class {
         this.tick = false
         this.arr = []
 
-        BM(this, ['fn', 'gRaf', 'run'])
-        this.timer = new Timer(this.gRaf, 200)
+        N.BM(this, ['fn', 'gRaf', 'run'])
+        // this.timer = new Timer(this.gRaf, 200)
         window.addEventListener('resize', this.fn)
 
         this.breakpoints = {}
@@ -174,13 +174,13 @@ const Ro = new class {
         // src/styles/helpers/breakpoints.sass // =remscale()
 
         if (this.mode === 'fit') {
-            this.scale = Clamp(Math.min(scaleX, scaleY), d.remScale.min, d.remScale.max)
+            this.scale = N.Clamp(Math.min(scaleX, scaleY), d.remScale.min, d.remScale.max)
         }
         else if (this.mode === 'width') {
-            this.scale = Clamp(scaleX, d.remScale.min, d.remScale.max)
+            this.scale = N.Clamp(scaleX, d.remScale.min, d.remScale.max)
         }
         else if (this.mode === 'height') {
-            this.scale = Clamp(scaleY, d.remScale.min, d.remScale.max)
+            this.scale = N.Clamp(scaleY, d.remScale.min, d.remScale.max)
         }
     }
 }

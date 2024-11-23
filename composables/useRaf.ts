@@ -2,18 +2,12 @@ import { FramePriority, type FrameEvent } from "~/plugins/core/frame"
 
 export const useRaf = (cb: (e: FrameEvent) => void, priority: FramePriority = FramePriority.MAIN) => {
 
-  const { $Frame } = useNuxtApp()
-  console.log($Frame);
-  const raf = process.client ? new $Frame(cb, priority) : undefined
-  console.log(raf);
+  return useCleanScope(() => {
+    console.log('callback in useSafeClient');
+    const raf = getFrame(cb, priority).run()
 
-  onMounted(() => {
-    raf && raf.run()
+    return () => {
+      raf.kill()
+    }
   })
-
-  onBeforeUnmount(() => {
-    raf && raf.kill()
-  })
-
-  return raf
 }

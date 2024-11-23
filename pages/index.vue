@@ -1,5 +1,8 @@
 <template>
     <main ref="mainRef">
+        <TestWrapper />
+        <div style="height: 10rem; width: 20rem; background-color: red;"></div>
+        <TestWrapper />
         <p>
             hey this is my boilerplate™<br>
             I use Nuxt and a lot custom tools. Some of this is a bit useless maybe. Maybe you should not use my

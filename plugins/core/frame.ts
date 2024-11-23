@@ -1,6 +1,5 @@
-import { OrderedMap } from "~/plugins/core/utils"
-
-const isClient = typeof window !== "undefined"
+import { OrderedMap } from "~/utils/namhai"
+import { N } from "~/utils/namhai"
 
 enum FramePriority {
     FIRST = 0,
@@ -23,7 +22,7 @@ type FrameItem = {
     startTime?: number
 }
 
-const Tab = new class {
+class TabManager {
     array: {
         stop: () => void,
         resume: (delta: number) => void
@@ -32,16 +31,16 @@ const Tab = new class {
     constructor() {
         this.array = []
         this.pause = 0
-        N.BM(this, ["v"])
 
-        isClient && document.addEventListener("visibilitychange", this.v)
+        N.BM(this, ["update"])
+        document.addEventListener("visibilitychange", this.update)
     }
     add(arg: { stop: () => void, resume: (delta: number) => void }) {
         this.array.push(arg)
     }
 
     // calcule le temps entre le moment ou pas visible a visible, puis actionne, tOff() ou tOn(r)
-    v(e: Event) {
+    update(e: Event) {
         const t = e.timeStamp;
         let dT = 0
 
@@ -60,32 +59,25 @@ const Tab = new class {
     }
 }
 
-const FrameManager = new class {
+class FrameManager {
     now: number = 0;
-    _on: boolean;
-    private set on(on: boolean) {
-        this._on = on
-    }
-
-    public get on(): boolean {
-        return this._on
-    };
+    on: boolean;
 
     private stack: OrderedMap<number, FrameItem[]>;
 
-    constructor() {
+    constructor(tab: TabManager) {
         N.BM(this, ['update', 'stop', 'resume'])
 
-        console.log('Frame Manager init');
         this.stack = new OrderedMap<number, FrameItem[]>()
         this.stack.set(FramePriority.FIRST, [])
         this.stack.set(FramePriority.MAIN, [])
         this.stack.set(FramePriority.LAST, [])
 
 
-        this._on = true
-        Tab.add({ stop: this.stop, resume: this.resume })
-        isClient && this.raf()
+        this.on = true
+        tab.add({ stop: this.stop, resume: this.resume })
+        this.raf()
+        // isClient && this.raf()
     }
 
     resume(delta = 0) {
@@ -117,7 +109,7 @@ const FrameManager = new class {
             return
         }
         const stack = this.stack.get(priority)!
-        const i = binarySearch(stack, id)
+        const i = N.binarySearch(stack, id)
 
         if (i == -1) {
             console.warn("Raf remove jammed : id not in stack")
@@ -131,7 +123,6 @@ const FrameManager = new class {
         this.now = t
 
         if (Math.floor(1 / delta * 1000) < 20) {
-            // console.log(this.stack.get(FramePriority.MAIN)!.length);
             console.warn("Huge frame drop")
         }
 
@@ -157,53 +148,73 @@ const FrameManager = new class {
     private raf() {
         requestAnimationFrame(this.update)
     }
+
+
+}
+
+class FrameFactory {
+    FrameManager: FrameManager
+    constructor(FrameManager: FrameManager) {
+        this.FrameManager = FrameManager
+        N.BM(this, ["Frame", "Delay", "Timer"])
+    }
+    Frame(options: Omit<ConstructorParameters<typeof Frame>[0], "FrameManager">) {
+        return new Frame({ ...options, FrameManager: this.FrameManager })
+    }
+    Delay(options: Omit<ConstructorParameters<typeof Delay>[0], "FrameManager">) {
+        return new Delay({ ...options, FrameManager: this.FrameManager })
+    }
+    Timer(options: Omit<ConstructorParameters<typeof Timer>[0], "FrameManager">) {
+        return new Timer({ ...options, FrameManager: this.FrameManager })
+    }
 }
 
 let FrameId = 0
 class Frame {
-    readonly cb: (e: FrameEvent) => void;
+    readonly callback: (e: FrameEvent) => void;
     readonly priority: number;
     private killed: boolean;
     on: boolean
     id?: number
+    FrameManager!: FrameManager
 
-    constructor(cb: (e: FrameEvent) => void, priority: number = FramePriority.MAIN) {
+    constructor(options: { callback: (e: FrameEvent) => void, priority?: number, FrameManager: FrameManager }) {
         N.BM(this, ["stop", "run", "kill"])
-        this.cb = cb
-        this.priority = priority
+        this.FrameManager = options.FrameManager
+        this.callback = options.callback
+        this.priority = options.priority || FramePriority.MAIN
 
         this.on = false
         this.killed = false
-
     }
 
     run(startTime?: number) {
-        if (this.on || this.killed) return
+        if (this.on || this.killed) return this
         this.on = true
         FrameId++
         this.id = FrameId
         const frameItem: FrameItem = {
             id: this.id,
-            cb: this.cb,
-            startTime: startTime ? FrameManager.now - startTime : undefined
+            cb: this.callback,
+            startTime: startTime ? this.FrameManager.now - startTime : undefined
         }
-        // if (startTime !== undefined) {
-        //     frameItem.startTime = FrameManager.now - startTime
-        // }
 
-        FrameManager.add(frameItem, this.priority)
+        this.FrameManager.add(frameItem, this.priority)
+        return this
     }
 
     stop() {
-        if (!this.on) return
+        if (!this.on) return this
         this.on = false
 
-        this.id && FrameManager.remove(this.id, this.priority)
+        this.id && this.FrameManager.remove(this.id, this.priority)
+        return this
     }
 
     kill() {
         this.stop()
         this.killed = true
+        return this
     }
 }
 
@@ -211,12 +222,15 @@ class Delay {
     readonly cb: (lateStart?: number) => void;
     readonly delay: number;
     private frame: Frame;
-    constructor(delay: number, callback: (lateStart?: number) => void) {
-        N.BM(this, ["update", "stop", "run"])
-        this.cb = callback
-        this.delay = delay
+    constructor(options: { delay: number, callback: (lateStart?: number) => void, FrameManager: FrameManager }) {
+        const { callback, delay, FrameManager } = options
 
-        this.frame = new Frame(this.update, FramePriority.DELAY)
+        N.BM(this, ["update", "stop", "run"])
+        this.cb = options.callback
+        this.delay = options.delay
+
+        this.frame = new Frame({ callback: this.update, priority: FramePriority.DELAY, FrameManager })
+
     }
 
     run() {
@@ -242,8 +256,9 @@ class Delay {
 
 class Timer {
     private ticker: Delay
-    constructor(callback: () => void, delay: number = 200) {
-        this.ticker = new Delay(delay, callback)
+    constructor(options: { callback: () => void, delay: number, FrameManager: FrameManager }) {
+        const { callback, delay = 200, FrameManager } = options
+        this.ticker = new Delay({ delay, callback, FrameManager })
     }
 
     tick() {
@@ -256,27 +271,5 @@ class Timer {
     }
 }
 
-
-
-export function binarySearch(arr: { id: number }[], n: number): number {
-    let left = 0
-    let right = arr.length - 1
-
-    while (left <= right) {
-        const mid = Math.floor((right - left) / 2) + left
-        const m = arr[mid].id
-
-        if (n === m) {
-            return mid;
-        } else if (n < m) {
-            right = mid - 1;
-        } else {
-            left = mid + 1;
-        }
-    }
-
-    return left
-}
-
-export { Frame, Delay, Timer, FramePriority }
+export { Frame, Delay, Timer, FramePriority, TabManager, FrameManager, FrameFactory }
 export type { FrameItem, FrameEvent }

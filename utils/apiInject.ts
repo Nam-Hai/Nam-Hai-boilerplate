@@ -13,6 +13,7 @@ export function createContext<Args, T extends Record<string | number | symbol, a
     const defaultVal = defaultValue(value);
     const constructedVal = Object.assign(defaultVal, value)
     provide(key, constructedVal);
+    return constructedVal
   };
 
   const useContext = (value?: Values | (() => Values), treatDefaultAsFactory?: boolean): Values => {
