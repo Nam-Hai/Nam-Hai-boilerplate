@@ -1,5 +1,8 @@
+@use "sass:map";
+@use "sass:list";
+
 @function index-to-key($map, $index) {
-  @return nth(map-keys($map), $index);
+  @return list.nth(map.keys($map), $index);
 }
 
 

@@ -1,4 +1,5 @@
 @use "sass:math";
+@use "sass:map";
 @use "vh-property.scss" as *;
 @use "./variables.module.scss" as *;
 
@@ -35,8 +36,8 @@
 }
 
 @mixin mainContainer(){
-  $desktopWidth: map-get(map-get(($breakpoints), desktop), design-width);
-  $desktopMaxScale: map-get(map-get(($breakpoints), desktop), scale-max);
+  $desktopWidth: map.get(map.get(($breakpoints), desktop), design-width);
+  $desktopMaxScale: map.get(map.get(($breakpoints), desktop), scale-max);
   width: var(--grid-width, 100%);
   max-width: #{$desktopWidth * $desktopMaxScale * 1px}; // css var doesn't work here for some reason
   margin-left: auto;

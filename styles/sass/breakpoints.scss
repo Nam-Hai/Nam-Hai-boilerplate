@@ -1,4 +1,6 @@
 @use "sass:math";
+@use "sass:map";
+@use "sass:list";
 
 @use "variables.module.scss" as *;
 @use "functions.scss" as *;
@@ -16,11 +18,11 @@
 
   @each $breakpoint-key,
   $breakpoint in $breakpoints {
-    $width: map-get(($breakpoint), width);
-    $design-width: map-get(($breakpoint), design-width);
-    $design-height: map-get(($breakpoint), design-height);
-    $scale-min: map-get($breakpoint, scale-min);
-    $scale-max: map-get($breakpoint, scale-max);
+    $width: map.get(($breakpoint), width);
+    $design-width: map.get(($breakpoint), design-width);
+    $design-height: map.get(($breakpoint), design-height);
+    $scale-min: map.get($breakpoint, scale-min);
+    $scale-max: map.get($breakpoint, scale-max);
     $breakpoint-min: max(1px, $scale-min * $site-scale * 10px);
     $breakpoint-val-w: math.div(10, ($design-width * $site-scale)) * 100vw;
     $breakpoint-val-h: math.div(10, ($design-height * $site-scale)) * 100vh;
@@ -80,12 +82,12 @@
 
     @each $breakpoint-key,
     $breakpoint in $breakpoints {
-      $index: index(($breakpoints), ($breakpoint-key $breakpoint));
-      $last: $index ==length($breakpoints);
+      $index: list.index(($breakpoints), ($breakpoint-key $breakpoint));
+      $last: $index ==list.length($breakpoints);
       $first: $index ==1;
-      $width: map-get(($breakpoint), width);
-      $scale-min: map-get($breakpoint, scale-min);
-      $scale-max: map-get($breakpoint, scale-max);
+      $width: map.get(($breakpoint), width);
+      $scale-min: map.get($breakpoint, scale-min);
+      $scale-max: map.get($breakpoint, scale-max);
       $scaled-min: $width * $scale-min;
       $scaled-max: $width * $scale-max;
 
@@ -98,8 +100,8 @@
         }
 
         @else {
-          $next: map-get(($breakpoints), index-to-key($breakpoints, $index + 1));
-          $next-width: map-get(($next), width);
+          $next: map.get(($breakpoints), index-to-key($breakpoints, $index + 1));
+          $next-width: map.get(($next), width);
 
           $next-width2: $next-width - 1;
 
@@ -134,7 +136,7 @@
             //     @media only screen and (min-width: $scaled-max * 1px)
             //       @content
             //   @else
-            //     $next: map-get(($breakpoints), index-to-key($breakpoints, $index + 1))
+            //     $next: map.get(($breakpoints), index-to-key($breakpoints, $index + 1))
             //     $next-width: map-get(($next), width)
             //
             //     @if $scaled-max < $next-width
