@@ -17,17 +17,3 @@ export default defineNuxtPlugin({
 
     }
 })
-
-// export default defineNuxtPlugin(nuxtApp => {
-
-//   const tab = new TabManager()
-//   const FM = new FrameManager(tab)
-//   const frameFactory = new FrameFactory(FM)
-
-//   return {
-//     provide: {
-//       frameFactory
-//     }
-//   }
-
-// })

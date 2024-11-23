@@ -1,3 +1,4 @@
+import type { EffectScope } from "vue"
 import { FramePriority, type FrameEvent } from "~/plugins/core/frame"
 import type { StopMotionOption } from "~/plugins/core/stopMotion"
 
@@ -21,36 +22,40 @@ export function useTimer(callback: () => void, delay: number) {
     return $frameFactory.Timer({ callback, delay })
 }
 
-
-export function useDelay(callback: () => void, delay: number, detached = false) {
+export function getDelay(callback: () => void, delay: number) {
     const { $frameFactory } = useNuxtApp()
 
-    const scope = useCleanScope(() => {
-        const d = $frameFactory.Delay({
-            callback: () => {
-                scope.run(() => {
-                    callback()
-                })
-            }, delay
-        })
+    return $frameFactory.Delay({ callback, delay })
+}
 
-        d.run()
+export function useDelay(callback: () => void, delay: number, detached = false) {
+    const scope = useCleanScope(() => {
+        let delayedScope: EffectScope | undefined;
+        const d = getDelay(() => {
+            delayedScope = useCleanScope(() => {
+                callback()
+            }, true)
+        }, delay).run()
 
         return () => {
+            delayedScope?.stop()
             d.stop()
-            scope.stop()
         }
     }, detached)
+
     return scope
 }
 
 export function getFrame(callback: (arg: FrameEvent) => void, priority: FramePriority = FramePriority.MAIN) {
     const { $frameFactory } = useNuxtApp()
-
     return $frameFactory.Frame({ callback, priority })
 }
+export const useFrame = (cb: (e: FrameEvent) => void, priority: FramePriority = FramePriority.MAIN) => {
+    return useCleanScope(() => {
+        const raf = getFrame(cb, priority).run()
 
-// export function useROR(callback: (arg: ResizeEvent) => void) {
-//     const { $ROR } = useNuxtApp()
-//     return new $ROR(callback)
-// }
+        return () => {
+            raf.kill()
+        }
+    })
+}

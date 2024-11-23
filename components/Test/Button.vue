@@ -28,12 +28,10 @@ const { count } = useTest()
 // })
 
 onMounted(() => {
-    const scope = useDelay(() => {
-        // const scopeD = effectScope()
-        // console.log(scope);
-        // scope.run(() => {
-        // })
-        console.log('test');
+    useDelay(() => {
+        useFrame(()=>{
+            console.log('test');
+        })
     }, 1000)
 
 })

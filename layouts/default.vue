@@ -31,9 +31,6 @@
 onMounted(() => {
   const nuxtapp = useNuxtApp()
   console.log(nuxtapp);
-  useRaf(()=>{
-    // console.log('tes');
-  })
 
   // useMotion({
   //   d: 2000,

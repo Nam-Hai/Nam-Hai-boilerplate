@@ -219,14 +219,14 @@ class Frame {
 }
 
 class Delay {
-    readonly cb: (lateStart?: number) => void;
+    readonly callback: (lateStart?: number) => void;
     readonly delay: number;
     private frame: Frame;
     constructor(options: { delay: number, callback: (lateStart?: number) => void, FrameManager: FrameManager }) {
         const { callback, delay, FrameManager } = options
 
         N.BM(this, ["update", "stop", "run"])
-        this.cb = options.callback
+        this.callback = options.callback
         this.delay = options.delay
 
         this.frame = new Frame({ callback: this.update, priority: FramePriority.DELAY, FrameManager })
@@ -234,13 +234,15 @@ class Delay {
     }
 
     run() {
-        if (this.delay === 0) return this.cb()
+        if (this.delay === 0) this.callback()
+        else this.frame.run()
 
-        this.frame.run()
+        return this
     }
 
     stop() {
         this.frame.stop()
+        return this
     }
 
     update(e: FrameEvent) {
@@ -249,8 +251,10 @@ class Delay {
         if (t >= this.delay) {
             this.stop()
             const lateStart = e.elapsed - this.delay
-            this.cb(lateStart)
+            this.callback(lateStart)
         }
+
+        return this
     }
 }
 
@@ -264,10 +268,12 @@ class Timer {
     tick() {
         this.ticker.stop()
         this.ticker.run()
+        return this
     }
 
     stop() {
         this.ticker.stop()
+        return this
     }
 }
 

@@ -1,16 +1,16 @@
 import { onWatcherCleanup, getCurrentWatcher } from "vue"
 
-export const useCleanScope = (callback: () => () => void, detached = false) => {
+export const useCleanScope = (callback: (() => (() => void) | void), detached = false) => {
     const curScope = getCurrentScope(), currentWatcher = getCurrentWatcher(), curInstance = getCurrentInstance()
+
+    if (!detached && !curScope && !currentWatcher && !curInstance) throw "useCleanScope is outside a scope or watcher"
+
     const scope = effectScope(detached);
-
-    if (!curScope && !currentWatcher && !curInstance) throw "useCleanScope is outside a scope or watcher"
-
     scope.run(() => {
         const onDiposeCallback = callback();
 
         onScopeDispose(() => {
-            onDiposeCallback();
+            onDiposeCallback?.();
         });
     });
 
@@ -18,11 +18,6 @@ export const useCleanScope = (callback: () => () => void, detached = false) => {
         onWatcherCleanup(() => {
             scope.stop()
         })
-    } else {
-        // on peut supprimer, je sais pas dans quel monde on va utiliser un effect()
-        // onEffectCleanup(() => {
-        //     scope.stop()
-        // })
     }
 
     return scope;
