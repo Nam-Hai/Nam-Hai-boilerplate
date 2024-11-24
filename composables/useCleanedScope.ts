@@ -1,18 +1,10 @@
-import { onWatcherCleanup, getCurrentWatcher } from "vue"
+import { onWatcherCleanup, getCurrentWatcher, EffectScope, type ShallowRef } from "vue"
 
-export const useCleanScope = (callback: (() => (() => void) | void), detached = false) => {
-    const curScope = getCurrentScope(), currentWatcher = getCurrentWatcher(), curInstance = getCurrentInstance()
-
-    if (!detached && !curScope && !currentWatcher && !curInstance) throw "useCleanScope is outside a scope or watcher"
+export const useCleanScope = <T>(callback: (() => T), detached = false) => {
+    const currentScope = getCurrentScope(), currentWatcher = getCurrentWatcher(), currentInstance = getCurrentInstance(), isVue = !!currentInstance
+    if (!detached && !currentScope && !currentWatcher && !currentInstance) throw "useCleanScope is outside a scope or watcher"
 
     const scope = effectScope(detached);
-    scope.run(() => {
-        const onDiposeCallback = callback();
-
-        onScopeDispose(() => {
-            onDiposeCallback?.();
-        });
-    });
 
     if (!!currentWatcher) {
         onWatcherCleanup(() => {
@@ -20,5 +12,16 @@ export const useCleanScope = (callback: (() => (() => void) | void), detached = 
         })
     }
 
-    return scope;
+    if (!!currentInstance && !currentInstance?.isMounted && !currentWatcher) {
+        onMounted(() => {
+            scope.run(() => {
+                callback()
+            })
+        })
+    } else {
+        scope.run(() => {
+            callback();
+        });
+    }
+    return scope
 };

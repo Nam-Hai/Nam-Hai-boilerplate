@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div ref="test">
 
         <button @click="onClick">TEST</button>
     </div>
@@ -26,18 +26,39 @@ const { count } = useTest()
 
 //     return a
 // })
+const test = useTemplateRef("test")
+useCleanScope(() => {
+    console.log(test.value);
+})
+// useFrame(()=>{
+//     console.log('test');
+// })
+// console.log(window, document);
+onMounted(() => {
+    useCleanScope(() => {
+        console.log('onMounter test');
+    })
+})
+// getFrame(()=>{
+//     console.log('test', document);
+// }).run()
 
 onMounted(() => {
     useDelay(() => {
-        useFrame(()=>{
-            console.log('test');
-        })
-    }, 1000)
+        console.log('delay 1');
+        useDelay(() => {
+            console.log('delay 2');
+            useFrame(() => console.log('test'))
 
+        }, 2000)
+    }, 1000)
 })
 
 watch(count, (v) => {
-})
+    useCleanScope(() => {
+        console.log("watch immeditate test");
+    })
+}, { immediate: true })
 </script>
 
 <style scoped>

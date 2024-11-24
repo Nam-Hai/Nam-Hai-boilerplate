@@ -455,8 +455,6 @@ export class Film {
 
     stopMotions: Motion[]
     on: boolean
-    start?: number;
-    end: number = 0;
     motionManager: MotionManager;
 
     constructor(motionManager: MotionManager) {
@@ -465,14 +463,7 @@ export class Film {
         this.on = false
     }
 
-    from(props: StopMotionOption | number) {
-        if (typeof props === "number") {
-            this.start = props || undefined
-            this.end = props
-            return this
-        }
-        this.start = props.delay || 0
-        this.end = this.start + (props.d || 0)
+    from(props: StopMotionOption) {
 
         const stopMotion = new Motion(props, this.motionManager)
         this.stopMotions.push(stopMotion)
@@ -495,6 +486,7 @@ export class Film {
             stopMotion.pause()
         }
     }
+
     reset() {
         for (let i = this.stopMotions.length - 1; i >= 0; i--) {
             const motion = this.stopMotions[i]
