@@ -24,9 +24,10 @@ onMounted(() => {
         console.log('delay 1');
         const tl = getFilm()
         tl.from({
+            el: test.value!,
             d: 1000,
-            update:(e)=>{
-                N.O(test.value!, e.progress)
+            p: {
+                o: [1, 0]
             }
         })
         tl.from({

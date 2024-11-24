@@ -99,17 +99,16 @@ export class MotionManager {
         this.motions.push({ ticker })
     }
 
-    remove(id: number) {
+    remove(id: number, canMiss: boolean = false) {
         const { index, miss } = N.binarySearch(this.motions.map(el => { return { id: el.ticker.id } }), id)
 
         console.log(this.motions, id, index, miss);
-        if (miss) {
+        if (!canMiss && miss) {
             console.warn("Motion remove jammed : id not in stack")
             return
         }
 
-        const motions = this.motions.splice(index, 1)
-        if (motions.length === 0) return
+        this.motions.splice(index, 1)
     }
 
     raf(e: FrameEvent) {
@@ -117,8 +116,7 @@ export class MotionManager {
             const item = this.motions[i]
             const ticker = item.ticker
 
-            item.startTime = item.startTime || e.elapsed
-
+            if (!item.startTime) item.startTime = item.startTime || e.elapsed
             const t = N.Clamp(e.elapsed - item.startTime, 0, ticker.d)
             if (ticker.d == 0) {
                 ticker.prog = 1
@@ -130,7 +128,7 @@ export class MotionManager {
             ticker.update({ progress: ticker.prog, easeProgress: ticker.progE })
 
             if (ticker.prog === 1) {
-                this.remove(ticker.id)
+                ticker.stop()
                 ticker.cb && ticker.cb()
             }
         }
@@ -170,25 +168,25 @@ export class Motion {
     }
 
     pause() {
+        this.ticker.stop()
         this.delay && this.delay.stop()
 
-        this.motionManager.remove(this.ticker.id)
-
-        // this.id = undefined
         return this
     }
     play(prop?: StopMotionUpdatePropsOption) {
         this.pause()
-
+        this.ticker.wait()
         this.ticker.updateProps(prop)
 
         const delay = this.ticker.delay || 0
+
         this.delay = this.motionManager.frameFactory.Delay({
             delay,
             callback: () => {
-                this.motionManager.add(this.ticker)
+                this.ticker.run()
             }
         })
+
         this.delay.run()
 
         this.promise = new Promise<void>(res => {
@@ -221,6 +219,11 @@ interface TickerI {
     updateProps: (props?: StopMotionUpdatePropsOption) => void
 }
 
+enum TickerOn {
+    stop = 0,
+    waiting = 1,
+    play = 2
+}
 class Ticker implements TickerI {
     reverse: boolean;
     cb: (() => void) | undefined;
@@ -233,6 +236,7 @@ class Ticker implements TickerI {
     updateFunc?: (e: MotionEvent) => void;
     id: number
     motionManager: MotionManager;
+    on: TickerOn;
     constructor(props: StopMotionOptionPrimitive, motionManager: MotionManager) {
         this.motionManager = motionManager
         this.d = props.d || 0
@@ -242,14 +246,29 @@ class Ticker implements TickerI {
         this.ease = props.e || EaseEnum.linear
         this.calc = typeof this.ease === "string" ? Ease[this.ease] : Ease4(this.ease)
         this.updateFunc = props.update
+        this.on = TickerOn.stop
 
         MotionId++
         this.id = MotionId
 
         if (this.reverse === true) {
             const ease = this.calc
-            // this.calc = (t: number) => 1 - ease(t)
+            this.calc = (t: number) => ease(1 - t)
         }
+    }
+    run() {
+        console.log("run", this.on);
+        if (this.on !== TickerOn.play) this.motionManager.add(this)
+        this.on = TickerOn.play
+    }
+    stop() {
+        if (this.on === TickerOn.play) {
+            this.motionManager.remove(this.id)
+        }
+        this.on = TickerOn.stop
+    }
+    wait() {
+        this.on = TickerOn.waiting
     }
 
     update(e: MotionEvent) {
@@ -271,10 +290,10 @@ class Ticker implements TickerI {
 
         this.calc = typeof this.ease === "string" ? Ease[this.ease] : Ease4(this.ease)
 
-        // if (this.reverse === true) {
-        //     const ease = this.calc
-        //     // this.calc = (t: number) => 1 - ease(t)
-        // }
+        if (this.reverse === true) {
+            const ease = this.calc
+            this.calc = (t: number) => ease(1 - t)
+        }
     }
 }
 
@@ -286,8 +305,6 @@ type DOMProp = {
 }
 
 class TickerDOMAnimation extends Ticker implements TickerI {
-
-    // props = new Map<DOMPropName, DOMProp>()
     override: boolean | undefined;
     el: [HTMLElement, DOMProp[]][];
     propToIndex: Record<StyleMapKey, number>
@@ -348,7 +365,7 @@ class TickerDOMAnimation extends Ticker implements TickerI {
                 if (translate) {
                     const valueX = x ? prop[this.propToIndex["x"]] : undefined
                     const valueY = y ? prop[this.propToIndex["y"]] : undefined
-                    transformString += `translante3d(${valueX?.curr ?? 0}${valueX?.unit || "%"}, ${valueY?.curr ?? 0}${valueY?.unit || "%"}, 0) `
+                    transformString += `translate3d(${valueX?.curr ?? 0}${valueX?.unit || "%"}, ${valueY?.curr ?? 0}${valueY?.unit || "%"}, 0) `
                 }
 
                 if (scale) {
@@ -365,6 +382,7 @@ class TickerDOMAnimation extends Ticker implements TickerI {
                 }
                 element.style.transform = transformString
             }
+
             if (opacity) {
                 const value = prop[this.propToIndex["o"]]
                 N.O(element, value.curr)
