@@ -79,9 +79,6 @@ export const useFrame = (cb: (e: FrameEvent) => void, priority: FramePriority = 
         onScopeDispose(() => {
             raf.kill()
         })
-        // return () => {
-        //     raf.kill()
-        // }
         return raf
     })
 }

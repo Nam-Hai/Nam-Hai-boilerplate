@@ -1,6 +1,6 @@
-import { onWatcherCleanup, getCurrentWatcher, EffectScope, type ShallowRef } from "vue"
+import { onWatcherCleanup, getCurrentWatcher } from "vue"
 
-export const useCleanScope = <T>(callback: (() => T), detached = false) => {
+export const useCleanScope = (callback: (() => void), detached = false) => {
     const currentScope = getCurrentScope(), currentWatcher = getCurrentWatcher(), currentInstance = getCurrentInstance(), isVue = !!currentInstance
     if (!detached && !currentScope && !currentWatcher && !currentInstance) throw "useCleanScope is outside a scope or watcher"
 
