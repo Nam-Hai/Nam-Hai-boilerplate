@@ -1,6 +1,5 @@
 import { FrameFactory, FrameManager, TabManager } from './core/frame'
-// import { ROR } from './core/resize'
-
+import { ResizeFactory, ResizeManager } from './core/resize'
 
 export default defineNuxtPlugin({
   name: "namhai",
@@ -9,9 +8,13 @@ export default defineNuxtPlugin({
     const FM = new FrameManager(tab)
     const frameFactory = new FrameFactory(FM)
 
+    const RM = new ResizeManager(frameFactory.Timer)
+    const resizeFactory = new ResizeFactory(RM)
+
     return {
       provide: {
-        frameFactory
+        frameFactory,
+        resizeFactory
       }
     }
 

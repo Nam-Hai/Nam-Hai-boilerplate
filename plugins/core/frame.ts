@@ -59,9 +59,11 @@ class TabManager {
     }
 }
 
+
 class FrameManager {
     now: number = 0;
     on: boolean;
+    frameId = 0
 
     private stack: OrderedMap<number, FrameItem[]>;
 
@@ -130,8 +132,9 @@ class FrameManager {
             for (const key of this.stack.orderedKeys) {
                 const stack = this.stack.get(key)!
 
-                for (let index = stack.length - 1; index >= 0; index--) {
-                    const frameItem = stack[index]
+                // for (let index = stack.length - 1; index >= 0; index--) {
+                for (const frameItem of stack) {
+                    // const frameItem = stack[index]
                     if (!frameItem.startTime) {
                         frameItem.startTime = t
                     }
@@ -153,7 +156,7 @@ class FrameManager {
 }
 
 class FrameFactory {
-    FrameManager: FrameManager
+    private FrameManager: FrameManager
     constructor(FrameManager: FrameManager) {
         this.FrameManager = FrameManager
         N.BM(this, ["Frame", "Delay", "Timer"])
@@ -169,14 +172,13 @@ class FrameFactory {
     }
 }
 
-let FrameId = 0
 class Frame {
     readonly callback: (e: FrameEvent) => void;
     readonly priority: number;
     private killed: boolean;
     on: boolean
     id?: number
-    FrameManager!: FrameManager
+    private FrameManager!: FrameManager
 
     constructor(options: { callback: (e: FrameEvent) => void, priority?: number, FrameManager: FrameManager }) {
         N.BM(this, ["stop", "run", "kill"])
@@ -191,8 +193,8 @@ class Frame {
     run(startTime?: number) {
         if (this.on || this.killed) return this
         this.on = true
-        FrameId++
-        this.id = FrameId
+        this.FrameManager.frameId++
+        this.id = this.FrameManager.frameId
         const frameItem: FrameItem = {
             id: this.id,
             cb: this.callback,
