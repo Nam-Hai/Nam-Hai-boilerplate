@@ -102,7 +102,6 @@ export class MotionManager {
     remove(id: number, canMiss: boolean = false) {
         const { index, miss } = N.binarySearch(this.motions.map(el => { return { id: el.ticker.id } }), id)
 
-        console.log(this.motions, id, index, miss);
         if (!canMiss && miss) {
             console.warn("Motion remove jammed : id not in stack")
             return
@@ -257,7 +256,6 @@ class Ticker implements TickerI {
         }
     }
     run() {
-        console.log("run", this.on);
         if (this.on !== TickerOn.play) this.motionManager.add(this)
         this.on = TickerOn.play
     }

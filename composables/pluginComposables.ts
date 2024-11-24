@@ -25,6 +25,11 @@ export function getDelay(callback: () => void, delay: number) {
     return $frameFactory.Delay({ callback, delay })
 }
 
+export function getFrame(callback: (arg: FrameEvent) => void, priority: FramePriority = FramePriority.MAIN) {
+    const { $frameFactory } = useNuxtApp()
+    return $frameFactory.Frame({ callback, priority })
+}
+
 export function useTimer() {
 
 }
@@ -47,16 +52,15 @@ export function useTimer() {
  *  
  */
 export function useDelay(callback: () => void, delay: number, detached = false) {
-    const scope = useCleanScope(() => {
-        let delayedScope: EffectScope | undefined;
-        const d = getDelay(() => {
+    let delayedScope: EffectScope | undefined;
+    const d = getDelay(() => {
+        delayedScope = useCleanScope(() => {
+            return callback()
+        }, true)
+    }, delay)
 
-            delayedScope = useCleanScope(() => {
-                return callback()
-            }, true)
-
-        }, delay).run()
-
+    useCleanScope(() => {
+        d.run()
         onScopeDispose(() => {
             delayedScope?.stop()
             d.stop()
@@ -64,43 +68,40 @@ export function useDelay(callback: () => void, delay: number, detached = false) 
         return d
     }, detached)
 
-    return scope
+    return d
 }
 
-export function getFrame(callback: (arg: FrameEvent) => void, priority: FramePriority = FramePriority.MAIN) {
-    const { $frameFactory } = useNuxtApp()
-    return $frameFactory.Frame({ callback, priority })
-}
 
 export const useFrame = (cb: (e: FrameEvent) => void, priority: FramePriority = FramePriority.MAIN) => {
-    return useCleanScope(() => {
-        const raf = getFrame(cb, priority).run()
+    const raf = getFrame(cb, priority)
+    useCleanScope(() => {
+        raf.run()
 
         onScopeDispose(() => {
             raf.kill()
         })
         return raf
     })
+    return raf
 }
 
 
 export function useMotion(arg: StopMotionOption) {
     const motion = getMotion(arg)
-    const scope = useCleanScope(() => {
-        return () => {
+    useCleanScope(() => {
+        onScopeDispose(() => {
             motion.pause()
-        }
+        })
     })
-    return [motion, scope]
+    return motion
 }
 
 export function useFilm() {
-
     const film = getFilm()
-    const scope = useCleanScope(() => {
-        return () => {
+    useCleanScope(() => {
+        onScopeDispose(() => {
             film.pause()
-        }
+        })
     })
-    return [film, scope]
+    return film
 }

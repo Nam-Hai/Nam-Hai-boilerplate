@@ -21,24 +21,6 @@ useCleanScope(() => {
 
 onMounted(() => {
     useDelay(() => {
-        console.log('delay 1');
-        const tl = getFilm()
-        tl.from({
-            el: test.value!,
-            d: 1000,
-            p: {
-                o: [1, 0]
-            }
-        })
-        tl.from({
-            el: test.value!,
-            d: 1000,
-            delay: 200,
-            p: {
-                x: [0, 100]
-            }
-        })
-        tl.play()
         useDelay(() => {
             console.log('delay 2');
             useFrame(() => console.log('test'))

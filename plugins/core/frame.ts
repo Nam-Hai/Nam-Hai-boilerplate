@@ -72,7 +72,6 @@ class OrderedArray<T> extends Array<{ id: number, value: T }> {
         const { index } = N.binarySearch(this, el.id)
 
         this.splice(index, 0, el)
-        console.log("OrderedArray push, index : ", index, this);
         return index
     }
 }
@@ -114,14 +113,12 @@ class FrameManager {
         const { index, miss } = this.stacks.indexOfId(priority)
         let stack: FrameItem[]
 
-        console.log("add", priority, index, miss, this.stacks);
         if (miss) {
             stack = []
             this.stacks.splice(index, 0, { id: priority, value: stack })
         } else {
             stack = this.stacks[index].value
         }
-        console.log("add", priority, index, miss, this.stacks);
 
         stack.push(frameItem)
 
