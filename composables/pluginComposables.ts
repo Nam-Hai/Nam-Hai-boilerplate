@@ -14,9 +14,9 @@ export function getMotion(arg: StopMotionOption) {
 }
 
 
-export function getTimer(callback: () => void, delay: number) {
+export function getTimer(callback: () => void, throttle: number) {
     const { $frameFactory } = useNuxtApp()
-    return $frameFactory.Timer({ callback, delay })
+    return $frameFactory.Timer({ callback, throttle: throttle })
 }
 
 export function getDelay(callback: () => void, delay: number) {
@@ -30,8 +30,15 @@ export function getFrame(callback: (arg: FrameEvent) => void, priority: FramePri
     return $frameFactory.Frame({ callback, priority })
 }
 
-export function useTimer() {
+export function useTimer(callback: () => void, throttle: number) {
+    const timer = getTimer(callback, throttle)
+    useCleanScope(() => {
+        onScopeDispose(() => {
+            timer.stop()
+        })
+    })
 
+    return timer
 }
 
 /**
@@ -65,7 +72,6 @@ export function useDelay(callback: () => void, delay: number, detached = false) 
             delayedScope?.stop()
             d.stop()
         })
-        return d
     }, detached)
 
     return d
@@ -80,7 +86,6 @@ export const useFrame = (cb: (e: FrameEvent) => void, priority: FramePriority = 
         onScopeDispose(() => {
             raf.kill()
         })
-        return raf
     })
     return raf
 }

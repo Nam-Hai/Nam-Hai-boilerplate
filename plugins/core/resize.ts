@@ -201,7 +201,7 @@ export class ResizeManager {
         N.BM(this, ["resizePayload"])
         this.stack = []
 
-        this.timer = Timer({ callback: this.resizePayload, delay: 200 })
+        this.timer = Timer({ callback: this.resizePayload, throttle: 200 })
         window.addEventListener('resize', () => this.timer.tick())
     }
 

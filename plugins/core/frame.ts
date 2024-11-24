@@ -280,8 +280,8 @@ class Delay {
 
 class Timer {
     private ticker: Delay
-    constructor(options: { callback: () => void, delay: number, FrameManager: FrameManager }) {
-        const { callback, delay = 200, FrameManager } = options
+    constructor(options: { callback: () => void, throttle: number, FrameManager: FrameManager }) {
+        const { callback, throttle: delay = 200, FrameManager } = options
         this.ticker = new Delay({ delay, callback, FrameManager })
     }
 
