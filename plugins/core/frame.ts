@@ -59,35 +59,49 @@ class TabManager {
     }
 }
 
+class OrderedArray<T> extends Array<{ id: number, value: T }> {
+    constructor() {
+        super()
+    }
+
+    indexOfId(id: number) {
+        return N.binarySearch(this, id)
+    }
+
+    override push(el: { id: number, value: T }) {
+        const { index } = N.binarySearch(this, el.id)
+
+        this.splice(index, 0, el)
+        console.log("OrderedArray push, index : ", index, this);
+        return index
+    }
+}
 
 class FrameManager {
     now: number = 0;
     on: boolean;
     frameId = 0
 
-    private stack: OrderedMap<number, FrameItem[]>;
+    private stacks: OrderedArray<Array<FrameItem>>
 
     constructor(tab: TabManager) {
         N.BM(this, ['update', 'stop', 'resume'])
 
-        this.stack = new OrderedMap<number, FrameItem[]>()
-        this.stack.set(FramePriority.FIRST, [])
-        this.stack.set(FramePriority.MAIN, [])
-        this.stack.set(FramePriority.LAST, [])
-
+        this.stacks = new OrderedArray()
+        this.stacks.push({ id: FramePriority.FIRST, value: [] })
+        this.stacks.push({ id: FramePriority.MAIN, value: [] })
+        this.stacks.push({ id: FramePriority.LAST, value: [] })
 
         this.on = true
         tab.add({ stop: this.stop, resume: this.resume })
         this.raf()
-        // isClient && this.raf()
     }
 
     resume(delta = 0) {
         this.on = true
-        for (const key of this.stack.orderedKeys) {
-            const stack = this.stack.get(key)!
-            for (const frameItem of stack) {
-                frameItem.startTime! += delta
+        for (const stack of this.stacks) {
+            for (const frameItem of stack.value) {
+                frameItem.startTime = (frameItem.startTime || 0) + delta
             }
         }
         this.now += delta
@@ -97,27 +111,38 @@ class FrameManager {
     }
 
     add(frameItem: FrameItem, priority: number) {
-        if (!this.stack.has(priority)) {
-            this.stack.set(priority, [])
+        const { index, miss } = this.stacks.indexOfId(priority)
+        let stack: FrameItem[]
+
+        console.log("add", priority, index, miss, this.stacks);
+        if (miss) {
+            stack = []
+            this.stacks.splice(index, 0, { id: priority, value: stack })
+        } else {
+            stack = this.stacks[index].value
         }
-        const stack = this.stack.get(priority)!
+        console.log("add", priority, index, miss, this.stacks);
+
         stack.push(frameItem)
+
         if (priority === FramePriority.MAIN && stack.length > 10000) console.warn("Main raf stack congested", stack.length)
     }
 
     remove(id: number, priority: number) {
-        if (!this.stack.has(priority)) {
+        const { index: priorityIndex, miss: priorityMiss } = this.stacks.indexOfId(priority)
+        if (priorityMiss) {
             console.error("Raf remove jammed : priority stack doesn't exist")
             return
         }
-        const stack = this.stack.get(priority)!
-        const i = N.binarySearch(stack, id)
+        const stack = this.stacks[priorityIndex].value
 
-        if (i == -1) {
+        const { index, miss } = N.binarySearch(stack, id)
+
+        if (miss) {
             console.warn("Raf remove jammed : id not in stack")
             return
         }
-        stack.splice(i, 1)
+        stack.splice(index, 1)
     }
 
     update(t: number) {
@@ -129,12 +154,8 @@ class FrameManager {
         }
 
         if (this.on) {
-            for (const key of this.stack.orderedKeys) {
-                const stack = this.stack.get(key)!
-
-                // for (let index = stack.length - 1; index >= 0; index--) {
-                for (const frameItem of stack) {
-                    // const frameItem = stack[index]
+            for (const stack of this.stacks) {
+                for (const frameItem of stack.value) {
                     if (!frameItem.startTime) {
                         frameItem.startTime = t
                     }

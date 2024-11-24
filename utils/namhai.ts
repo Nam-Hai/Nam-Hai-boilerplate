@@ -93,17 +93,8 @@ const Snif = {
   }
 }
 
-const T = (el: HTMLElement, x: number, y: number, options?: { unit?: string, soft?: boolean }) => {
-  const unit = options?.unit || "%"
-  const soft = !!options?.soft
-
-  if (soft) {
-    N.Class.add(el, "stop-motion__translate")
-    el.style.setProperty("--stop-motion-x", x + unit)
-    el.style.setProperty("--stop-motion-y", y + unit)
-  } else {
-    el.style.transform = "translate3d(" + x + unit + "," + y + unit + ",0)"
-  }
+const T = (el: HTMLElement, x: number, y: number, unit: string = "%") => {
+  el.style.transform = "translate3d(" + x + unit + "," + y + unit + ",0)"
 }
 const BM = (context: any, methodArray: string[]) => {
   for (const methodString of methodArray) {
@@ -147,8 +138,7 @@ export class OrderedMap<K extends number, V> extends Map<number, V> {
   }
 }
 
-
-function binarySearch(arr: { id: number }[], n: number): number {
+function binarySearch(arr: { id: number }[], n: number): { index: number, miss: boolean } {
   let left = 0
   let right = arr.length - 1
 
@@ -157,7 +147,10 @@ function binarySearch(arr: { id: number }[], n: number): number {
     const m = arr[mid].id
 
     if (n === m) {
-      return mid;
+      return {
+        index: mid,
+        miss: false
+      }
     } else if (n < m) {
       right = mid - 1;
     } else {
@@ -165,7 +158,10 @@ function binarySearch(arr: { id: number }[], n: number): number {
     }
   }
 
-  return left
+  return {
+    index: left,
+    miss: true
+  }
 }
 
 

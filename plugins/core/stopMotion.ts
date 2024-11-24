@@ -2,15 +2,21 @@
 import { EaseEnum, type Ease4Arg, type EaseFunctionName, Ease, Ease4 } from "~/plugins/core/eases";
 import { Frame, FramePriority, type FrameEvent, Delay, FrameFactory } from "./frame";
 
-const STYLE_MAP = {
-    o: "--stop-motion-opacity",
-    x: "--stop-motion-x",
-    y: "--stop-motion-y",
-    s: "--stop-motion-scaleX",
-    scaleX: "--stop-motion-scaleX",
-    scaleY: "--stop-motion-scaleY",
-    r: "--stop-motion-rotate",
-} as const;
+const STYLE_MAP = [
+    "o",
+    "x",
+    "y",
+    "s",
+    "scaleX",
+    "scaleY",
+    "r"
+] as const;
+type StyleMapKey = typeof STYLE_MAP[number];
+
+const styleMapObject: Record<StyleMapKey, number> = STYLE_MAP.reduce((acc, key, index) => {
+    acc[key] = index;
+    return acc;
+}, {} as Record<StyleMapKey, number>);
 
 type MotionEvent = { progress: number, easeProgress: number }
 interface StopMotionOptionPrimitive {
@@ -28,9 +34,9 @@ interface StopMotionOptionPrimitiveI extends StopMotionOptionPrimitive {
 }
 
 type FromTo = [number, number]
-type DOMPropName = "x" | "y" | "o" | "s" | "scaleX" | "scaleY" | "r"
+type DOMPropName = StyleMapKey
 interface StopMotionOptionBasicDOMAnimation extends StopMotionOptionPrimitive {
-    el: HTMLElement,
+    el: HTMLElement | HTMLElement[],
     p: {
         x?: [number, number, string] | [number, number]
         y?: [number, number, string] | [number, number]
@@ -74,8 +80,8 @@ export class MotionManager {
 
     motions: MotionItem[]
     frame: Frame;
-    tickerStore: Map<number, Record<string, number>>
     frameFactory: FrameFactory;
+    motionWeakMapAnimation: WeakMap<Element, number>
     constructor(frameFactory: FrameFactory) {
 
         this.frameFactory = frameFactory;
@@ -86,7 +92,7 @@ export class MotionManager {
         this.frame = this.frameFactory.Frame({ callback: this.raf, priority: FramePriority.MOTION })
         this.frame.run()
 
-        this.tickerStore = new Map()
+        this.motionWeakMapAnimation = new WeakMap()
     }
 
     add(ticker: Ticker) {
@@ -94,19 +100,16 @@ export class MotionManager {
     }
 
     remove(id: number) {
-        const i = N.binarySearch(this.motions.map(el => { return { id: el.ticker.id } }), id)
+        const { index, miss } = N.binarySearch(this.motions.map(el => { return { id: el.ticker.id } }), id)
 
-        if (i == -1) {
+        console.log(this.motions, id, index, miss);
+        if (miss) {
             console.warn("Motion remove jammed : id not in stack")
             return
         }
 
-        const motions = this.motions.splice(i, 1)
+        const motions = this.motions.splice(index, 1)
         if (motions.length === 0) return
-        const { ticker } = motions[0]
-        const vars = ticker.vars
-
-        this.tickerStore.set(ticker.id, vars)
     }
 
     raf(e: FrameEvent) {
@@ -150,7 +153,7 @@ export class MotionFactory {
 }
 
 export class Motion {
-    ticker: Ticker[];
+    ticker: Ticker;
     delay!: Delay;
     promise: Promise<void>;
     promiseRelease!: (value: void | PromiseLike<void>) => void;
@@ -168,9 +171,8 @@ export class Motion {
 
     pause() {
         this.delay && this.delay.stop()
-        for (const ticker of this.ticker) {
-            this.motionManager.remove(ticker.id)
-        }
+
+        this.motionManager.remove(this.ticker.id)
 
         // this.id = undefined
         return this
@@ -178,17 +180,13 @@ export class Motion {
     play(prop?: StopMotionUpdatePropsOption) {
         this.pause()
 
-        for (const ticker of this.ticker) {
-            ticker.updateProps(prop)
-        }
+        this.ticker.updateProps(prop)
 
-        const delay = this.ticker[0].delay || 0
+        const delay = this.ticker.delay || 0
         this.delay = this.motionManager.frameFactory.Delay({
             delay,
             callback: () => {
-                for (const ticker of this.ticker) {
-                    this.motionManager.add(ticker)
-                }
+                this.motionManager.add(this.ticker)
             }
         })
         this.delay.run()
@@ -203,15 +201,15 @@ export class Motion {
 
 class TickerFactory {
     static createTicker(props: StopMotionOption, motionManager: MotionManager) {
-        let ticker: Ticker[]
+        let ticker: Ticker
         if (props.svg && false) {
             props.svg
             // TODO
         } else if (props.p) {
-            const elements = N.Select(props.el)
-            ticker = Object.values(elements as HTMLElement[]).map(el => new TickerDOMAnimation({ ...props, el: el }, motionManager))
+            const elements = N.Select(props.el) as HTMLElement[]
+            ticker = new TickerDOMAnimation({ ...props, el: elements }, motionManager)
         } else {
-            ticker = [new Ticker(props, motionManager)]
+            ticker = new Ticker(props, motionManager)
         }
 
         return ticker
@@ -233,10 +231,7 @@ class Ticker implements TickerI {
     prog: number = 0
     progE: number = 0
     updateFunc?: (e: MotionEvent) => void;
-
     id: number
-
-    vars: { [key: string]: number } = {}
     motionManager: MotionManager;
     constructor(props: StopMotionOptionPrimitive, motionManager: MotionManager) {
         this.motionManager = motionManager
@@ -292,119 +287,125 @@ type DOMProp = {
 
 class TickerDOMAnimation extends Ticker implements TickerI {
 
-    props = new Map<DOMPropName, DOMProp>()
-    el: HTMLElement;
+    // props = new Map<DOMPropName, DOMProp>()
     override: boolean | undefined;
+    el: [HTMLElement, DOMProp[]][];
+    propToIndex: Record<StyleMapKey, number>
     constructor(props: StopMotionOptionBasicDOMAnimation, motionManager: MotionManager) {
         super(props, motionManager)
 
-        this.el = props.el
+        const el = N.Select(props.el) as HTMLElement[]
 
         this.override = props.override || false
-        for (const [key, value] of Object.entries(props.p)) {
-            const k = key as DOMPropName & string;
-
-            const from = value[0]
-            const to = value[1]
-            const unit = value[2] || "%"
 
 
-            this.props.set(k, {
-                curr: this.reverse ? to : from,
-                start: from,
-                end: to,
-                unit
+        this.propToIndex = Object.entries(props.p).reduce((acc, [key, prop], index) => {
+            acc[key as keyof typeof props.p] = index;
+            return acc;
+        }, {} as Record<keyof typeof props.p, number>);
+
+        this.el = el.map((el) => {
+            const p = Object.entries(props.p).map(([key, prop]) => {
+                const [from, to, unit = "%"] = prop || []
+
+                return {
+                    curr: this.reverse ? to : from,
+                    start: from,
+                    end: to,
+                    unit
+                } as DOMProp
             })
-        }
+
+            return [el, p]
+        })
+
     }
 
     override update(e: MotionEvent) {
         super.update(e)
-        for (const [key, prop] of this.props.entries()) {
-            prop.curr = N.Lerp(prop.start, prop.end, e.easeProgress)
-            this.vars[key] = prop.curr
+        for (const [key, [el, props]] of this.el.entries()) {
+            for (const prop of props) {
+                prop.curr = N.Lerp(prop.start, prop.end, e.easeProgress)
+            }
         }
-        const table = this.props;
 
-        const x = table.has("x"), y = table.has("y")
+
+        const has = (...args: Parameters<typeof Object.hasOwn>) => Object.hasOwn(args[0], args[1])
+        styleMapObject["x"]
+        const x = has(this.propToIndex, "x"), y = has(this.propToIndex, "y")
         const translate = x || y
-        const opacity = table.has("o")
-        const scale = table.has("s")
-        const scaleX = table.has("scaleX")
-        const scaleY = table.has("scaleY")
-        const rotate = table.has("r")
+        const opacity = has(this.propToIndex, "o")
+        const scale = has(this.propToIndex, "s")
+        const scaleX = has(this.propToIndex, "scaleX")
+        const scaleY = has(this.propToIndex, "scaleY")
+        const rotate = has(this.propToIndex, "r")
 
         if (!this.el) return
-        const element = this.el
+        const elements = this.el
+        for (const [element, prop] of elements) {
+            if (translate || scale || scaleX || scaleY || rotate) {
+                let transformString = ""
+                if (translate) {
+                    const valueX = x ? prop[this.propToIndex["x"]] : undefined
+                    const valueY = y ? prop[this.propToIndex["y"]] : undefined
+                    transformString += `translante3d(${valueX?.curr ?? 0}${valueX?.unit || "%"}, ${valueY?.curr ?? 0}${valueY?.unit || "%"}, 0) `
+                }
 
-        if (translate) {
-            N.Class.add(element, "stop-motion__translate")
-            if (x) {
-                const value = this.props.get("x")!
-                element.style.setProperty("--stop-motion-x", value.curr + value.unit)
+                if (scale) {
+                    const value = prop[this.propToIndex["s"]]
+                    transformString += `scale(${value.curr})`
+                } else if (scaleX || scaleY) {
+                    const valueX = x ? prop[this.propToIndex["scaleX"]] : undefined
+                    const valueY = y ? prop[this.propToIndex["scaleY"]] : undefined
+                    transformString += `scale(${valueX?.curr ?? 1}, ${valueY?.curr ?? 1}) `
+                }
+                if (rotate) {
+                    const value = prop[this.propToIndex["r"]]
+                    transformString += `rotate(${value.curr}${value.unit})`
+                }
+                element.style.transform = transformString
             }
-            if (y) {
-                const value = this.props.get("y")!
-                element.style.setProperty("--stop-motion-y", value.curr + value.unit)
+            if (opacity) {
+                const value = prop[this.propToIndex["o"]]
+                N.O(element, value.curr)
             }
-        }
-
-        if (opacity) {
-            N.Class.add(element, "stop-motion__opacity")
-            const value = this.props.get("o")!
-            element.style.setProperty("--stop-motion-opacity", value.curr + "")
-        }
-
-        if (scale || scaleX || scaleY) N.Class.add(element, "stop-motion__scale")
-        if (scale) {
-            const scaleValue = this.props.get("s")!.curr + ""
-            element.style.setProperty("--stop-motion-scaleX", scaleValue)
-            element.style.setProperty("--stop-motion-scaleY", scaleValue)
-        } else if (scaleX) {
-            const scaleValue = this.props.get("scaleX")!.curr + ""
-            element.style.setProperty("--stop-motion-scaleX", scaleValue)
-        } else if (scaleY) {
-            const scaleValue = this.props.get("scaleY")!.curr + ""
-            element.style.setProperty("--stop-motion-scaleY", scaleValue)
-
-        }
-
-        if (rotate) {
-            N.Class.add(element, "stop-motion__rotate")
-            const prop = this.props.get("r")!
-            const rotateValue = prop.curr + (prop.unit === "%" ? "deg" : prop.unit)
-            element.style.setProperty("--stop-motion-rotate", rotateValue)
         }
     }
 
 
     override updateProps(arg?: StopMotionUpdatePropsOption) {
-        const id = N.Ga(this.el, "data-stop-motion")
-        !!id && this.motionManager.remove(+id)
-        const currProps = !!id && this.motionManager.tickerStore.get(+id) || {}
-        !!id && this.motionManager.tickerStore.delete(+id)
+        for (const [el, props] of this.el) {
+            const id = this.motionManager.motionWeakMapAnimation.get(el)
+            !!id && this.motionManager.remove(+id)
+        }
+
         super.updateProps(arg)
 
-        this.override = arg?.override || this.override
+        if (!arg) return
+        this.override = arg.override || this.override
+        const argProp = arg.p || {}
 
-        this.el.setAttribute("data-stop-motion", `${this.id}`)
+        for (const [key, p] of Object.entries(argProp)) {
+            const k = key as unknown as StyleMapKey
+            const index = this.propToIndex[k]
 
-        for (const [key, prop] of this.props.entries()) {
-            prop.end = this.reverse ? prop.start : prop.end
+            for (const [el, props] of this.el) {
 
-            if (!this.override) {
-                const value = currProps[key]
-                if (value) prop.curr = value
-            }
-            prop.start = prop.curr
+                const prop = props[index]
+                prop.end = this.reverse ? props[index].start : prop.end
 
-            if (arg && arg.p && arg.p[key]) {
-                if (!!arg.p[key]?.end) {
-                    const end = arg.p[key]!.end!
+                // // if (!this.override) {
+                // //     const value = currProps[key]
+                // //     if (value) prop.curr = value
+                // // }
+                prop.start = prop.curr
+
+                if (!!p.end) {
+                    const end = p.end!
                     prop.end = end
                 }
-                if (arg.p[key]?.start) {
-                    const start = arg.p[key]!.start!
+                if (p.start) {
+                    const start = p.start!
                     prop.start = start
                 }
             }

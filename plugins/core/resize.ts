@@ -220,13 +220,13 @@ export class ResizeManager {
     }
     remove(id: number) {
 
-        const i = N.binarySearch(this.stack, id)
+        const { index, miss } = N.binarySearch(this.stack, id)
 
-        if (i == -1) {
+        if (miss) {
             console.warn("ResizeManager remove jammed : id not in stack")
             return
         }
-        this.stack.splice(i, 1)
+        this.stack.splice(index, 1)
     }
     get callbackArg() {
         return {
