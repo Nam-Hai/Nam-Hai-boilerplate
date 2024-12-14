@@ -1,7 +1,7 @@
-@forward 'shared.scss';
-@use './app/index.scss' as *;
+@forward "shared.scss";
+@use "./app/index.scss" as *;
 // @use 'sass/breakpoints.scss' as *;
-@use './shared.scss' as *;
+@use "./shared.scss" as *;
 
 :root {
   --vh100max: 100vh;
@@ -20,19 +20,17 @@
 }
 
 html {
-
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: none;
   font-size: 10px;
-
-  @include rem-scale();
 
   font-weight: 500;
 
   &.remlock {
     font-size: 10px !important;
   }
+  @include rem-scale();
 }
 
 html,
@@ -46,7 +44,7 @@ body {
 }
 
 #__nuxt {
-  display: contents
+  display: contents;
 }
 
 html,
@@ -57,7 +55,7 @@ body,
 }
 
 html {
-  height: auto
+  height: auto;
 }
 
 body,
@@ -93,7 +91,7 @@ p {
 }
 
 p {
-  font-family: 'Geist';
+  font-family: "Geist";
   font-weight: 300;
 }
 
@@ -133,7 +131,6 @@ svg {
   font-stretch: expanded;
 }
 
-
 .mobile-only {
   @include breakpoint(desktop) {
     display: none !important;
@@ -172,7 +169,6 @@ main {
   position: relative;
   z-index: 5;
 }
-
 
 section,
 footer,
@@ -219,7 +215,6 @@ body.flowIsHijacked {
   }
 }
 
-
 .stop-motion__translate {
   // transform: translate3d(var(--stop-motion-x), var(--stop-motion-y), 0) scale(var(--stop-motion-scale));
   --stop-motion-x: 0;
@@ -230,7 +225,7 @@ body.flowIsHijacked {
 .stop-motion__scale {
   --stop-motion-scaleX: 0;
   --stop-motion-scaleY: 0;
-  scale: var(--stop-motion-scaleX) var(--stop-motion-scaleY)
+  scale: var(--stop-motion-scaleX) var(--stop-motion-scaleY);
 }
 
 .stop-motion__rotate {
