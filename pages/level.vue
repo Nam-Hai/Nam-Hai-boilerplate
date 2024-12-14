@@ -1,6 +1,6 @@
 <template>
     <h1>
-        Level : {{ data }}
+        Level : {{ data?.data.fromServer }}
     </h1>
 </template>
 
