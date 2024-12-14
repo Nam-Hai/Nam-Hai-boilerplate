@@ -8,13 +8,6 @@ export default defineNuxtConfig({
     // },
     css: ["@/styles/core.scss", "@/styles/app/index.scss"],
 
-    modules: ['@pinia/nuxt'],
-
-    pinia: {
-        storesDirs: ['./stores/**'],
-    },
-
-
     ignore: [
         '~/pages/ignore/',
         '~/pages/ignore/_templatePage.transitions.ts',

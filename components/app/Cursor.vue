@@ -1,15 +1,12 @@
 <script lang="ts" setup>
 import { useStoreCursor } from '~/composables/useStore';
-import { useStoreView } from '~/composables/useStoreView';
+// import { useStoreView } from '~/composables/useStoreView';
 
 
 const wrapperRef = ref() as Ref<HTMLElement>
 
-const { mouse, vw } = useStoreView()
+// const { mouse, vw } = useStoreView()
 
-useRaf((e) => {
-    // console.log(mouse.value);
-})
 
 const { cursorState } = useStoreCursor()
 watch(cursorState, val => {
@@ -18,12 +15,12 @@ watch(cursorState, val => {
 </script>
 
 <template>
-    <div class="curose__wrapper" :class="{ 'cursor-1': cursorState === 1, 'cursor-2': cursorState === 2 }"
+    <!-- <div class="curose__wrapper" :class="{ 'cursor-1': cursorState === 1, 'cursor-2': cursorState === 2 }"
         ref="wrapperRef" :style="{ transform: `translate(${mouse.x}px, ${mouse.y}px)` }">
     </div>
     <div class="curose__wrapper" :class="{ 'cursor-1': cursorState === 1, 'cursor-2': cursorState === 2 }"
         ref="wrapperRef" :style="{ transform: `translate(${(mouse.x + vw / 2) % vw}px, ${mouse.y}px)` }">
-    </div>
+    </div> -->
 </template>
 
 <style lang="scss" scoped>

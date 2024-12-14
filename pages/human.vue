@@ -4,7 +4,8 @@
 </template>
 
 <script lang="ts" setup>
-import { usePageFlow } from '~/waterflow/composables/usePageFlow';
+import { usePageFlow } from '~/lib/waterflow/composables/usePageFlow';
+
 
 const mainRef = shallowRef()
 

@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "1.0.2",
+    "@types/bun": "^1.1.14",
     "@types/node": "^20.17.7",
     "eslint": "^8.57.1",
     "nuxt": "^3.14.1592",
