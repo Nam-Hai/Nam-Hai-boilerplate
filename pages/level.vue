@@ -17,7 +17,6 @@
 </template>
 
 <script lang="ts" setup>
-import { fetchRemoveLevel } from '~/server.bun';
 
 const { data, error } = await useAsyncData("levels", async () => {
     const rep = await $fetch("/api/getLevels")
