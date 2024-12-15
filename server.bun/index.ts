@@ -1,8 +1,11 @@
 import { server } from "./config"
 
-
 export type LevelsData = {
-    levels: string[]
+    id: number
+    levels: {
+        id: number,
+        name: string
+    }[]
 }
 
 export const routeServerApiMap = new Map<string, ReturnType<typeof createApi>[0]>()
@@ -53,14 +56,25 @@ const createApi = <T extends Object, P extends Object | undefined>(path: string,
 
 export const [getLevels, fetchLevels] = createApi("/levels/", async () => {
     const data = await readLevels()
-    return data
+    return data.levels
 })
 
 export const [addlevel, fetchAddLevel] = createApi("/add/", async (d: { name: string }) => {
     const data = await readLevels()
-    data.levels.push(d.name)
+    data.id++
+    data.levels.push({
+        id: data.id,
+        name: d.name
+    })
     Bun.write(server.json, JSON.stringify(data))
-    return data
+    return data.levels
+})
+
+export const [removeLevel, fetchRemoveLevel] = createApi("/remove", async (query: { id: number }) => {
+    const data = await readLevels()
+    data.levels = data.levels.filter(el => el.id !== data.id)
+    Bun.write(server.json, JSON.stringify(data))
+    return data.levels
 })
 
 

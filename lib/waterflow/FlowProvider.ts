@@ -1,4 +1,4 @@
-import type { ShallowRef } from 'nuxt/dist/app/compat/capi';
+import type { ShallowRef } from "vue";
 
 
 type CrossFadeMode = "TOP" | "BOTTOM"

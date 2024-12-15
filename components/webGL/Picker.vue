@@ -2,9 +2,7 @@
 import { RenderTarget } from 'ogl';
 import { useEventListener } from '~/composables/useEventListener';
 import { useStoreCursor } from '~/composables/useStore';
-import { useStoreView } from '~/composables/useStoreView';
-import { useCamera, useOGL } from '~/ogl.renderer/useOGL';
-import { getNodeTree } from '~/scene/utils/WebGL.utils';
+import { useCamera, useOGL } from '~/lib/webGL/ogl.renderer/useOGL';
 
 const wrapperRef = ref() as Ref<HTMLElement>
 onMounted(() => {
@@ -31,10 +29,14 @@ useEventListener(document, "click", () => {
     needUpdate.click = true
 })
 
-const { mouse, vh, vw, dpr } = useStoreView()
+// const { mouse, vh, vw, dpr } = useStoreView()
+const mouse = ref({ x: 0, y: 0 })
+const vh = ref(2)
+const vw = ref(2)
+const dpr = ref(1)
 const { cursorState } = useStoreCursor()
 
-useRaf((e) => {
+useFrame((e) => {
     gl.renderer.render({
         scene: scene.value,
         camera: camera.value,

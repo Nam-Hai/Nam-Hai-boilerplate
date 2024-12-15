@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { Mesh, Plane, Program, Vec3 } from 'ogl';
-import { useOGL } from '~/ogl.renderer/useOGL';
-import { basicVer } from '~/scene/shaders/BasicVer';
-import { getUId } from '~/scene/utils/WebGL.utils';
-import { useFlowProvider } from '~/waterflow/FlowProvider';
+import { useOGL } from '~/lib/webGL/ogl.renderer/useOGL';
+import { basicVer } from '~/lib/webGL/scene/shaders/BasicVer';
+import { getUId } from '~/lib/webGL/scene/utils/WebGL.utils';
 
 const { coord = { x: 0, y: 0 } } = defineProps<{ coord?: { x: number, y: number } }>()
 console.log(coord);

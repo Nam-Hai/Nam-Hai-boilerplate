@@ -383,7 +383,7 @@ class TickerDOMAnimation extends Ticker implements TickerI {
 
             if (opacity) {
                 const value = prop[this.propToIndex["o"]]
-                N.O(element, value.curr)
+                element.style.opacity = `${value.curr}`
             }
         }
     }
@@ -431,13 +431,13 @@ class TickerDOMAnimation extends Ticker implements TickerI {
 }
 const Svg = {
     getLength: (e: Element) => {
-        if ("circle" === e.tagName) return 2 * Math.PI * (+N.Ga(e, "r")!)
+        if ("circle" === e.tagName) return 2 * Math.PI * (+N.DOM.ga(e, "r")!)
         if ('line' === e.tagName) {
             let a, b, c, d;
-            a = +N.Ga(e, 'x1')!
-            b = +N.Ga(e, "x2")!
-            c = +N.Ga(e, 'y1')!
-            d = +N.Ga(e, 'y2')!
+            a = +N.DOM.ga(e, 'x1')!
+            b = +N.DOM.ga(e, "x2")!
+            c = +N.DOM.ga(e, 'y1')!
+            d = +N.DOM.ga(e, 'y2')!
 
             return Math.sqrt((a -= b) * a + (c -= d) * c)
         }

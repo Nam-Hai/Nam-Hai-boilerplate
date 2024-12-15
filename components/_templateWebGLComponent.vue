@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useOGL } from '~/ogl.renderer/useOGL';
+import { useOGL } from '~/lib/webGL/ogl.renderer/useOGL';
 
 const wrapperRef = ref() as Ref<HTMLElement>
 

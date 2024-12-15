@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import OGLRenderer from '~/ogl.renderer/OGLRenderer.vue';
-import Renderer from '~/ogl.renderer/OGLWrapper/Renderer.vue';
+import OGLRenderer from '~/lib/webGL/ogl.renderer/OGLRenderer.vue';
+import Renderer from '~/lib/webGL/ogl.renderer/OGLWrapper/Renderer.vue';
 
 </script>
 <template>
