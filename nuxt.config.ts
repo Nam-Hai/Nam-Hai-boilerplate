@@ -2,6 +2,7 @@
 
 export default defineNuxtConfig({
     ssr: true,
+    pages: false,
 
     // nitro: {
     //     preset: "vercel",

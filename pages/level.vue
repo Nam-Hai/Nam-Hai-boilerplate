@@ -13,6 +13,8 @@
 </template>
 
 <script lang="ts" setup>
+import { fetchRemoveLevel } from '~/server.bun';
+
 const { data, error } = await useAsyncData("levels", async () => {
     const rep = await $fetch("/api/getLevels")
     console.log(rep);
@@ -26,22 +28,24 @@ const levelName = ref("")
 const addLevel = async () => {
     if (levelName.value === "") return
     const levels = await $fetch("/api/addLevels", {
-        query: {
+        method: "PUT",
+        body: {
             name: levelName.value
+
         }
     })
-    console.log("addlevel", levels);
     levelName.value = ""
 
     data && data.value && (data.value = levels)
 }
 const removeLevel = async (id: number) => {
     const levels = await $fetch("/api/removeLevel", {
-        query: {
+        method: "PUT",
+        body: {
             id
-        }
+        },
     })
-    console.log("remove", data.value, id, levels);
+
     data && data.value && (data.value = levels)
 }
 

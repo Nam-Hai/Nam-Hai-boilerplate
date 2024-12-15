@@ -27,15 +27,14 @@ const createApi = <T extends Object, P extends Object | undefined>(path: string,
         return payload.length > 0;
     };
 
-    const frontAPI = async (query?: any): Promise<T> => {
+    const middlewareAPI = async (body?: any): Promise<T> => {
         const fetchResult = await fetch(url.href, {
-            method: query !== undefined ? "PUT" : "GET",
-            body: query !== undefined ? JSON.stringify(query) : undefined
+            method: body !== undefined ? "PUT" : "GET",
+            body: body !== undefined ? JSON.stringify(body) : undefined
         });
         const data: T = await fetchResult.json();
         return data
     }
-
 
     const serverAPI =
         (async (req?: Request) => {
@@ -51,7 +50,7 @@ const createApi = <T extends Object, P extends Object | undefined>(path: string,
     apiRoutes.push(path)
     routeServerApiMap.set(path, serverAPI)
 
-    return [serverAPI, frontAPI] as const
+    return [serverAPI, middlewareAPI] as const
 }
 
 export const [getLevels, fetchLevels] = createApi("/levels/", async () => {
@@ -59,23 +58,21 @@ export const [getLevels, fetchLevels] = createApi("/levels/", async () => {
     return data.levels
 })
 
-export const [addlevel, fetchAddLevel] = createApi("/add/", async (d: { name: string }) => {
+export const [addlevel, fetchAddLevel] = createApi("/add/", async (body: { name: string }) => {
     const data = await readLevels()
     data.id++
     data.levels.push({
         id: data.id,
-        name: d.name
+        name: body.name
     })
-    console.log(data);
     Bun.write(server.json, JSON.stringify(data))
     return data.levels
 })
 
-export const [removeLevel, fetchRemoveLevel] = createApi("/remove", async (query: { id: string }) => {
+export const [removeLevel, fetchRemoveLevel] = createApi("/remove", async (body: { id: number }) => {
     const data = await readLevels()
-    data.levels = data.levels.filter(el => el.id !== +query.id)
+    data.levels = data.levels.filter(el => el.id !== body.id)
     Bun.write(server.json, JSON.stringify(data))
-    console.log(query, data);
     return data.levels
 })
 
