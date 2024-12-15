@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { RouteComponent, RouteLocationNormalized } from '#vue-router';
-import { provideFlowProvider, useFlowProvider } from './FlowProvider';
+import { useFlowProvider } from './FlowProvider';
 
-const nuxtApp = useNuxtApp()
 const router = useRouter()
 const routes = router.getRoutes()
 

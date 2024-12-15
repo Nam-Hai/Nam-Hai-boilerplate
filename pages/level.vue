@@ -1,12 +1,8 @@
 <template>
     <section>
 
-        <h1>
-            Level : {{ data }}
-        </h1>
-
         <ul class="level-wrapper">
-            <li v-for="level in data" @click="removeLevel(level.id)">
+            <li v-for="level in data" @click="removeLevel(level.id)" :key="level.id">
                 {{ level.name }}
             </li>
         </ul>
@@ -17,7 +13,6 @@
 </template>
 
 <script lang="ts" setup>
-
 const { data, error } = await useAsyncData("levels", async () => {
     const rep = await $fetch("/api/getLevels")
     console.log(rep);
@@ -35,13 +30,19 @@ const addLevel = async () => {
             name: levelName.value
         }
     })
+    console.log("addlevel", levels);
     levelName.value = ""
 
     data && data.value && (data.value = levels)
 }
 const removeLevel = async (id: number) => {
-    // const levels = await fetchRemoveLevel(id)
-    // data && data.value && (data.value = levels)
+    const levels = await $fetch("/api/removeLevel", {
+        query: {
+            id
+        }
+    })
+    console.log("remove", data.value, id, levels);
+    data && data.value && (data.value = levels)
 }
 
 
@@ -63,5 +64,11 @@ button {
 input {
     font-size: 10rem;
     background-color: red;
+}
+
+li {
+    font-size: 5rem;
+    margin: 2rem;
+    background-color: aquamarine;
 }
 </style>

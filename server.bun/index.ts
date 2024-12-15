@@ -61,21 +61,23 @@ export const [getLevels, fetchLevels] = createApi("/levels/", async () => {
 
 export const [addlevel, fetchAddLevel] = createApi("/add/", async (d: { name: string }) => {
     const data = await readLevels()
-    // data.id++
+    data.id++
     data.levels.push({
-        id: 0,
+        id: data.id,
         name: d.name
     })
+    console.log(data);
     Bun.write(server.json, JSON.stringify(data))
     return data.levels
 })
 
-// export const [removeLevel, fetchRemoveLevel] = createApi("/remove", async (query: { id: number }) => {
-//     const data = await readLevels()
-//     data.levels = data.levels.filter(el => el.id !== data.id)
-//     Bun.write(server.json, JSON.stringify(data))
-//     return data.levels
-// })
+export const [removeLevel, fetchRemoveLevel] = createApi("/remove", async (query: { id: string }) => {
+    const data = await readLevels()
+    data.levels = data.levels.filter(el => el.id !== +query.id)
+    Bun.write(server.json, JSON.stringify(data))
+    console.log(query, data);
+    return data.levels
+})
 
 
 Bun.write("./types.d.ts", `declare type APIRoutes = ${apiRoutes.map(el => `"${el}"`).join(" | ")}`)
