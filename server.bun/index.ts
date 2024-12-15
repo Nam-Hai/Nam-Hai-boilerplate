@@ -5,15 +5,7 @@ export type LevelsData = {
     levels: string[]
 }
 
-function lazy<T>(getter: () => T): { value: T } {
-    return {
-        get value() {
-            const value = getter()
-            Object.assign(this, "value", value)
-            return value
-        }
-    }
-}
+export const routeServerApiMap = new Map<string, ReturnType<typeof createApi>[0]>()
 
 const readLevels = async () => {
     const file = Bun.file(server.json)
@@ -54,6 +46,7 @@ const createApi = <T extends Object, P extends Object | undefined>(path: string,
         })
 
     apiRoutes.push(path)
+    routeServerApiMap.set(path, serverAPI)
 
     return [serverAPI, frontAPI] as const
 }
@@ -69,5 +62,6 @@ export const [addlevel, fetchAddLevel] = createApi("/add/", async (d: { name: st
     Bun.write(server.json, JSON.stringify(data))
     return data
 })
+
 
 Bun.write("./types.d.ts", `declare type APIRoutes = ${apiRoutes.map(el => `"${el}"`).join(" | ")}`)

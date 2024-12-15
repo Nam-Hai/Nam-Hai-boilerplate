@@ -1,5 +1,6 @@
-import { addlevel, getLevels } from ".";
+import { addlevel, getLevels, routeServerApiMap } from ".";
 import { server } from "./config";
+
 
 
 Bun.serve({
@@ -7,14 +8,9 @@ Bun.serve({
     async fetch(req) {
         const url = new URL(req.url);
 
-        if (url.pathname === "/add/") {
-            return await addlevel(req)
-
-        } else if (url.pathname === "/levels/") {
-            return await getLevels()
+        if (routeServerApiMap.has(url.pathname)) {
+            return await routeServerApiMap.get(url.pathname)!(req)
         }
-
-
 
         return new Response("404!");
     },

@@ -16,33 +16,22 @@ const map = (x: number, start1: number, end1: number, start2: number, end2: numb
   return Lerp(start2, end2, iLerp(x, start1, end1))
 }
 
-const get = (selector: string, context?: ParentNode) => {
+const get = <T extends Element = HTMLElement>(selector: string, context?: ParentNode) => {
   const c = context || document;
-  return c.querySelector(selector)
+  return c.querySelector<T>(selector)
 }
-const getAll = (selector: string, context?: ParentNode) => {
+const getAll = <T extends Element = HTMLElement>(selector: string, context?: ParentNode) => {
   const c = context || document
-  return c.querySelectorAll(selector)
+  return c.querySelectorAll<T>(selector)
 }
 
-const Is = {
-  str: (t: any): t is string => 'string' == typeof t,
-  obj: (t: any): t is Object => t === Object(t),
-  arr: (t: any): t is Array<any> => t.constructor === Array,
-  def: <T>(t: T | undefined): t is T => void 0 !== t,
-  und: (t: any): t is undefined => t === undefined
-}
 
 const Select = (t: string | NodeList | HTMLElement[] | HTMLElement) => {
-  return Is.str(t) ? getAll(t) : (t instanceof window.NodeList || Array.isArray(t)) ? t : [t];
-}
-
-const Cr = (tagName: string) => {
-  return document.createElement(tagName)
+  return typeof t === "string" ? getAll(t) : (t instanceof window.NodeList || Array.isArray(t)) ? t : [t];
 }
 
 const Round = (x: number, decimal?: number) => {
-  decimal = Is.und(decimal) ? 100 : 10 ** decimal;
+  decimal = decimal === undefined ? 100 : 10 ** decimal;
   return Math.round(x * decimal) / decimal
 }
 const random = Math.random
@@ -68,22 +57,6 @@ const Arr = {
 
 const Has = <T extends Object, K extends PropertyKey>(obj: T, property: K): obj is Extract<T, { [P in K]?: any }> => obj.hasOwnProperty(property)
 
-const O = (el: HTMLElement, value: string | number) => {
-  el.style.opacity = "" + value
-}
-
-const pe = (el: HTMLElement, state: string) => {
-  el.style.pointerEvents = state
-}
-const PE = {
-  all: (el: HTMLElement) => {
-    pe(el, 'all')
-  },
-  none: (el: HTMLElement) => {
-    pe(el, 'none')
-  }
-}
-
 const Snif = {
   isMobile: () => {
     return window.matchMedia('(pointer: coarse)').matches;
@@ -102,7 +75,11 @@ const BM = (context: any, methodArray: string[]) => {
   }
 }
 
-const Ga = (context: Element, attribute: string) => context.getAttribute(attribute)
+const DOM = {
+  ga: (context: Element, attribute: string) => context.getAttribute(attribute),
+  sa: (context: Element, attribute: string, value: string) => context.setAttribute(attribute, value),
+  T: T
+}
 const PD = (event: Event) => {
   event.cancelable && event.preventDefault()
 }
@@ -115,8 +92,8 @@ const Class = {
   remove: (el: Element, name: string) => {
     el.classList.remove(name)
   },
-  toggle: (el: Element, name: string) => {
-    el.classList.toggle(name)
+  toggle: (el: Element, name: string, force?: boolean) => {
+    el.classList.toggle(name, force)
   }
 }
 export class OrderedMap<K extends number, V> extends Map<number, V> {
@@ -165,7 +142,17 @@ function binarySearch(arr: { id: number }[], n: number): { index: number, miss: 
 }
 
 
-export const mod = (n: number, m: number) => (n % m + m) % m;
+const mod = (n: number, m: number) => (n % m + m) % m;
+
+function lazy<T>(getter: () => T): { value: T } {
+  return {
+    get value() {
+      const value = getter()
+      Object.assign(this, "value", value)
+      return value
+    }
+  }
+}
 
 export const N = {
   Lerp,
@@ -175,23 +162,20 @@ export const N = {
   get,
   getAll,
   Select,
-  Cr,
   Round,
   binarySearch,
   random,
   Rand,
   Arr,
   Has,
-  O,
-  T,
-  PE,
+  lazy,
   Snif,
   BM,
-  Ga,
+  DOM,
   PD,
   ZL,
+  mod,
   Ease,
   Ease4,
-  Is,
   Class
 }
