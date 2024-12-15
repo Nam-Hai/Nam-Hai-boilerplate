@@ -2,7 +2,7 @@
     <section>
 
         <h1>
-            Level : {{ data?.data.levels }}
+            Level : {{ data }}
         </h1>
 
         <button @click="() => addLevel()">add level named : {{ levelName }}</button>
@@ -11,16 +11,26 @@
 </template>
 
 <script lang="ts" setup>
-const { data } = await useFetch("/api/hello")
+const { data, error } = await useAsyncData("levels", async () => {
+    const rep = await $fetch("/api/getLevels")
+    console.log(rep);
+    // return ["test", "tt"]
+    return rep.levels
+})
+if (!data.value) throw createError({ statusCode: 404, statusMessage: "Page Not Found" });
+console.log(data.value);
 
 const levelName = ref("")
 const addLevel = async () => {
-    console.log('test');
-    const a =  await $fetch("/api/addLevels", {
+    if (levelName.value === "") return
+    const { levels } = await $fetch("/api/addLevels", {
         query: {
             name: levelName.value
         }
     })
+    levelName.value = ""
+
+    data && data.value && (data.value = levels)
 }
 
 

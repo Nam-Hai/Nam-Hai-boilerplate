@@ -1,0 +1,1 @@
+declare type APIRoutes = "/levels/" | "/add/"

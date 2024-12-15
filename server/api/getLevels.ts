@@ -1,0 +1,13 @@
+import { fetchLevels } from "~/server.bun/index";
+
+export default defineEventHandler(async (event) => {
+  try {
+    console.log('test');
+    const f =  await fetchLevels()
+    console.log(f);
+    return f
+  } catch (error) {
+    console.error(error);
+    throw createError({ statusCode: 500, message: 'Failed to fetch data' });
+  }
+})
