@@ -33,7 +33,6 @@ const createApi = <T extends Object, P extends Object | undefined>(path: string,
     };
 
     const frontAPI = async (query?: any): Promise<T> => {
-        console.log('fetch');
         const fetchResult = await fetch(url.href, {
             method: query !== undefined ? "PUT" : "GET",
             body: query !== undefined ? JSON.stringify(query) : undefined
@@ -60,9 +59,7 @@ const createApi = <T extends Object, P extends Object | undefined>(path: string,
 }
 
 export const [getLevels, fetchLevels] = createApi("/levels/", async () => {
-    console.log('fetch fetchLevels server handler');
     const data = await readLevels()
-    console.log(data);
     return data
 })
 
@@ -70,7 +67,6 @@ export const [addlevel, fetchAddLevel] = createApi("/add/", async (d: { name: st
     const data = await readLevels()
     data.levels.push(d.name)
     Bun.write(server.json, JSON.stringify(data))
-
     return data
 })
 
