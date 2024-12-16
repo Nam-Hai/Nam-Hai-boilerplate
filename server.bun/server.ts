@@ -2,7 +2,7 @@ import { apiRoutes, routeServerApiMap } from ".";
 import { fetchAddLevel } from "./api";
 import { server } from "./config";
 
-console.log(fetchAddLevel);
+console.log(fetchAddLevel, routeServerApiMap);
 
 Bun.serve({
     port: server.port,

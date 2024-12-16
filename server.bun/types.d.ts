@@ -1,1 +1,1 @@
-declare type APIRoutes = 
+declare type APIRoutes = "/levels/" | "/add/" | "/remove/"
