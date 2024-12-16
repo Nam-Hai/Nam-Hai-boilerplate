@@ -2,6 +2,7 @@ import { apiRoutes, routeServerApiMap } from ".";
 import { fetchAddLevel } from "./api";
 import { server } from "./config";
 
+// dont comment this line, it break stuff pls
 console.log(fetchAddLevel, routeServerApiMap);
 
 Bun.serve({
