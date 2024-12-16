@@ -1,4 +1,4 @@
-import { fetchAddLevel } from "~/server.bun/index";
+import { fetchAddLevel } from "~/server.bun/api";
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)

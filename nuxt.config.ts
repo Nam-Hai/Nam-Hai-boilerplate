@@ -2,7 +2,7 @@
 
 export default defineNuxtConfig({
     ssr: true,
-    pages: false,
+    pages: true,
 
     // nitro: {
     //     preset: "vercel",
@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     ],
 
     app: {
+        layoutTransition: false,
         head: {
             meta: [
                 {

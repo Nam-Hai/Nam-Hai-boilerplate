@@ -9,7 +9,7 @@ const ApiMap = new Map()
 function createApi<T>(store: () => T) {
   const key = Symbol()
 
-  const provide = ()=>{
+  const provide = () => {
 
   }
   const inject = provide()

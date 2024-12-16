@@ -13,16 +13,14 @@
 </template>
 
 <script lang="ts" setup>
-import { fetchRemoveLevel } from '~/server.bun';
+import { nuxtfetchTest } from '~/server.bun/api';
 
-const { data, error } = await useAsyncData("levels", async () => {
+
+const { data } = await useAsyncData("level", async () => {
     const rep = await $fetch("/api/getLevels")
-    console.log(rep);
-    // return ["test", "tt"]
     return rep
 })
 if (!data.value) throw createError({ statusCode: 404, statusMessage: "Page Not Found" });
-console.log(data.value);
 
 const levelName = ref("")
 const addLevel = async () => {
@@ -39,12 +37,15 @@ const addLevel = async () => {
     data && data.value && (data.value = levels)
 }
 const removeLevel = async (id: number) => {
-    const levels = await $fetch("/api/removeLevel", {
-        method: "PUT",
-        body: {
-            id
-        },
-    })
+    const levels = await nuxtfetchTest("/api/removeLevel", { id })
+
+    // $fetch()
+    // const levels = await $fetch("/api/removeLevel", {
+    //     method: "PUT",
+    //     body: {
+    //         id
+    //     },
+    // })
 
     data && data.value && (data.value = levels)
 }
