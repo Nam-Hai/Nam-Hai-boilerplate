@@ -20,12 +20,6 @@ export function getUId() {
     return { id, uId }
 }
 
-import type { CanvasNode, CanvasPage } from './types'
-import type { WatchSource, WatchCallback, ComputedGetter, DebuggerOptions } from 'nuxt/dist/app/compat/capi'
-import type { MultiWatchSources } from 'nuxt/dist/app/composables/asyncData'
-
-
-let EventID = 0
 export class EventHandler {
     cbs: Map<number, Array<(e: any) => void>>
     constructor() {
@@ -54,29 +48,4 @@ export class EventHandler {
     remove(id: number) {
         this.cbs.delete(id)
     }
-}
-
-
-export function useCanvasReactivity(ctx: CanvasNode) {
-    function canvasWatch(ref: MultiWatchSources | WatchSource | WatchCallback, callback: WatchCallback) {
-        const unWatch = watch(ref, callback)
-        ctx.onDestroy(() => unWatch())
-    }
-
-    return {
-        watch: canvasWatch
-    }
-}
-
-export function getNodeTree() {
-    const instance = getCurrentInstance();
-    const parent = shallowRef()
-    const el = shallowRef()
-
-    onMounted(() => {
-        if (!instance) return
-        parent.value = instance.parent?.vnode.el
-        el.value = instance.vnode.el
-    });
-    return { parent, el }
 }

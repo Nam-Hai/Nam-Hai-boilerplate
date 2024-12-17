@@ -1,5 +1,6 @@
 import type { EffectScope } from "vue"
 import { FramePriority, type FrameEvent } from "~/plugins/core/frame"
+import type { ResizeEvent } from "~/plugins/core/resize"
 import type { StopMotionOption } from "~/plugins/core/stopMotion"
 
 export function getFilm() {
@@ -39,6 +40,22 @@ export function useTimer(callback: () => void, throttle: number) {
     })
 
     return timer
+}
+export function getResize(callback: (e: ResizeEvent) => void) {
+    const { $resizeFactory } = useNuxtApp()
+    return $resizeFactory.Resize(callback)
+}
+
+export function useResize(callback: (e: ResizeEvent) => void) {
+    const resize = getResize(callback)
+    useCleanScope(() => {
+        resize.on()
+
+        onScopeDispose(() => {
+            resize.off()
+        })
+    })
+    return resize
 }
 
 /**
