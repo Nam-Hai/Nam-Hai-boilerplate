@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@studio-freight/lenis": "^1.0.42",
+    "better-sqlite3": "^11.7.0",
     "ogl": "1.0.3",
     "stats.js": "^0.17.0",
     "vue-demi": "^0.14.10"

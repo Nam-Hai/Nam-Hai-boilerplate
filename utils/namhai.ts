@@ -46,6 +46,9 @@ const Arr = {
   create: (ArrayLength: number) => {
     return [...Array(ArrayLength).keys()]
   },
+  randomElement: <T>(array: Array<T>) => {
+    return array[Rand.range(0, array.length, 0)]
+  },
   /** shuffle an Array */
   shuffle: <T>(array: Array<T>) => {
     for (let i = array.length - 1; i > 0; i--) {
