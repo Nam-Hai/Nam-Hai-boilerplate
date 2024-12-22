@@ -79,13 +79,13 @@ export const useDefaultFlow = (main: Ref<HTMLElement | null>) => {
         props: {
             main
         },
-        flowIn: useDefaultFlowIn(),
-        flowOut: useDefaultFlowOut(),
         flowOutMap: new Map([
+            ["default", useDefaultFlowOut()],
             ["any => work-slug", useDefaultFlowOut("x")],
             ["work-slug => work-slug", useDefaultFlowOut("x")]
         ]),
         flowInMap: new Map([
+            ["default", useDefaultFlowIn()],
             ["any => work-slug", useDefaultFlowIn("x")],
             ["work-slug => work-slug", useDefaultFlowIn("x")]
         ])
