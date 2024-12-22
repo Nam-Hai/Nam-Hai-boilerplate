@@ -1,4 +1,3 @@
-import { OrderedMap } from "~/utils/namhai"
 import { N } from "~/utils/namhai"
 
 enum FramePriority {
@@ -202,7 +201,7 @@ class Frame {
         N.Bind(this, ["stop", "run", "kill"])
         this.FrameManager = options.FrameManager
         this.callback = options.callback
-        this.priority = options.priority || FramePriority.MAIN
+        this.priority = options.priority ?? FramePriority.MAIN
 
         this.on = false
         this.killed = false

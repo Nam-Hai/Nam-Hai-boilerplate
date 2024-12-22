@@ -2,7 +2,7 @@ import { FrameFactory, FrameManager, TabManager } from './core/frame'
 import { ResizeFactory, ResizeManager } from './core/resize'
 
 export default defineNuxtPlugin({
-  name: "namhai",
+  name: "frame",
   setup: nuxtApp => {
     const tab = new TabManager()
     const FM = new FrameManager(tab)

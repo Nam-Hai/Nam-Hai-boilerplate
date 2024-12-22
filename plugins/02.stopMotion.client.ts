@@ -2,7 +2,7 @@ import type { FrameFactory } from "./core/frame";
 import { MotionFactory, MotionManager } from "./core/stopMotion"
 
 export default defineNuxtPlugin({
-    dependsOn: ['namhai'],
+    dependsOn: ['frame'],
     setup: nuxtApp => {
         const { $frameFactory } = nuxtApp
         const MM = new MotionManager($frameFactory as FrameFactory)

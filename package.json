@@ -12,14 +12,14 @@
   "devDependencies": {
     "@nuxt/devtools": "1.0.2",
     "@types/bun": "^1.1.14",
-    "@types/node": "^20.17.7",
+    "@types/node": "^20.17.10",
     "eslint": "^8.57.1",
     "nuxt": "^3.14.1592",
     "prettier": "3.1.0",
-    "sass": "^1.81.0"
+    "sass": "^1.83.0"
   },
   "dependencies": {
-    "@studio-freight/lenis": "^1.0.42",
+    "lenis": "^1.1.18",
     "better-sqlite3": "^11.7.0",
     "ogl": "1.0.3",
     "vue-demi": "^0.14.10"
