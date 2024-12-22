@@ -2,11 +2,11 @@
 import type { RouteComponent, RouteLocationNormalized } from '#vue-router';
 import { useFlowProvider } from './FlowProvider';
 
+const { scrollTopApi } = defineProps<{ scrollTopApi: () => void }>()
 const router = useRouter()
 const routes = router.getRoutes()
 
 const { currentRoute, routeTo, routeFrom, hijackFlow, flowIsHijacked, releaseHijackFlow, flowInPromise } = useFlowProvider()
-const lenis = useLenis()
 
 const currentPage: Ref<RouteComponent | undefined> = shallowRef(undefined)
 const bufferPage: Ref<RouteComponent | undefined> = shallowRef(undefined)
@@ -27,13 +27,11 @@ const routerGuard = router.beforeEach(async (to, from, next) => {
     pageObject.bufferPage.value = await getComponent(to)!
     await nextTick()
     await Promise.all([flowInPromise.value])
-    console.log("router.before each resolved");
     next()
 })
 
 router.afterEach(async (to, from, failure) => {
     if (checkEqualRoute(to, from)) return
-    console.log("router.afterEach start", pageObject);
     currentRoute.value = routeTo.value
 
     const temp = pageObject.currentPage
@@ -43,7 +41,7 @@ router.afterEach(async (to, from, failure) => {
     pageObject.bufferPage.value = undefined
 
     swapClass()
-    lenis.scrollTo("top", { immediate: true })
+    scrollTopApi()
 
     console.log("router.after each resolved");
     releaseHijackFlow()
@@ -88,9 +86,7 @@ const swapClass = () => {
 <style lang="scss">
 .custom-router__wrapper {
     position: relative;
-    // overflow: scroll;
-    // height: var(--100vh);
-    // width: 100vw;
+
 }
 
 .page-a {
@@ -103,10 +99,8 @@ const swapClass = () => {
 
 .page-a,
 .page-b {
-    // position: absolute;
     top: 0;
     width: 100%;
-    // height: var(--100vh);
 }
 
 .current-page {
