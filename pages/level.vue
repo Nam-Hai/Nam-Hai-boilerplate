@@ -17,6 +17,7 @@ import { nuxtfetchTest } from '~/server.bun/api';
 
 
 const { data } = await useAsyncData("level", async () => {
+    console.log("level");
     const rep = await $fetch("/api/getLevels")
     return rep
 })

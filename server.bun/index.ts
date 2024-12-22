@@ -5,7 +5,7 @@ export const routeServerApiMap = new Map<string, ReturnType<typeof createServerA
 
 export const apiRoutes: string[] = []
 
-export const createServerApi = <T extends Object, P extends Object | undefined>(path: string, payload: ((data: P) => Promise<T>)) => {
+export const createServerApi = <T extends Object, P extends Object>(path: string, payload: ((data: P) => Promise<T>)) => {
 
     const url = new URL(path, `${server.url}:${server.port}`)
 
@@ -14,6 +14,7 @@ export const createServerApi = <T extends Object, P extends Object | undefined>(
     ): payload is (data: P) => Promise<T> => {
         return payload.length > 0;
     };
+
 
     const middlewareAPI = async (body: P): Promise<T> => {
         const fetchResult = await fetch(url.href, {
@@ -25,6 +26,7 @@ export const createServerApi = <T extends Object, P extends Object | undefined>(
         return data
     }
 
+    // TODO
     const frontAPI = async (args: Parameters<ReturnType<typeof nuxtFetch>>[0], body: P) => {
         const response = await fetch(args,
             {

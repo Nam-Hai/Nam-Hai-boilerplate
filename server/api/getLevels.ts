@@ -3,7 +3,7 @@ import { fetchLevels } from "~/server.bun/api";
 export default defineEventHandler(async (event) => {
   try {
     console.log("getLevels");
-    const f = await fetchLevels()
+    const f = await fetchLevels({})
     console.log("getLevels", f);
     return f
   } catch (error) {

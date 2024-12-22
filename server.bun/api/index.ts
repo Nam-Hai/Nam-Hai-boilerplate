@@ -15,7 +15,7 @@ const readLevels = async () => {
     return data
 }
 
-export const [getLevels, fetchLevels] = createServerApi("/levels/", async () => {
+export const [getLevels, fetchLevels] = createServerApi("/levels/", async ({ }) => {
     const data = await readLevels()
     return data.levels
 })
