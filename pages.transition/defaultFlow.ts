@@ -1,7 +1,7 @@
 import { useLayout } from "~/layouts/default.vue"
 import { usePageFlow } from "~/lib/waterflow/composables/usePageFlow"
 
-export const useDefaultFlowIn = () => {
+export const useDefaultFlowIn = (axis: "x" | "y" = "y") => {
     const { vh, scale } = useScreen()
 
     return (props: { main: Ref<HTMLElement | null> }, resolve: () => void) => {
@@ -20,7 +20,7 @@ export const useDefaultFlowIn = () => {
             p: {
                 scaleX: [scaleXFrom, scaleXFrom],
                 scaleY: [scaleYFrom, scaleYFrom],
-                y: [vh.value, 0, "px"]
+                [axis]: [vh.value, 0, "px"]
             },
             d: 750,
             e: "io2",
@@ -34,15 +34,14 @@ export const useDefaultFlowIn = () => {
             d: 750,
             delay: 750,
             e: "io2",
-            cb() {
-                resolve()
-            },
         })
-        tl.play()
+        tl.play().then(() => {
+            resolve()
+        })
     }
 }
 
-export const useDefaultFlowOut = () => {
+export const useDefaultFlowOut = (axis: "x" | "y" = "y") => {
     const { overlay } = useLayout()
     return (props: { main: Ref<HTMLElement | null> }, resolve: () => void) => {
         if (!props.main.value) {
@@ -60,11 +59,11 @@ export const useDefaultFlowOut = () => {
         tl.from({
             el: props.main.value,
             p: {
-                y: [0, -3, "rem"],
+                [axis]: [0, -6, "rem"],
             },
-            d: 750,
-            delay: 300,
-            e: "o3",
+            d: 1200,
+            delay: 100,
+            e: "o1",
         })
 
         tl.play().then(() => {
@@ -81,6 +80,12 @@ export const useDefaultFlow = (main: Ref<HTMLElement | null>) => {
             main
         },
         flowIn: useDefaultFlowIn(),
-        flowOut: useDefaultFlowOut()
+        flowOut: useDefaultFlowOut(),
+        flowOutMap: new Map([
+            ["work-slug => work-slug", useDefaultFlowOut("x")]
+        ]),
+        flowInMap: new Map([
+            ["work-slug => work-slug", useDefaultFlowIn("x")]
+        ])
     })
 }
