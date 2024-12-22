@@ -1,12 +1,12 @@
 import type { ShallowRef } from "vue";
+import type { RouteLocationNormalized } from '#vue-router';
 
 
 type CrossFadeMode = "TOP" | "BOTTOM"
-export const [provideFlowProvider, useFlowProvider, flowKey] = createContext(() => {
-  const route = useRoute()
-  const currentRoute = shallowRef(route)
-  const routeTo = shallowRef(route)
-  const routeFrom = shallowRef(route)
+export const [provideFlowProvider, useFlowProvider, flowKey] = createContext((options: { route: RouteLocationNormalized }) => {
+  const currentRoute = shallowRef(options.route)
+  const routeTo = shallowRef(options.route)
+  const routeFrom = shallowRef(options.route)
   const crossfadeMode: ShallowRef<CrossFadeMode> = shallowRef("TOP")
 
 

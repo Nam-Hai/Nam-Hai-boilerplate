@@ -1,4 +1,4 @@
-export const useState = createState(() => {
+export const useStore = createState(() => {
 
   const isMobile = ref(false);
 
