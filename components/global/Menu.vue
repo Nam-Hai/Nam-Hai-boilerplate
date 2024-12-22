@@ -15,7 +15,7 @@
 <style lang="scss" scoped>
 .menu__wrapper {
   z-index: 1000;
-  position: absolute;
+  position: fixed;
   top: 8rem;
   left: 22rem;
   display: flex;

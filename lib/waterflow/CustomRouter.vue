@@ -85,8 +85,8 @@ const swapClass = () => {
 .custom-router__wrapper {
     position: relative;
     // overflow: scroll;
-    height: 100vh;
-    width: 100vw;
+    // height: var(--100vh);
+    // width: 100vw;
 }
 
 .page-a {
