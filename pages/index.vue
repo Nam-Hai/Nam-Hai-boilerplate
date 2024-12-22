@@ -2,9 +2,6 @@
     <main ref="mainRef">
         <p v-cursor>
             hey this is my boilerplate™<br>
-            I use Nuxt and a lot custom tools. Some of this is a bit useless maybe. Maybe you should not use my
-            animation engine as there are more robust already existing tools like gsap or animejs. The frame manager and
-            the resize manager are cool tho.<br>
         </p>
     </main>
 </template>

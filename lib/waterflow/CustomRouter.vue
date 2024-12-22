@@ -23,14 +23,17 @@ const routerGuard = router.beforeEach(async (to, _from, next) => {
     hijackFlow()
 
     pageObject.bufferPage.value = await getComponent(to)!
+    console.log(pageObject.bufferPage.value);
 
     await nextTick()
     console.log(flowInPromise.value);
     await Promise.all([flowInPromise.value])
+    console.log("router.before each resolved");
     next()
 })
 
 router.afterEach(async (to, from, failure) => {
+    console.log("router.afterEach start", pageObject);
     currentRoute.value = routeTo.value
 
     const temp = pageObject.currentPage
@@ -41,15 +44,18 @@ router.afterEach(async (to, from, failure) => {
 
     swapClass()
 
+    console.log("router.after each resolved");
     releaseHijackFlow()
 })
 
 async function getComponent(route: RouteLocationNormalized) {
-    const comp = routes.filter(el => {
+    const componentGetter = routes.filter(el => {
         return el.path === route.path
     })[0].components?.default
 
-    return typeof comp === "function" ? (comp as Function)() : comp
+    console.log(componentGetter);
+    const component = typeof componentGetter === "function" ? (await (componentGetter as Function)()).default : componentGetter
+    return component
 }
 
 const wrapperA = shallowRef()

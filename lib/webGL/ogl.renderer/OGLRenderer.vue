@@ -3,9 +3,7 @@ import { Transform } from 'ogl';
 import { createRenderer, Fragment, type App } from 'vue-demi';
 import { provideOGL, type OGLContext } from './useOGL';
 import { nodeOps } from './CustomRenderer';
-import { provideFlowProvider, useFlowProvider } from '~/waterflow/FlowProvider';
-import { provideStoreView } from '~/composables/useStoreView';
-import { provideStoreCursor, useStoreCursor } from '~/composables/useStore';
+import { provideFlowProvider, useFlowProvider } from '~/lib/waterflow/FlowProvider';
 
 const canvasRef = shallowRef() as Ref<HTMLCanvasElement>
 
@@ -17,8 +15,7 @@ const slots = defineSlots<{
 const scene = shallowRef<Transform>(new Transform())
 
 const flowProvider = useFlowProvider()
-const storeView = useStoreView()
-const storeCursor = useStoreCursor()
+const screen = useScreen()
 
 const createInternalComponent = (context: OGLContext) =>
     defineComponent({
@@ -28,8 +25,7 @@ const createInternalComponent = (context: OGLContext) =>
 
             provide('ogl', context)
             provideFlowProvider(flowProvider)
-            provideStoreView(storeView)
-            provideStoreCursor(storeCursor)
+            provideScreen(screen)
 
             const slot = slots?.default ? slots.default() : []
             return () => h(Fragment, null, slot)

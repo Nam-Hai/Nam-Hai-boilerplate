@@ -1,6 +1,7 @@
 <template>
   <NuxtLayout>
-    <!-- <NuxtPage /> -->
+    <!-- <NuxtPage v-if="false" /> -->
+
     <CustomRouter />
   </NuxtLayout>
 </template>
