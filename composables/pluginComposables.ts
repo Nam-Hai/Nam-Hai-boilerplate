@@ -46,6 +46,11 @@ export function getResize(callback: (e: ResizeEvent) => void) {
     return $resizeFactory.Resize(callback)
 }
 
+export function useLenis() {
+    const { $lenis } = useNuxtApp()
+    return $lenis
+}
+
 export function useResize(callback: (e: ResizeEvent) => void) {
     const resize = getResize(callback)
     useCleanScope(() => {
@@ -57,6 +62,7 @@ export function useResize(callback: (e: ResizeEvent) => void) {
     })
     return resize
 }
+
 
 /**
  *  The delay created and its callback are scoped
