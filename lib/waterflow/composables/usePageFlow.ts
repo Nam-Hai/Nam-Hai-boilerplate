@@ -1,7 +1,8 @@
-import { onUnmounted } from "vue";
+import { EffectScope, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useFlowProvider } from "../FlowProvider";
 import type { RouteLocationNormalized } from "#vue-router";
+import { onLeave } from "./onFlow";
 
 export type FlowFunction<T> = (props: T, resolve: () => void) => void
 
@@ -23,22 +24,33 @@ export function usePageFlow<T>({
 
   const router = useRouter()
 
-  const { flowInPromise, startFlowIn, routeFrom, routeTo } = useFlowProvider()
+  const { flowIsHijackedPromise, flowInPromise, startFlowIn, routeFrom, routeTo } = useFlowProvider()
 
-  onMounted(async () => {
-    const resolver = startFlowIn()
-    await createFlow<T>(routeFrom.value, routeTo.value, flowInMap, flowIn, props)
-    resolver && resolver()
+  const scopeIn = effectScope()
+  onMounted(() => {
+    console.log(flowIsHijackedPromise.value);
+    if (!flowIsHijackedPromise.value) return
+    scopeIn.run(async () => {
+      const resolver = startFlowIn()
+      await createFlow<T>(routeFrom.value, routeTo.value, flowInMap, flowIn, props)
+      console.log("in", resolver);
+      resolver && resolver()
+    })
   })
 
-  const routerGuard = router.beforeEach(async (to, from, next) => {
-    await createFlow<T>(from, to, flowOutMap, flowOut, props)
+  onLeave(async (from, to) => {
+    scopeIn.stop()
 
-    next()
-  })
+    const scope = effectScope(true)
+    await new Promise<void>((res, rej) => {
+      scope.run(async () => {
+        await createFlow<T>(from, to, flowOutMap, flowOut, props)
+        res()
+      })
+    })
 
-  onUnmounted(() => {
-    routerGuard()
+    scope.stop()
+
   })
 }
 

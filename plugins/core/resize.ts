@@ -50,6 +50,7 @@ export class ResizeManager {
 
         this.mode = SassVars.scale_mode as 'fit' | 'width' | 'height'
         this.init()
+        this.update()
         window.addEventListener('resize', () => this.timer.tick())
     }
 

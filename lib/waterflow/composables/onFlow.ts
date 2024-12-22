@@ -1,5 +1,6 @@
 import { onMounted, watch } from "vue"
 import { useFlowProvider } from "../FlowProvider"
+import type { RouteLocationNormalized } from 'vue-router';
 
 export function onFlow(cb: () => void) {
   const { flowIsHijackedPromise } = useFlowProvider()
@@ -10,7 +11,7 @@ export function onFlow(cb: () => void) {
     cb && cb()
   })
   onMounted(() => {
-    if(!!flowIsHijackedPromise.value) return
+    if (!!flowIsHijackedPromise.value) return
     flow.value = true
     cb && cb()
   })
@@ -18,12 +19,12 @@ export function onFlow(cb: () => void) {
   return flow
 }
 
-
-export function onLeave(callback: () => void) {
-  const { flowIsHijackedPromise } = useFlowProvider()
+export function onLeave(callback: (from: RouteLocationNormalized, to: RouteLocationNormalized) => void) {
+  const { flowIsHijackedPromise, routeFrom, routeTo } = useFlowProvider()
   watch(flowIsHijackedPromise, flow => {
+    console.log("flow leave");
     if (!!flow) {
-      callback()
+      callback(routeFrom.value, routeTo.value)
     }
   })
 }

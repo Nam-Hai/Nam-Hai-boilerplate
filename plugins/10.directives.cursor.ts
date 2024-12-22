@@ -8,8 +8,6 @@ export default defineNuxtPlugin((nuxtApp) => {
             const speed = binding.value?.speed ?? 1
 
             const { state } = useCursor()
-            console.log(state);
-            console.log("directive cursor");
 
             const scope = useCleanScope(
                 () => {

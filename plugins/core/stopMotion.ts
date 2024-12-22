@@ -333,7 +333,6 @@ class TickerDOMAnimation extends Ticker implements TickerI {
 
             return [el, p]
         })
-
     }
 
     override update(e: MotionEvent) {
@@ -346,7 +345,7 @@ class TickerDOMAnimation extends Ticker implements TickerI {
 
 
         const has = (...args: Parameters<typeof Object.hasOwn>) => Object.hasOwn(args[0], args[1])
-        styleMapObject["x"]
+        // styleMapObject["x"]
         const x = has(this.propToIndex, "x"), y = has(this.propToIndex, "y")
         const translate = x || y
         const opacity = has(this.propToIndex, "o")
@@ -370,8 +369,8 @@ class TickerDOMAnimation extends Ticker implements TickerI {
                     const value = prop[this.propToIndex["s"]]
                     transformString += `scale(${value.curr})`
                 } else if (scaleX || scaleY) {
-                    const valueX = x ? prop[this.propToIndex["scaleX"]] : undefined
-                    const valueY = y ? prop[this.propToIndex["scaleY"]] : undefined
+                    const valueX = scaleX ? prop[this.propToIndex["scaleX"]] : undefined
+                    const valueY = scaleY ? prop[this.propToIndex["scaleY"]] : undefined
                     transformString += `scale(${valueX?.curr ?? 1}, ${valueY?.curr ?? 1}) `
                 }
                 if (rotate) {
@@ -481,7 +480,6 @@ export class Film {
     }
 
     from(props: StopMotionOption) {
-
         const stopMotion = new Motion(props, this.motionManager)
         this.stopMotions.push(stopMotion)
         return this

@@ -30,7 +30,6 @@ html {
   @include rem-scale();
 }
 
-
 .mobile-only {
   @include breakpoint(desktop) {
     display: none !important;
@@ -67,5 +66,22 @@ main {
 
   * {
     pointer-events: none;
+  }
+}
+
+main {
+  font-size: 2rem;
+
+  padding-top: 10rem;
+  background-color: white;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  p {
+    width: 70rem;
+    border-radius: 0.2rem;
+    padding: 2rem;
+    background-color: beige;
   }
 }

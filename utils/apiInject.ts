@@ -15,9 +15,15 @@ export function createContext<Args, Values extends Record<string | number | symb
     return constructedVal
   };
 
-  const useContext = (value?: Values | (() => Values), treatDefaultAsFactory?: boolean): Values => {
-    return inject(key) as Values
+  const useContext = (value?: Values): Values => {
+    return inject(key, value) as Values
   }
+  // const useContext = (args?: Parameters<typeof inject<Values>>) => {
+  //   if (args?.[2] !== undefined) {
+  //     return inject(key, args?.[1] || undefined, args[2])
+  //   }
+  //   return inject(key, args?.[1] || undefined)
+  // }
 
   return [provideContext, useContext, key] as const;
 }

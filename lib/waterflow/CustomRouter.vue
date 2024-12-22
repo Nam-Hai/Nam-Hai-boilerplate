@@ -5,7 +5,8 @@ import { useFlowProvider } from './FlowProvider';
 const router = useRouter()
 const routes = router.getRoutes()
 
-const { currentRoute, routeTo, routeFrom, hijackFlow, releaseHijackFlow, flowInPromise } = useFlowProvider()
+const { currentRoute, routeTo, routeFrom, hijackFlow, flowIsHijacked, releaseHijackFlow, flowInPromise } = useFlowProvider()
+const lenis = useLenis()
 
 const currentPage: Ref<RouteComponent | undefined> = shallowRef(undefined)
 const bufferPage: Ref<RouteComponent | undefined> = shallowRef(undefined)
@@ -16,23 +17,22 @@ const pageObject = {
 }
 pageObject.currentPage.value = await getComponent(currentRoute.value)
 
-const routerGuard = router.beforeEach(async (to, _from, next) => {
+const routerGuard = router.beforeEach(async (to, from, next) => {
+    if (flowIsHijacked.value) return
     routeFrom.value = routeTo.value
     routeTo.value = to
 
     hijackFlow()
 
     pageObject.bufferPage.value = await getComponent(to)!
-    console.log(pageObject.bufferPage.value);
-
     await nextTick()
-    console.log(flowInPromise.value);
     await Promise.all([flowInPromise.value])
     console.log("router.before each resolved");
     next()
 })
 
 router.afterEach(async (to, from, failure) => {
+    if (checkEqualRoute(to, from)) return
     console.log("router.afterEach start", pageObject);
     currentRoute.value = routeTo.value
 
@@ -43,17 +43,21 @@ router.afterEach(async (to, from, failure) => {
     pageObject.bufferPage.value = undefined
 
     swapClass()
+    lenis.scrollTo("top", { immediate: true })
 
     console.log("router.after each resolved");
     releaseHijackFlow()
 })
+
+function checkEqualRoute(from: RouteLocationNormalized, to: RouteLocationNormalized) {
+    return from.fullPath === to.fullPath && from.hash === to.hash
+}
 
 async function getComponent(route: RouteLocationNormalized) {
     const componentGetter = routes.filter(el => {
         return el.path === route.path
     })[0].components?.default
 
-    console.log(componentGetter);
     const component = typeof componentGetter === "function" ? (await (componentGetter as Function)()).default : componentGetter
     return component
 }
@@ -99,11 +103,21 @@ const swapClass = () => {
 
 .page-a,
 .page-b {
-    position: absolute;
+    // position: absolute;
     top: 0;
     width: 100%;
-    height: 100%;
+    // height: var(--100vh);
 }
 
-.current-page {}
+.current-page {
+    z-index: 50;
+    position: relative;
+}
+
+.buffer-page {
+    z-index: 100;
+    position: fixed;
+    pointer-events: none;
+    height: var(--100vh);
+}
 </style>
