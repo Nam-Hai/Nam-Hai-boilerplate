@@ -20,9 +20,9 @@
   },
   "dependencies": {
     "lenis": "^1.1.18",
-    "better-sqlite3": "^11.7.0",
     "ogl": "1.0.3",
-    "vue-demi": "^0.14.10"
+    "vue-demi": "^0.14.10",
+    "@pinia/nuxt": "^0.7.0"
   },
   "overrides": {
     "vue": "latest"
