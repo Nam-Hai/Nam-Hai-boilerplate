@@ -10,10 +10,10 @@ import { usePageFlow } from '~/lib/waterflow/composables/usePageFlow';
 // usePageFlow({
 //     props: {
 //     },
-//     flowIn: (props, res) => {
+//     flowin: (props, res) => {
 //         res()
 //     },
-//     flowOut: (props, res) => {
+//     flowout: (props, res) => {
 //         res()
 //     }
 // })
