@@ -52,10 +52,12 @@ export function usePageFlow<T>({
 }
 
 function createFlow<T>(from: RouteLocationNormalized, to: RouteLocationNormalized, flowMap: Map<string, FlowFunction<T>> | undefined, flow: FlowFunction<T> | undefined, props: T): Promise<void> {
-  const key: string = from.name?.toString() + ' => ' + to.name?.toString()
+  const fromName = from.name?.toString(), toName = to.name?.toString()
+  const key: string = fromName + ' => ' + toName
+  const keyDefaultIn = fromName + " => any"
+  const keyDefaultOut = "any => " + toName
 
-  let FlowFunction = getFlowFunction(key, flowMap, flow)
-  // console.log(props.main.value, key);
+  const FlowFunction = flowMap?.get(key) || flowMap?.get(keyDefaultIn) || flowMap?.get(keyDefaultOut) || flowMap?.get('default') || flow || undefined
   return new Promise<void>(cb => {
     if (!FlowFunction) cb()
     else FlowFunction(props, cb)
