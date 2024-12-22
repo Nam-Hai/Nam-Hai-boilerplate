@@ -15,8 +15,6 @@ import { useDefaultFlowIn, useDefaultFlowOut } from '~/pages.transition/defaultF
 
 const main = useTemplateRef("mainRef")
 
-const { overlay } = useLayout()
-
 usePageFlow({
     props: {
         main

@@ -8,11 +8,9 @@
 
 <script setup lang="ts">
 import { lorem } from '~/assets/lorem';
-import { useLayout } from '~/layouts/default.vue';
 import { usePageFlow } from '~/lib/waterflow/composables/usePageFlow';
 import { useDefaultFlowIn, useDefaultFlowOut } from '~/pages.transition/defaultFlow';
 
-const { overlay } = useLayout()
 const { vh, scale } = useScreen()
 onMounted(() => {
     console.log(vh.value);
