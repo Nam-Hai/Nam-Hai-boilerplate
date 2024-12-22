@@ -14,11 +14,6 @@ import { lorem } from '~/assets/lorem';
 import { usePageFlow } from '~/lib/waterflow/composables/usePageFlow';
 import { useDefaultFlowIn, useDefaultFlowOut } from '~/pages.transition/defaultFlow';
 
-const { vh, scale } = useScreen()
-onMounted(() => {
-    console.log(vh.value);
-
-})
 const main = useTemplateRef("main")
 usePageFlow({
     props: {

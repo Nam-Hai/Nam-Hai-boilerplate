@@ -7,7 +7,6 @@
 import { useFlowProvider } from '~/lib/waterflow/FlowProvider';
 const { currentRoute } = useFlowProvider()
 const routeSlug = currentRoute.value.params.slug
-console.log(routeSlug);
 const slug = typeof routeSlug === "string" ? routeSlug : routeSlug[0]
 
 const { data, error } = await useAsyncData(`slug-${slug}`, async () => {

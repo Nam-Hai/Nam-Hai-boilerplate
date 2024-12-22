@@ -5,9 +5,12 @@ export default defineNuxtConfig({
     ssr: true,
     pages: true,
     devtools: { enabled: true },
-    nitro: {
-        static: true
-    },
+    // nitro: {
+    // static: true,
+    // prerender: {
+    //     routes: []
+    // }
+    // },
     devServer: {
         host: "0.0.0.0",
     },
@@ -71,7 +74,8 @@ export default defineNuxtConfig({
         "/baz": { prerender: true },
         // "/works": { swr: true },
         // "/works/**": { swr: 3600 },
-        "/work/*": { prerender: true },
-        "/api/**": { cors: true },
+        "/work/**": { prerender: true },
+        "/api/getSlugs": { cors: true, prerender: true },
+        // "/api/**": { prerender: true },
     },
 });

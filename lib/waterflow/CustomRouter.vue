@@ -4,7 +4,6 @@ import type { RouteComponent, RouteLocationNormalized } from '#vue-router';
 const { scrollTopApi } = defineProps<{ scrollTopApi?: () => void }>()
 const router = useRouter()
 const routes = router.getRoutes()
-console.log(routes);
 // const components = {
 //     index: defineAsyncComponent(() => import("@/pages/index.vue")),
 //     foo: defineAsyncComponent(() => import("@/pages/foo.vue")),
@@ -25,8 +24,6 @@ pageObject.currentPage.value = await getComponent(currentRoute.value)
 
 // watch(currentRoute, async (to, from) => {
 const routerGuard = router.beforeEach(async (to, from, next) => {
-    console.log(to, from);
-
     if (checkEqualRoute(to, from)) return
     if (flowIsHijacked.value) return next()
     // if (flowIsHijacked.value) return
@@ -77,14 +74,8 @@ const swapNode = () => {
     pageObject.currentPage = pageObject.bufferPage
     pageObject.bufferPage = temp
     pageObject.bufferPage.value = undefined
-    // console.log(pageObject.bufferPage.value, pageObject.currentPage.value);
-    console.log(wrapperA.value, wrapperB.value);
 }
 
-const error = useError()
-watch(error, (val) => {
-    console.log(val);
-})
 </script>
 
 <template>

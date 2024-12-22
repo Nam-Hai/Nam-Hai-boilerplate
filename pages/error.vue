@@ -16,7 +16,6 @@
 </template>
 
 <script setup lang="ts">
-
 const { query, params } = useQuery()
 const error = query
 

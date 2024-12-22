@@ -22,7 +22,6 @@ export function onFlow(callback?: (from: RouteLocationNormalized, to: RouteLocat
 export function onLeave(callback: (from: RouteLocationNormalized, to: RouteLocationNormalized) => void) {
   const { flowIsHijackedPromise, routeFrom, routeTo } = useFlowProvider()
   watch(flowIsHijackedPromise, flow => {
-    console.log("flow leave");
     if (!!flow) {
       callback(routeFrom.value, routeTo.value)
     }

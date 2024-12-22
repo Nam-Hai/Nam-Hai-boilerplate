@@ -12,9 +12,6 @@
     <NuxtLink :to="{ name: 'work-slug', params: { slug: d.name } }" v-for="d in data">
       {{ d.name }}
     </NuxtLink>
-    <NuxtLink :to="{ name: 'work-slug', params: { slug: 'test' } }">
-      Test wrong slug route
-    </NuxtLink>
   </div>
 </template>
 
