@@ -7,7 +7,9 @@ export const [provideFlowProvider, useFlowProvider, flowKey] = createContext((op
   const currentRoute = shallowRef(options.route)
   const routeTo = shallowRef(options.route)
   const routeFrom = shallowRef(options.route)
+
   const crossfadeMode: ShallowRef<CrossFadeMode> = shallowRef("TOP")
+
 
 
   const flowIsHijackedPromise: Ref<Promise<void> | undefined> = shallowRef(undefined)

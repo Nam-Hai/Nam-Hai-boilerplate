@@ -5,6 +5,9 @@ export default defineNuxtConfig({
     ssr: true,
     pages: true,
     devtools: { enabled: true },
+    nitro: {
+        static: true
+    },
     devServer: {
         host: "0.0.0.0",
     },
@@ -60,13 +63,15 @@ export default defineNuxtConfig({
         },
     },
     vue: {
-        // runtimeCompiler: true,
+        runtimeCompiler: true,
     },
-    // routeRules: {
-    // "/": { prerender: true },
-    // "/foo": { prerender: true },
-    // "/works": { swr: true },
-    // "/works/**": { swr: 3600 },
-    // "/api/**": { cors: true },
-    // },
+    routeRules: {
+        "/": { prerender: true },
+        "/foo": { prerender: true },
+        "/baz": { prerender: true },
+        // "/works": { swr: true },
+        // "/works/**": { swr: 3600 },
+        "/work/*": { prerender: true },
+        "/api/**": { cors: true },
+    },
 });

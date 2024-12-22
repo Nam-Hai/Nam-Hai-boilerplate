@@ -1,6 +1,7 @@
 <template>
   <NuxtLayout>
-    <!-- <NuxtPage v-if="false" /> -->
+    <!-- <NuxtPage /> -->
+
 
     <CustomRouter :scroll-top-api="() => lenis.scrollTo('top', { immediate: true })" />
   </NuxtLayout>

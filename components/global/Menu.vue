@@ -1,5 +1,5 @@
 <template>
-  <div class="menu__wrapper">
+  <div class="menu__wrapper" v-if="data">
     <NuxtLink :to="{ name: 'index' }" class="menu-item">
       home
     </NuxtLink>
@@ -9,14 +9,23 @@
     <NuxtLink :to="{ name: 'baz' }" class="menu-item">
       baz
     </NuxtLink>
-    <NuxtLink :to="{ name: 'work-slug', params: { slug: slug } }" class="menu-item">
-      slug
+    <NuxtLink :to="{ name: 'work-slug', params: { slug: d.name } }" v-for="d in data">
+      {{ d.name }}
+    </NuxtLink>
+    <NuxtLink :to="{ name: 'work-slug', params: { slug: 'test' } }">
+      Test wrong slug route
     </NuxtLink>
   </div>
 </template>
 
 <script lang="ts" setup>
-const slug = "yoooo-12"
+const { data, error } = await useAsyncData("slugs", async () => {
+  const data = await $fetch("/api/getSlugs")
+  return data
+});
+if (error.value) throw createError({ statusCode: 404, statusMessage: "Slugs Not Found" });
+// if (error.value) createError({ statusCode: 404, statusMessage: "Slugs Not Found" });
+
 </script>
 
 <style lang="scss" scoped>

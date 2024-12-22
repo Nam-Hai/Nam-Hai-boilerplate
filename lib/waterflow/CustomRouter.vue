@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { RouteComponent, RouteLocationNormalized } from '#vue-router';
-import { useFlowProvider } from './FlowProvider';
 
 const { scrollTopApi } = defineProps<{ scrollTopApi?: () => void }>()
 const router = useRouter()
 const routes = router.getRoutes()
+console.log(routes);
 // const components = {
 //     index: defineAsyncComponent(() => import("@/pages/index.vue")),
 //     foo: defineAsyncComponent(() => import("@/pages/foo.vue")),
@@ -23,9 +23,14 @@ const pageObject = {
 }
 pageObject.currentPage.value = await getComponent(currentRoute.value)
 
+// watch(currentRoute, async (to, from) => {
 const routerGuard = router.beforeEach(async (to, from, next) => {
+    console.log(to, from);
+
     if (checkEqualRoute(to, from)) return
     if (flowIsHijacked.value) return next()
+    // if (flowIsHijacked.value) return
+
     routeFrom.value = routeTo.value
     routeTo.value = to
     currentRoute.value = routeTo.value
@@ -50,7 +55,6 @@ function checkEqualRoute(from: RouteLocationNormalized, to: RouteLocationNormali
 }
 
 async function getComponent(route: RouteLocationNormalized) {
-    console.log(route.name, route.params, route.path, route.fullPath, route.hash);
     const componentGetter = routes.filter(el => {
         return el.name === route.name
     })[0].components?.default
@@ -73,7 +77,14 @@ const swapNode = () => {
     pageObject.currentPage = pageObject.bufferPage
     pageObject.bufferPage = temp
     pageObject.bufferPage.value = undefined
+    // console.log(pageObject.bufferPage.value, pageObject.currentPage.value);
+    console.log(wrapperA.value, wrapperB.value);
 }
+
+const error = useError()
+watch(error, (val) => {
+    console.log(val);
+})
 </script>
 
 <template>
