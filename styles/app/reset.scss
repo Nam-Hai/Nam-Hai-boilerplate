@@ -16,16 +16,15 @@ html,
 body,
 #__nuxt {
   width: 100%;
-  // height: 100%;
+  height: 100%;
 }
 
 html {
   height: auto;
 }
 
-body,
-#__nuxt {
-  // overflow: hidden;
+body {
+  display: grid;
 }
 
 *,

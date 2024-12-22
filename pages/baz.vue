@@ -10,6 +10,6 @@
 
 <style scoped lang="scss">
 main {
-    background-color: azure;
+    background-color: red;
 }
 </style>

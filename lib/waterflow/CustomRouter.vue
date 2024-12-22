@@ -2,7 +2,7 @@
 import type { RouteComponent, RouteLocationNormalized } from '#vue-router';
 import { useFlowProvider } from './FlowProvider';
 
-const { scrollTopApi } = defineProps<{ scrollTopApi: () => void }>()
+const { scrollTopApi } = defineProps<{ scrollTopApi?: () => void }>()
 const router = useRouter()
 const routes = router.getRoutes()
 // const components = {
@@ -32,15 +32,13 @@ const routerGuard = router.beforeEach(async (to, from, next) => {
 
     hijackFlow()
 
-    console.log("beforeEach", to.name);
     pageObject.bufferPage.value = await getComponent(to)!
     await nextTick()
     await Promise.all([flowInPromise.value])
 
 
-    scrollTopApi()
+    scrollTopApi && scrollTopApi()
 
-    console.log("router.beforeEach resolved");
     releaseHijackFlow()
 
     swapNode()
