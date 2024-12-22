@@ -39,18 +39,17 @@ usePageFlow({
         tl.from({
             el: props.mainRef.value,
             p: {
-                y: [0, -5, "rem"],
+                y: [0, -3, "rem"],
             },
             d: 750,
-            delay: 750,
+            delay: 300,
             e: "o3",
-            cb() {
-                overlay.value && (overlay.value.style.opacity = "0")
-                resolve()
-            },
         })
 
-        tl.play()
+        tl.play().then(() => {
+            overlay.value && (overlay.value.style.opacity = "0")
+            resolve()
+        })
     }
 })
 

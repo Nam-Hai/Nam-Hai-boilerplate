@@ -158,12 +158,18 @@ export class Motion {
     motionManager: MotionManager;
 
     constructor(option: StopMotionOption, motionManager: MotionManager) {
-        this.motionManager = motionManager
-        this.ticker = TickerFactory.createTicker(option, this.motionManager)
-
         this.promise = new Promise<void>(res => {
             this.promiseRelease = res
         })
+        const callback = option.cb
+        const cb = () => {
+            callback?.()
+            this.promiseRelease()
+        }
+        Object.assign(option, { cb })
+        this.motionManager = motionManager
+        this.ticker = TickerFactory.createTicker(option, this.motionManager)
+
     }
 
     pause() {
