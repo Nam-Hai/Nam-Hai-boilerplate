@@ -1,5 +1,6 @@
 <template>
     <main ref="mainRef">
+        <h1>Index</h1>
         <p v-cursor>
             hey this is my boilerplate™<br>
             {{ lorem }}
@@ -9,7 +10,6 @@
 
 <script lang="ts" setup>
 import { lorem } from '~/assets/lorem';
-import { useLayout } from '~/layouts/default.vue';
 import { usePageFlow } from '~/lib/waterflow/composables/usePageFlow';
 import { useDefaultFlowIn, useDefaultFlowOut } from '~/pages.transition/defaultFlow';
 

@@ -11,7 +11,6 @@ const overlay = useTemplateRef("overlay")
 
 const { provideOverlay } = useLayout()
 onMounted(() => {
-    console.log(overlay, provideOverlay);
     if (!overlay.value) return
     provideOverlay(overlay.value)
 })

@@ -28,12 +28,10 @@ export function usePageFlow<T>({
 
   const scopeIn = effectScope()
   onMounted(() => {
-    console.log(flowIsHijackedPromise.value);
     if (!flowIsHijackedPromise.value) return
     scopeIn.run(async () => {
       const resolver = startFlowIn()
       await createFlow<T>(routeFrom.value, routeTo.value, flowInMap, flowIn, props)
-      console.log("in", resolver);
       resolver && resolver()
     })
   })

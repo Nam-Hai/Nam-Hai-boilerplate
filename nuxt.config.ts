@@ -60,13 +60,13 @@ export default defineNuxtConfig({
         },
     },
     vue: {
-        runtimeCompiler: true,
+        // runtimeCompiler: true,
     },
     // routeRules: {
-    //     "/": { prerender: true },
-    //     "/about": { prerender: true },
-    //     "/works": { swr: true },
-    //     "/works/**": { swr: 3600 },
-    //     "/api/**": { cors: true },
+    // "/": { prerender: true },
+    // "/foo": { prerender: true },
+    // "/works": { swr: true },
+    // "/works/**": { swr: 3600 },
+    // "/api/**": { cors: true },
     // },
 });

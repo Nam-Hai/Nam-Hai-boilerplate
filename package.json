@@ -1,5 +1,7 @@
 {
-  "name": "nuxt-app",
+  "module": "index.ts",
+  "type": "module",
+  "name": "namhai-boilerplate",
   "private": true,
   "scripts": {
     "build": "nuxt build",

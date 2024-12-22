@@ -1,5 +1,5 @@
 <template>
-  <div class="layout__wrapper">
+  <div class="layout__wrapper" :class="[layoutStore.theme]">
     <Overlay />
     <Menu />
     <div class="page__wrapper">
@@ -24,6 +24,7 @@ export const [provideLayout, useLayout] = createContext(() => {
 <script setup lang="ts">
 import type { ShallowRef } from 'vue';
 
+const layoutStore = useLayoutStore()
 provideLayout({})
 
 </script>

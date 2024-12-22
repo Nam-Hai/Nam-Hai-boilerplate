@@ -1,24 +1,10 @@
 <script lang="ts" setup>
-import { useStoreCursor } from '~/composables/useStore';
-// import { useStoreView } from '~/composables/useStoreView';
-
-
-const wrapperRef = ref() as Ref<HTMLElement>
-
-// const { mouse, vw } = useStoreView()
-
-
-const { cursorState } = useStoreCursor()
-watch(cursorState, val => {
-    console.log(val);
-})
 </script>
 
 <template>
 </template>
 
 <style lang="scss" scoped>
-
 .curose__wrapper {
     height: 1rem;
     width: 1rem;

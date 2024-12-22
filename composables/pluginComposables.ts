@@ -74,7 +74,7 @@ export function useResize(callback: (e: ResizeEvent) => void) {
  *  onMounted(() => {
  *      useDelay(() => {
  *          useFrame(()=>{
- *              console.log('test');
+ *              // insert code
  *          })
  *      }, 1000)
  *  })

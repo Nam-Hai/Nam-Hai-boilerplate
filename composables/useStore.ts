@@ -1,4 +1,4 @@
-const useStore = createStore(() => {
+export const useState = createState(() => {
 
   const isMobile = ref(false);
 
@@ -12,11 +12,4 @@ const useStore = createStore(() => {
 
   const preloaderComplete = ref(false);
   return { isMobile, pageLoaded, preventScroll, fromPreloader, manifestLoaded, preloaderComplete }
-})
-
-export default useStore
-
-export const [provideStoreCursor, useStoreCursor] = createContext(() => {
-  const cursorState = ref(0)
-  return { cursorState }
 })

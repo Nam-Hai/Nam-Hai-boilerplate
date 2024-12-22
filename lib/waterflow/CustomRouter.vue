@@ -5,6 +5,12 @@ import { useFlowProvider } from './FlowProvider';
 const { scrollTopApi } = defineProps<{ scrollTopApi: () => void }>()
 const router = useRouter()
 const routes = router.getRoutes()
+// const components = {
+//     index: defineAsyncComponent(() => import("@/pages/index.vue")),
+//     foo: defineAsyncComponent(() => import("@/pages/foo.vue")),
+//     baz: defineAsyncComponent(() => import("@/pages/baz.vue")),
+//     "work-slug": defineAsyncComponent(() => import("@/pages/work/[slug].vue"))
+// } as const
 
 const { currentRoute, routeTo, routeFrom, hijackFlow, flowIsHijacked, releaseHijackFlow, flowInPromise } = useFlowProvider()
 
@@ -18,33 +24,27 @@ const pageObject = {
 pageObject.currentPage.value = await getComponent(currentRoute.value)
 
 const routerGuard = router.beforeEach(async (to, from, next) => {
-    if (flowIsHijacked.value) return
+    if (checkEqualRoute(to, from)) return
+    if (flowIsHijacked.value) return next()
     routeFrom.value = routeTo.value
     routeTo.value = to
+    currentRoute.value = routeTo.value
 
     hijackFlow()
 
+    console.log("beforeEach", to.name);
     pageObject.bufferPage.value = await getComponent(to)!
     await nextTick()
     await Promise.all([flowInPromise.value])
-    next()
-})
 
-router.afterEach(async (to, from, failure) => {
-    if (checkEqualRoute(to, from)) return
-    currentRoute.value = routeTo.value
 
-    const temp = pageObject.currentPage
-
-    pageObject.currentPage = pageObject.bufferPage
-    pageObject.bufferPage = temp
-    pageObject.bufferPage.value = undefined
-
-    swapClass()
     scrollTopApi()
 
-    console.log("router.after each resolved");
+    console.log("router.beforeEach resolved");
     releaseHijackFlow()
+
+    swapNode()
+    next()
 })
 
 function checkEqualRoute(from: RouteLocationNormalized, to: RouteLocationNormalized) {
@@ -52,8 +52,9 @@ function checkEqualRoute(from: RouteLocationNormalized, to: RouteLocationNormali
 }
 
 async function getComponent(route: RouteLocationNormalized) {
+    console.log(route.name, route.params, route.path, route.fullPath, route.hash);
     const componentGetter = routes.filter(el => {
-        return el.path === route.path
+        return el.name === route.name
     })[0].components?.default
 
     const component = typeof componentGetter === "function" ? (await (componentGetter as Function)()).default : componentGetter
@@ -63,12 +64,17 @@ async function getComponent(route: RouteLocationNormalized) {
 const wrapperA = shallowRef()
 const wrapperB = shallowRef()
 
-const swapClass = () => {
+const swapNode = () => {
     wrapperA.value.classList.toggle('buffer-page')
     wrapperA.value.classList.toggle('current-page')
 
     wrapperB.value.classList.toggle('buffer-page')
     wrapperB.value.classList.toggle('current-page')
+
+    const temp = pageObject.currentPage
+    pageObject.currentPage = pageObject.bufferPage
+    pageObject.bufferPage = temp
+    pageObject.bufferPage.value = undefined
 }
 </script>
 

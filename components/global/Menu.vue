@@ -6,10 +6,17 @@
     <NuxtLink :to="{ name: 'foo' }" class="menu-item">
       foo
     </NuxtLink>
+    <NuxtLink :to="{ name: 'baz' }" class="menu-item">
+      baz
+    </NuxtLink>
+    <NuxtLink :to="{ name: 'work-slug', params: { slug: slug } }" class="menu-item">
+      slug
+    </NuxtLink>
   </div>
 </template>
 
 <script lang="ts" setup>
+const slug = "yoooo-12"
 </script>
 
 <style lang="scss" scoped>
@@ -22,5 +29,11 @@
   flex-direction: column;
 
   font-size: 2rem;
+  row-gap: 1rem;
+}
+
+.menu-item {
+  padding: 0.5rem;
+  background-color: blanchedalmond;
 }
 </style>
