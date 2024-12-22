@@ -19,7 +19,6 @@
 </script>
 
 <style lang="scss" scoped>
-@use "@/styles/shared.scss" as *;
 
 .menu__wrapper {
   z-index: 1000;

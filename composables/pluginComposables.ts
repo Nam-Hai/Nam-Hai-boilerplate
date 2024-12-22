@@ -80,7 +80,7 @@ export function useDelay(callback: () => void, delay: number, detached = false) 
     const d = getDelay(() => {
         delayedScope = useCleanScope(() => {
             return callback()
-        }, true)
+        }, { detached: true })
     }, delay)
 
     useCleanScope(() => {
@@ -89,7 +89,7 @@ export function useDelay(callback: () => void, delay: number, detached = false) 
             delayedScope?.stop()
             d.stop()
         })
-    }, detached)
+    }, { detached: true })
 
     return d
 }

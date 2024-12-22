@@ -32,7 +32,7 @@ class TabManager {
         this.array = []
         this.pause = 0
 
-        N.BM(this, ["update"])
+        N.Bind(this, ["update"])
         document.addEventListener("visibilitychange", this.update)
     }
     add(arg: { stop: () => void, resume: (delta: number) => void }) {
@@ -84,7 +84,7 @@ class FrameManager {
     private stacks: OrderedArray<Array<FrameItem>>
 
     constructor(tab: TabManager) {
-        N.BM(this, ['update', 'stop', 'resume'])
+        N.Bind(this, ['update', 'stop', 'resume'])
 
         this.stacks = new OrderedArray()
         this.stacks.push({ id: FramePriority.FIRST, value: [] })
@@ -177,7 +177,7 @@ class FrameFactory {
     private FrameManager: FrameManager
     constructor(FrameManager: FrameManager) {
         this.FrameManager = FrameManager
-        N.BM(this, ["Frame", "Delay", "Timer"])
+        N.Bind(this, ["Frame", "Delay", "Timer"])
     }
     Frame(options: Omit<ConstructorParameters<typeof Frame>[0], "FrameManager">) {
         return new Frame({ ...options, FrameManager: this.FrameManager })
@@ -199,7 +199,7 @@ class Frame {
     private FrameManager!: FrameManager
 
     constructor(options: { callback: (e: FrameEvent) => void, priority?: number, FrameManager: FrameManager }) {
-        N.BM(this, ["stop", "run", "kill"])
+        N.Bind(this, ["stop", "run", "kill"])
         this.FrameManager = options.FrameManager
         this.callback = options.callback
         this.priority = options.priority || FramePriority.MAIN
@@ -245,7 +245,7 @@ class Delay {
     constructor(options: { delay: number, callback: (lateStart?: number) => void, FrameManager: FrameManager }) {
         const { callback, delay, FrameManager } = options
 
-        N.BM(this, ["update", "stop", "run"])
+        N.Bind(this, ["update", "stop", "run"])
         this.callback = options.callback
         this.delay = options.delay
 

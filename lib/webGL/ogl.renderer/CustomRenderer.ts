@@ -57,15 +57,9 @@ export const nodeOps = (context: OGLContext): RendererOptions<Transform, Transfo
                     instance = new target(gl, oglProps)
                 }
 
-                if (N.Has(oglProps, "position")) {
-                    instance.position.set(oglProps.position)
-                }
-                if (N.Has(oglProps, "rotation")) {
-                    instance.position.set(oglProps.rotation)
-                }
-                if (N.Has(oglProps, "scale")) {
-                    instance.position.set(oglProps.scale)
-                }
+                if (oglProps.hasOwnProperty("position")) instance.position.set(oglProps.position)
+                if (oglProps.hasOwnProperty("rotation")) instance.rotation.set(oglProps.rotation)
+                if (oglProps.hasOwnProperty("scale")) instance.scale.set(oglProps.scale)
             } else {
                 // TODO Primitives ?
 

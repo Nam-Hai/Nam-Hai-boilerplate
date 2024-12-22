@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="layout__wrapper">
     <div class="page__wrapper">
       <slot />
     </div>
@@ -15,6 +15,10 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use "@/styles/shared.scss" as *;
+
+.layout__wrapper {
+
+}
 
 .page__wrapper {}
 </style>

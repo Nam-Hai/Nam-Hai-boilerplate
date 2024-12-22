@@ -1,7 +1,4 @@
-@forward "shared.scss";
-@use "./app/index.scss" as *;
-// @use 'sass/breakpoints.scss' as *;
-@use "./shared.scss" as *;
+@forward "./app/index.scss";
 
 :root {
   --vh100max: 100vh;
@@ -33,103 +30,6 @@ html {
   @include rem-scale();
 }
 
-html,
-body {
-  margin: 0;
-  // line-height: 0 !important;
-}
-
-body {
-  white-space: pre-line;
-}
-
-#__nuxt {
-  display: contents;
-}
-
-html,
-body,
-#__nuxt {
-  width: 100%;
-  // height: 100%;
-}
-
-html {
-  height: auto;
-}
-
-body,
-#__nuxt {
-  overflow: hidden;
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-ul,
-ol {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-h1,
-h2,
-h3,
-h4,
-p {
-  margin: 0;
-}
-
-p {
-  font-family: "Geist";
-  font-weight: 300;
-}
-
-button,
-input {
-  border: none;
-  outline: none;
-  appearance: auto;
-  font-size: inherit;
-  font-weight: inherit;
-  font-family: inherit;
-  text-transform: inherit;
-  color: inherit;
-  padding: 0;
-}
-
-button {
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  background: none;
-}
-
-img,
-video,
-svg {
-  user-select: none;
-  pointer-events: none;
-  -webkit-user-drag: none;
-  -webkit-touch-callout: none;
-}
-
-.condensed {
-  font-stretch: condensed;
-}
-
-.expanded {
-  font-stretch: expanded;
-}
 
 .mobile-only {
   @include breakpoint(desktop) {
@@ -141,28 +41,6 @@ svg {
   @include breakpoint(mobile) {
     display: none !important;
   }
-}
-
-.full {
-  @include full;
-}
-
-.center-img {
-  @include center-img;
-}
-
-.mask-split-line {
-  overflow: hidden;
-}
-
-.split-element {
-  display: inline-block;
-  position: relative;
-  text-decoration: inherit;
-}
-
-.split-words {
-  white-space: nowrap;
 }
 
 main {
@@ -177,68 +55,11 @@ main {
   position: relative;
 }
 
-.splited-line {
-  display: inline-block;
-}
-
 main {
   width: 100%;
   min-height: var(--100vh);
 
   position: relative;
-}
-
-.light {
-  font-weight: 300;
-}
-
-.bold {
-  font-weight: 500;
-}
-
-.overflow {
-  overflow: hidden;
-
-  .overflow-content {
-    display: inline-block;
-    transform: translateY(100%);
-  }
-}
-
-.splited-line {
-  opacity: 0;
-}
-
-body.flowIsHijacked {
-  a {
-    pointer-events: none;
-  }
-}
-
-.stop-motion__translate {
-  // transform: translate3d(var(--stop-motion-x), var(--stop-motion-y), 0) scale(var(--stop-motion-scale));
-  --stop-motion-x: 0;
-  --stop-motion-y: 0;
-  translate: var(--stop-motion-x) var(--stop-motion-y);
-}
-
-.stop-motion__scale {
-  --stop-motion-scaleX: 0;
-  --stop-motion-scaleY: 0;
-  scale: var(--stop-motion-scaleX) var(--stop-motion-scaleY);
-}
-
-.stop-motion__rotate {
-  rotate: var(--stop-motion-rotate);
-  // transform: rotate3d(1, 1, 0, var(--stop-motion-rotate));
-}
-
-.stop-motion__opacity {
-  opacity: var(--stop-motion-opacity);
-}
-
-main {
-  overflow: hidden;
 }
 
 .flowIsHijacked {

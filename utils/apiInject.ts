@@ -3,9 +3,8 @@ import { inject, provide } from 'vue';
 /**
  * Helper function around provide/inject to create a typed pair with a curried "key" and default values
  */
-// export function createContext<T extends string | number | symbol, R>(
-export function createContext<Args, T extends Record<string | number | symbol, any>, Values = Omit<T, "init">>(
-  defaultValue: (args: Args) => T,
+export function createContext<Args, Values extends Record<string | number | symbol, any>>(
+  defaultValue: (args: Args) => Values,
 ) {
 
   const key = Symbol()

@@ -26,10 +26,6 @@ const getAll = <T extends Element = HTMLElement>(selector: string, context?: Par
 }
 
 
-const Select = (t: string | NodeList | HTMLElement[] | HTMLElement) => {
-  return typeof t === "string" ? getAll(t) : (t instanceof window.NodeList || Array.isArray(t)) ? t : [t];
-}
-
 const Round = (x: number, decimal?: number) => {
   decimal = decimal === undefined ? 100 : 10 ** decimal;
   return Math.round(x * decimal) / decimal
@@ -58,21 +54,10 @@ const Arr = {
   }
 }
 
-const Has = <T extends Object, K extends PropertyKey>(obj: T, property: K): obj is Extract<T, { [P in K]?: any }> => obj.hasOwnProperty(property)
-
-const Snif = {
-  isMobile: () => {
-    return window.matchMedia('(pointer: coarse)').matches;
-  },
-  isTouchable: () => {
-    return window.matchMedia('(any-pointer: coarse)').matches;
-  }
-}
-
 const T = (el: HTMLElement, x: number, y: number, unit: string = "%") => {
   el.style.transform = "translate3d(" + x + unit + "," + y + unit + ",0)"
 }
-const BM = (context: any, methodArray: string[]) => {
+const Bind = (context: any, methodArray: string[]) => {
   for (const methodString of methodArray) {
     context[methodString] = context[methodString].bind(context)
   }
@@ -164,16 +149,13 @@ export const N = {
   map,
   get,
   getAll,
-  Select,
   Round,
   binarySearch,
   random,
   Rand,
   Arr,
-  Has,
   lazy,
-  Snif,
-  BM,
+  Bind,
   DOM,
   PD,
   ZL,

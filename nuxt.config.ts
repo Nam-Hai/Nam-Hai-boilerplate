@@ -1,18 +1,14 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 export default defineNuxtConfig({
+    compatibilityDate: "2024-11-23",
     ssr: true,
     pages: true,
-
-    // nitro: {
-    //     preset: "vercel",
-    // },
-    css: ["@/styles/core.scss", "@/styles/app/index.scss"],
-
-    ignore: [
-        '~/pages/ignore/',
-        '~/pages/ignore/_templatePage.transitions.ts',
-    ],
+    devtools: { enabled: true },
+    devServer: {
+        host: "0.0.0.0",
+    },
+    css: ["@/styles/core.scss"],
 
     app: {
         layoutTransition: false,
@@ -48,40 +44,29 @@ export default defineNuxtConfig({
                 //     href: "/favicon/favicon-32x32.png",
                 //     class: "dark",
                 // },
-                // {
-                //     rel: "icon",
-                //     type: "image/png",
-                //     sizes: "16x16x",
-                //     href: "/favicon/favicon-16x16.png",
-                //     class: "dark",
-                // },
-                // {
-                //     rel: "icon",
-                //     type: "image/png",
-                //     sizes: "32x32",
-                //     href: "/favicon/favicon-32x32_light.png",
-                //     class: "light",
-                // },
-                // {
-                //     rel: "icon",
-                //     type: "image/png",
-                //     sizes: "16x16x",
-                //     href: "/favicon/favicon-16x16_light.png",
-                //     class: "light",
-                // },
-                // {
-                //     rel: "apple-touch-icon",
-                //     sizes: "180x180",
-                //     href: "/favicon/apple-touch-icon.png"
-                // },
-                // {
-                //     rel: "mask-icon",
-                //     href: "/favicon/safari-pinned-tab.svg",
-                //     color: "#292929"
-                // }
             ],
         },
     },
-
-    compatibilityDate: "2024-11-23",
+    vite: {
+        css: {
+            preprocessorOptions: {
+                scss: {
+                    additionalData: '@use "~/styles/_shared.scss" as *;',
+                    api: "modern-compiler",
+                    quietDeps: true,
+                    silenceDeprecations: ["mixed-decls"],
+                },
+            },
+        },
+    },
+    vue: {
+        runtimeCompiler: true,
+    },
+    // routeRules: {
+    //     "/": { prerender: true },
+    //     "/about": { prerender: true },
+    //     "/works": { swr: true },
+    //     "/works/**": { swr: 3600 },
+    //     "/api/**": { cors: true },
+    // },
 });

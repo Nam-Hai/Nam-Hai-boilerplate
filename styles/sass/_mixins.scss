@@ -1,8 +1,7 @@
 @use "sass:math";
 @use "sass:map";
-@use "vh-property.scss" as *;
 @use "./variables.module.scss" as *;
-
+@use "vh-property.scss" as *;
 
 @mixin full {
   position: absolute;
@@ -35,7 +34,7 @@
   user-drag: $val;
 }
 
-@mixin mainContainer(){
+@mixin mainContainer() {
   $desktopWidth: map.get(map.get(($breakpoints), desktop), design-width);
   $desktopMaxScale: map.get(map.get(($breakpoints), desktop), scale-max);
   width: var(--grid-width, 100%);

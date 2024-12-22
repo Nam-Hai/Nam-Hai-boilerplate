@@ -86,7 +86,7 @@ export class MotionManager {
 
         this.frameFactory = frameFactory;
 
-        N.BM(this, ["raf"])
+        N.Bind(this, ["raf"])
         this.motions = []
 
         this.frame = this.frameFactory.Frame({ callback: this.raf, priority: FramePriority.MOTION })
@@ -138,7 +138,7 @@ export class MotionFactory {
     motionManager: MotionManager;
     constructor(motionManager: MotionManager) {
         this.motionManager = motionManager
-        N.BM(this, ["Motion", "Film"])
+        N.Bind(this, ["Motion", "Film"])
     }
 
     Motion(options: StopMotionOption) {
@@ -203,7 +203,7 @@ class TickerFactory {
             props.svg
             // TODO
         } else if (props.p) {
-            const elements = N.Select(props.el) as HTMLElement[]
+            const elements = (props.el instanceof window.NodeList || Array.isArray(props.el)) ? props.el : [props.el];
             ticker = new TickerDOMAnimation({ ...props, el: elements }, motionManager)
         } else {
             ticker = new Ticker(props, motionManager)
@@ -309,7 +309,7 @@ class TickerDOMAnimation extends Ticker implements TickerI {
     constructor(props: StopMotionOptionBasicDOMAnimation, motionManager: MotionManager) {
         super(props, motionManager)
 
-        const el = N.Select(props.el) as HTMLElement[]
+        const el = ((props.el instanceof window.NodeList || Array.isArray(props.el)) ? props.el : [props.el]) as HTMLElement[];
 
         this.override = props.override || false
 

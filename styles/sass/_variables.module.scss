@@ -19,11 +19,21 @@ $mobile-scale-max: math.div(550, $design-mobile-width);
 $desktop-scale-min: math.div(768, $design-desktop-width);
 
 $breakpoints: (
-  mobile: (width: 320, design-width: $design-mobile-width, design-height: $design-mobile-height, scale-min: 0.8, scale-max: $mobile-scale-max),
-  desktop: (width: 768, design-width: $design-desktop-width, design-height: $design-desktop-height, scale-min: 0.8, scale-max: 3)
+  mobile: (
+    width: 320,
+    design-width: $design-mobile-width,
+    design-height: $design-mobile-height,
+    scale-min: 0.8,
+    scale-max: $mobile-scale-max,
+  ),
+  desktop: (
+    width: 768,
+    design-width: $design-desktop-width,
+    design-height: $design-desktop-height,
+    scale-min: 0.8,
+    scale-max: 3,
+  ),
 );
-
-
 
 // ****************************
 // GRID
@@ -43,8 +53,6 @@ $z-preloader: 400;
 $z-cursor: 500;
 $z-rotation-message: 600;
 
-
-
 // ****************************
 // SIZE
 // ****************************
@@ -52,33 +60,14 @@ $p1: 0.8rem;
 $p2: 1.6rem;
 $p3: 2.4rem;
 $p4: 3.2rem;
-$p5: 4.0rem;
+$p5: 4rem;
 $p6: 4.8rem;
 $p7: 5.6rem;
 $p8: 6.4rem;
 $p9: 7.2rem;
-$p10: 8.0rem;
-
+$p10: 8rem;
 
 // ****************************
 // LAYOUT
 // ****************************
 
-
-// EXPORTS
-// ****************************
-:export {
-  site_scale: $site-scale;
-  scale_mode: $scale-mode;
-
-  breakpoints: map.keys($breakpoints);
-
-  @each $key,
-  $val in $breakpoints {
-    breakpoint_#{$key}_width: map.get(($val), width);
-    breakpoint_#{$key}_design_width: map.get(($val), design-width);
-    breakpoint_#{$key}_design_height: map.get(($val), design-height);
-    breakpoint_#{$key}_scale_min: map.get(($val), scale-min);
-    breakpoint_#{$key}_scale_max: map.get(($val), scale-max);
-  }
-}
