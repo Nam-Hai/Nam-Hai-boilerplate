@@ -1,4 +1,5 @@
 import { useLayout } from "~/layouts/default.vue"
+import { usePageFlow } from "~/lib/waterflow/composables/usePageFlow"
 
 export const useDefaultFlowIn = () => {
     const { vh, scale } = useScreen()
@@ -71,4 +72,15 @@ export const useDefaultFlowOut = () => {
             resolve()
         })
     }
+}
+
+export const useDefaultFlow = (main: Ref<HTMLElement | null>) => {
+
+    usePageFlow({
+        props: {
+            main
+        },
+        flowIn: useDefaultFlowIn(),
+        flowOut: useDefaultFlowOut()
+    })
 }

@@ -24,7 +24,11 @@ pageObject.currentPage.value = await getComponent(currentRoute.value)
 
 // watch(currentRoute, async (to, from) => {
 const routerGuard = router.beforeEach(async (to, from, next) => {
-    if (checkEqualRoute(to, from)) return
+    console.log(to.path, from.path);
+    if (checkEqualRoute(to, from)) {
+        // console.log("test");
+        return
+    }
     if (flowIsHijacked.value) return next()
     // if (flowIsHijacked.value) return
 
@@ -33,6 +37,7 @@ const routerGuard = router.beforeEach(async (to, from, next) => {
     currentRoute.value = routeTo.value
 
     hijackFlow()
+    console.log("hijackflow", flowInPromise.value, flowIsHijacked.value);
 
     pageObject.bufferPage.value = await getComponent(to)!
     await nextTick()
@@ -41,6 +46,7 @@ const routerGuard = router.beforeEach(async (to, from, next) => {
 
     scrollTopApi && scrollTopApi()
 
+    console.log("releaseHijackFlow");
     releaseHijackFlow()
 
     swapNode()

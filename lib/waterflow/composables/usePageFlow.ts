@@ -22,15 +22,14 @@ export function usePageFlow<T>({
   flowInMap,
 }: PageFlowOptions<T>) {
 
-  const router = useRouter()
-
   const { flowIsHijackedPromise, flowInPromise, startFlowIn, routeFrom, routeTo } = useFlowProvider()
 
   const scopeIn = effectScope()
+  const resolver = startFlowIn()
   onMounted(() => {
-    if (!flowIsHijackedPromise.value) return
+    console.log(flowIsHijackedPromise.value);
+    if (!flowIsHijackedPromise.value) return resolver && resolver()
     scopeIn.run(async () => {
-      const resolver = startFlowIn()
       await createFlow<T>(routeFrom.value, routeTo.value, flowInMap, flowIn, props)
       resolver && resolver()
     })
@@ -56,6 +55,7 @@ function createFlow<T>(from: RouteLocationNormalized, to: RouteLocationNormalize
   const key: string = from.name?.toString() + ' => ' + to.name?.toString()
 
   let FlowFunction = getFlowFunction(key, flowMap, flow)
+  // console.log(props.main.value, key);
   return new Promise<void>(cb => {
     if (!FlowFunction) cb()
     else FlowFunction(props, cb)
@@ -66,5 +66,7 @@ function createFlow<T>(from: RouteLocationNormalized, to: RouteLocationNormalize
 // route => any
 // any => route
 function getFlowFunction<T>(key: string, map?: Map<string, FlowFunction<T>>, fallback?: FlowFunction<T>) {
-  return map?.get(key) || map?.get('default') || fallback || undefined
+  const flow = map?.get(key) || map?.get('default') || fallback || undefined
+  console.log(flow);
+  return flow
 }

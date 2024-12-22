@@ -28,6 +28,7 @@ html {
     font-size: 10px !important;
   }
   @include rem-scale();
+  overflow: hidden;
 }
 
 .mobile-only {

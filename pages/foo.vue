@@ -11,17 +11,10 @@
 
 <script setup lang="ts">
 import { lorem } from '~/assets/lorem';
-import { usePageFlow } from '~/lib/waterflow/composables/usePageFlow';
-import { useDefaultFlowIn, useDefaultFlowOut } from '~/pages.transition/defaultFlow';
+import { useDefaultFlow } from '~/pages.transition/defaultFlow';
 
 const main = useTemplateRef("main")
-usePageFlow({
-    props: {
-        main
-    },
-    flowOut: useDefaultFlowOut(),
-    flowIn: useDefaultFlowIn(),
-})
+useDefaultFlow(main)
 </script>
 
 <style scoped lang="scss">
