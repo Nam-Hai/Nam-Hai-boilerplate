@@ -36,7 +36,6 @@ export const useDefaultFlowIn = (axis: "x" | "y" = "y") => {
             e: "io2",
         })
         tl.play().then(() => {
-            console.log("tl ended");
             resolve()
         })
     }
@@ -100,7 +99,7 @@ export const useDefaultFlowOut = (axis: "x" | "y" = "y") => {
     }
 }
 
-export const useDefaultFlow = (main: Ref<HTMLElement | null>) => {
+export const useDefaultFlow = (main: Ref<HTMLElement | null>, options?: { blocking?: boolean }) => {
 
     usePageFlow({
         props: {
@@ -111,6 +110,7 @@ export const useDefaultFlow = (main: Ref<HTMLElement | null>) => {
         ]),
         flowInMap: new Map([
             ["default", useDefaultFlowIn()],
-        ])
+        ]),
+        blocking: options?.blocking
     })
 }

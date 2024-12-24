@@ -14,7 +14,13 @@ pages.push({
     id: ++idGen,
     component: await getComponent(currentRoute.value)
 })
-const routerGuard = router.beforeEach(async (to, from, next) => {
+
+router.beforeEach((to, _from, next) => {
+    currentRoute.value = to
+    next()
+})
+
+watch(currentRoute, async (to, from) => {
     if (!pageRef.value) return
     currentRoute.value = to
 
@@ -28,14 +34,20 @@ const routerGuard = router.beforeEach(async (to, from, next) => {
 
 
     await nextTick()
-    // const _page = pageRef.value[pageRef.value?.length - 1]
-    // _page.style.opacity = "0"
 
-    const flowInPromises = [...flowInPromise]
-    // const allExecptLast = flowInPromises.slice(0, -1)
-    // Promise.all(allExecptLast).then(async () => {
-    //     _page.style.opacity = "1"
-    // })
+    const flowInPromises = [...flowInPromise.map(el => el.promise)]
+    const currentFlowIn = flowInPromise[0]
+    if (currentFlowIn.blocking) {
+        console.log("blocking time");
+        // for blocking transition
+        const _page = pageRef.value[pageRef.value?.length - 1]
+        _page.style.opacity = "0"
+        const allExecptLast = flowInPromises.slice(1)
+        // we wait for previous page to be in place
+        Promise.all(allExecptLast).then(async () => {
+            _page.style.opacity = "1"
+        })
+    }
 
     await Promise.all(flowInPromises)
 
@@ -45,7 +57,7 @@ const routerGuard = router.beforeEach(async (to, from, next) => {
     resolver()
 
     pages.shift()
-    next()
+    // next()
 })
 
 async function getComponent(route: RouteLocationNormalized) {

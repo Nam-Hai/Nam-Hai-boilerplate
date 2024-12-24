@@ -21,25 +21,27 @@ export const [provideFlowProvider, useFlowProvider, flowKey] = createContext(() 
     const promise = new Promise<void>((resolve) => {
       resolver = () => {
         resolve;
-        flowIsHijackedPromise.shift()
+        flowIsHijackedPromise.pop()
       }
     });
-    flowIsHijackedPromise.push(promise)
+    flowIsHijackedPromise.unshift(promise)
 
     return resolver
   }
 
-  const flowInPromise: Array<Promise<void>> = shallowReactive([])
-  function startFlowIn() {
+  const flowInPromise: Array<{ promise: Promise<void>, blocking: boolean }> = shallowReactive([])
+  function startFlowIn(blocking: boolean = false) {
     let resolver: () => void = () => { }
 
-    flowInPromise.push(new Promise<void>((resolve) => {
-      resolver = () => {
-        flowInPromise.shift()
-        console.log(flowInPromise);
-        resolve();
-      }
-    }));
+    flowInPromise.unshift({
+      promise: new Promise<void>((resolve) => {
+        resolver = () => {
+          flowInPromise.pop()
+          resolve();
+        }
+      }),
+      blocking
+    });
 
     return resolver
   }

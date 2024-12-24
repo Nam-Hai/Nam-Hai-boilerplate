@@ -9,58 +9,56 @@ type FlowKey = `default` | `${string} => ${string}`;
 
 type PageFlowOptions<T> = {
   props: T,
-  flowOut?: FlowFunction<T>,
   flowOutMap?: Map<FlowKey, FlowFunction<T>>,
-  flowIn?: FlowFunction<T>,
   flowInMap?: Map<FlowKey, FlowFunction<T>>,
+  blocking?: boolean
 }
 
 export function usePageFlow<T>({
   props,
   flowOutMap,
   flowInMap,
+  blocking = false
 }: PageFlowOptions<T>) {
 
   const { flowIsHijackedPromise, flowInPromise, startFlowIn, routeFrom, routeTo } = useFlowProvider()
 
   const scopeIn = effectScope(true)
 
-  const previousFlowInPromise = flowInPromise.length > 0 ? flowInPromise[flowInPromise.length - 1] : undefined
-  const resolver = startFlowIn()
-  const _flowInPromise = flowInPromise[flowInPromise.length - 1]
+  const previousFlowInPromise = flowInPromise.length > 0 ? flowInPromise[0] : undefined
+  const resolver = startFlowIn(blocking)
+  const _flowInPromise = flowInPromise[0]
   onMounted(async () => {
 
     if (flowIsHijackedPromise.length === 0) return resolver()
 
-    // await previousFlowInPromise
+    blocking && await previousFlowInPromise?.promise
 
-    console.log("flowin goooo");
     scopeIn.run(async () => {
-      onScopeDispose(() => {
-        console.log("scope flow in disposed");
-      })
       await createFlow<T>(routeFrom.value, routeTo.value, flowInMap, props)
-      console.log("flowin anime ended", scopeIn.active);
       scopeIn.active && resolver()
     })
   })
 
   onLeave(async (from, to) => {
 
-    // await _flowInPromise
+    if (blocking) {
+      await _flowInPromise.promise
+      resolver()
+    }
+
 
     scopeIn.stop()
+
     const scope = effectScope(true)
-
     await new Promise<void>((res, rej) => {
-
       scope.run(async () => {
         await createFlow<T>(from, to, flowOutMap, props)
         res()
       })
     })
 
-    resolver()
+    if (!blocking) resolver()
     scope.stop()
 
   })

@@ -15,7 +15,7 @@ const slug = typeof routeSlug === "string" ? routeSlug : routeSlug[0]
 
 const main = useTemplateRef("main")
 // usePageFlow need to be on top of the async Pages
-useDefaultFlow(main)
+useDefaultFlow(main, { blocking: true })
 
 const { data, error } = await useAsyncData(`slug-${slug}`, async () => {
     const slugs = await $fetch("/api/getSlugs")
