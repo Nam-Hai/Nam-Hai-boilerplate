@@ -1,6 +1,5 @@
 <template>
   <div class="layout__wrapper" :class="[layoutStore.theme]">
-    <Overlay />
     <Menu />
     <div class="page__wrapper">
       <slot />

@@ -9,6 +9,9 @@
     <NuxtLink :to="{ name: 'baz' }" class="menu-item">
       baz
     </NuxtLink>
+    <button @click="onClick" class="menu-item">
+      Random Route
+    </button>
     <NuxtLink :to="{ name: 'work-slug', params: { slug: d.name } }" v-for="d in data">
       {{ d.name }}
     </NuxtLink>
@@ -23,6 +26,13 @@ const { data, error } = await useAsyncData("slugs", async () => {
 if (error.value) throw createError({ statusCode: 404, statusMessage: "Slugs Not Found" });
 // if (error.value) createError({ statusCode: 404, statusMessage: "Slugs Not Found" });
 
+const { currentRoute } = useFlowProvider()
+const onClick = () => {
+  const to = N.Arr.randomElement(['foo', 'baz', 'index'])
+  const cur = currentRoute.value.name?.toString()
+  if (to === cur) return onClick()
+  navigateTo({ name: to })
+}
 </script>
 
 <style lang="scss" scoped>

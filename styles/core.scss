@@ -87,4 +87,21 @@ main {
     padding: 2rem;
     background-color: beige;
   }
+
+  &::before {
+    content: "";
+    position: fixed;
+    pointer-events: none;
+    left: -1px;
+    top: -1px;
+    height: calc(100% + 2px);
+    width: calc(100% + 2px);
+    background-color: black;
+    opacity: 0;
+  }
+
+  &.hide::before {
+    transition: opacity 1000ms $easeOutQuad;
+    opacity: 1;
+  }
 }

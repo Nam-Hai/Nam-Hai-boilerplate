@@ -43,7 +43,7 @@ const Arr = {
     return [...Array(ArrayLength).keys()]
   },
   randomElement: <T>(array: Array<T>) => {
-    return array[Rand.range(0, array.length, 0)]
+    return array[Rand.range(0, array.length - 1, 0)]
   },
   /** shuffle an Array */
   shuffle: <T>(array: Array<T>) => {

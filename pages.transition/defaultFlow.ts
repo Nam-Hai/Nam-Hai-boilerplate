@@ -83,14 +83,15 @@ export const useDefaultFlowOut = (axis: "x" | "y" = "y") => {
             d: 500,
             e: "o2"
         })
-        tl.from({
-            el: props.main.value,
-            p: {
-                o: [1, 0]
-            },
-            d: 1000,
-            e: "o2",
-        })
+        // tl.from({
+        //     el: props.main.value,
+        //     p: {
+        //         o: [1, 0]
+        //     },
+        //     d: 1000,
+        //     e: "o2",
+        // })
+        N.Class.add(props.main.value, "hide")
 
         tl.play().then(() => {
             // overlay.value && (overlay.value.style.opacity = "0")

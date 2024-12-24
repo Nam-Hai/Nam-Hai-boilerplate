@@ -27,6 +27,7 @@ watch(currentRoute, async (to, from) => {
     const resolver = hijackFlow()
 
     const nextComponent = await getComponent(to)!
+    console.log(nextComponent);
     pages.push({
         component: nextComponent,
         id: ++idGen
