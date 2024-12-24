@@ -18,5 +18,7 @@ useDefaultFlow(main)
 </script>
 
 <style scoped lang="scss">
-main {}
+main {
+    background-color: darkcyan;
+}
 </style>
