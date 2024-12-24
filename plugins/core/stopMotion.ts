@@ -352,7 +352,7 @@ class TickerDOMAnimation extends Ticker implements TickerI {
         }
 
 
-        const has = (...args: Parameters<typeof Object.hasOwn>) => Object.hasOwn(args[0], args[1])
+        const has = Object.hasOwn
         // styleMapObject["x"]
         const x = has(this.propToIndex, "x"), y = has(this.propToIndex, "y")
         const translate = x || y
@@ -517,5 +517,10 @@ export class Film {
         }
 
         this.stopMotions = []
+    }
+
+    kill() {
+        this.pause()
+        this.stopMotions.forEach(el => el.promiseRelease())
     }
 }

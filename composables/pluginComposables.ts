@@ -124,12 +124,12 @@ export function useMotion(arg: StopMotionOption) {
     return motion
 }
 
-export function useFilm() {
+export function useFilm(options?: { watchCleanup?: boolean, detached?: boolean }) {
     const film = getFilm()
     useCleanScope(() => {
         onScopeDispose(() => {
-            film.pause()
+            film.kill()
         })
-    })
+    }, { detached: options?.detached, watchCleanup: options?.watchCleanup })
     return film
 }

@@ -6,13 +6,11 @@ export const useDefaultFlowIn = (axis: "x" | "y" = "y") => {
     const lenis = useLenis()
 
     return (props: { main: Ref<HTMLElement | null> }, resolve: () => void) => {
-        console.log("flowInc", props.main.value);
         if (!props.main.value) {
-            console.log("resole flowIn");
             resolve()
             return
         }
-        const tl = useFilm()
+        const tl = useFilm({ watchCleanup: true })
         const bounds = props.main.value.getBoundingClientRect()
         const padding = 60 * scale.value
         const scaleXFrom = (bounds.width - padding) / bounds.width
@@ -38,7 +36,7 @@ export const useDefaultFlowIn = (axis: "x" | "y" = "y") => {
             e: "io2",
         })
         tl.play().then(() => {
-            console.log("end of defaultFlowIn");
+            console.log("tl ended");
             resolve()
         })
     }
@@ -57,26 +55,46 @@ export const useDefaultFlowOut = (axis: "x" | "y" = "y") => {
         const bounds = props.main.value.getBoundingClientRect()
         const padding = 200
         const s = (bounds.width - padding * scale.value) / bounds.width
-        const tl = useFilm()
+        const tl = useFilm({ watchCleanup: false })
         props.main.value.style.transformOrigin = `center ${vh.value / 2 + lenis.animatedScroll}px`
-        tl.from({
-            el: overlay.value as HTMLElement,
-            p: {
-                o: [0, 0.8],
-            },
-            d: 1500,
-        })
+
+        const computedStyle = getComputedStyle(props.main.value)
+        const transformMatrix = computedStyle.transform.slice(7, -1).replaceAll(",", "").split(" ")
+        const { fromX, fromY, fromScale } = (() => {
+            if (transformMatrix.length > 1) {
+                return {
+                    fromX: +transformMatrix[4],
+                    fromY: +transformMatrix[5],
+                    fromScale: +transformMatrix[0]
+                }
+            }
+            return {
+                fromX: 0,
+                fromY: 0,
+                fromScale: 1
+            }
+        })()
         tl.from({
             el: props.main.value,
             p: {
-                s: [1, s]
+                s: [fromScale, s],
+                x: [fromX, 0, "px"],
+                y: [fromY, 0, "px"],
             },
             d: 500,
             e: "o2"
         })
+        tl.from({
+            el: props.main.value,
+            p: {
+                o: [1, 0]
+            },
+            d: 1000,
+            e: "o2",
+        })
 
         tl.play().then(() => {
-            overlay.value && (overlay.value.style.opacity = "0")
+            // overlay.value && (overlay.value.style.opacity = "0")
             resolve()
         })
     }

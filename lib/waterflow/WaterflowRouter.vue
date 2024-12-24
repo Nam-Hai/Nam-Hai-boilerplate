@@ -28,14 +28,14 @@ const routerGuard = router.beforeEach(async (to, from, next) => {
 
 
     await nextTick()
-    const _page = pageRef.value[pageRef.value?.length - 1]
-    _page.style.opacity = "0"
+    // const _page = pageRef.value[pageRef.value?.length - 1]
+    // _page.style.opacity = "0"
 
     const flowInPromises = [...flowInPromise]
-    const allExecptLast = flowInPromises.slice(0, -1)
-    Promise.all(allExecptLast).then(async () => {
-        _page.style.opacity = "1"
-    })
+    // const allExecptLast = flowInPromises.slice(0, -1)
+    // Promise.all(allExecptLast).then(async () => {
+    //     _page.style.opacity = "1"
+    // })
 
     await Promise.all(flowInPromises)
 
@@ -45,7 +45,6 @@ const routerGuard = router.beforeEach(async (to, from, next) => {
     resolver()
 
     pages.shift()
-    console.log("next", to.name);
     next()
 })
 

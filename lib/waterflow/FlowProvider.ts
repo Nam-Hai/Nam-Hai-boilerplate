@@ -36,6 +36,7 @@ export const [provideFlowProvider, useFlowProvider, flowKey] = createContext(() 
     flowInPromise.push(new Promise<void>((resolve) => {
       resolver = () => {
         flowInPromise.shift()
+        console.log(flowInPromise);
         resolve();
       }
     }));

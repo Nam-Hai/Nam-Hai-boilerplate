@@ -35,13 +35,10 @@ export function onLeave(callback: (from: RouteLocationNormalized, to: RouteLocat
   const { currentRoute, flowIsHijackedPromise, flowInPromise, routeFrom, routeTo } = useFlowProvider()
   // const _flowIsHijackedPromise = flowIsHijackedPromise.length === 0 ? undefined : flowIsHijackedPromise[flowIsHijackedPromise.length - 1]
 
-  let once = false
   watch(currentRoute, () => {
     if (flowIsHijackedPromise.length === 0) return
-    if (once) return
-    once = true
     callback(routeFrom.value, routeTo.value)
-  })
+  }, { once: true })
   // watch(flowIsHijackedPromise, flow => {
   //   if (!!flow) {
   //     callback(routeFrom.value, routeTo.value)

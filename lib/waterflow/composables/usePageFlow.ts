@@ -1,6 +1,7 @@
 import { useFlowProvider } from "../FlowProvider";
 import type { RouteLocationNormalized } from "#vue-router";
 import { onLeave } from "./onFlow";
+import { onWatcherCleanup } from "vue";
 
 export type FlowFunction<T> = (props: T, resolve: () => void) => void
 
@@ -19,13 +20,11 @@ export function usePageFlow<T>({
   flowOutMap,
   flowInMap,
 }: PageFlowOptions<T>) {
-  console.log("yo mount");
 
   const { flowIsHijackedPromise, flowInPromise, startFlowIn, routeFrom, routeTo } = useFlowProvider()
 
-  const scopeIn = effectScope()
+  const scopeIn = effectScope(true)
 
-  console.log(flowInPromise.length);
   const previousFlowInPromise = flowInPromise.length > 0 ? flowInPromise[flowInPromise.length - 1] : undefined
   const resolver = startFlowIn()
   const _flowInPromise = flowInPromise[flowInPromise.length - 1]
@@ -33,31 +32,35 @@ export function usePageFlow<T>({
 
     if (flowIsHijackedPromise.length === 0) return resolver()
 
-    await previousFlowInPromise
-    console.log("after flowin promise wait");
-    scopeIn.run(async () => {
+    // await previousFlowInPromise
 
+    console.log("flowin goooo");
+    scopeIn.run(async () => {
       onScopeDispose(() => {
-        console.log("wesh pk tu dispose le scope la");
+        console.log("scope flow in disposed");
       })
       await createFlow<T>(routeFrom.value, routeTo.value, flowInMap, props)
-      resolver && resolver()
+      console.log("flowin anime ended", scopeIn.active);
+      scopeIn.active && resolver()
     })
   })
 
   onLeave(async (from, to) => {
 
-    const scope = effectScope(true)
-    await _flowInPromise
+    // await _flowInPromise
+
     scopeIn.stop()
+    const scope = effectScope(true)
+
     await new Promise<void>((res, rej) => {
+
       scope.run(async () => {
         await createFlow<T>(from, to, flowOutMap, props)
-
         res()
       })
     })
 
+    resolver()
     scope.stop()
 
   })
