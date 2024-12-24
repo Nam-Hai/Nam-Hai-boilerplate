@@ -1,60 +1,65 @@
 import type { ShallowRef } from "vue";
-import type { RouteLocationNormalized } from '#vue-router';
+
 
 
 type CrossFadeMode = "TOP" | "BOTTOM"
-export const [provideFlowProvider, useFlowProvider, flowKey] = createContext((options: { route: RouteLocationNormalized }) => {
-  const currentRoute = shallowRef(options.route)
-  const routeTo = shallowRef(options.route)
-  const routeFrom = shallowRef(options.route)
+export const [provideFlowProvider, useFlowProvider, flowKey] = createContext(() => {
+  const route = useRoute()
+  const currentRoute = shallowRef(route)
+  const routeTo = shallowRef(route)
+  const routeFrom = shallowRef(route)
 
   const crossfadeMode: ShallowRef<CrossFadeMode> = shallowRef("TOP")
 
-
-
-  const flowIsHijackedPromise: Ref<Promise<void> | undefined> = shallowRef(undefined)
+  const flowIsHijackedPromise: Promise<void>[] = shallowReactive([])
   const flowIsHijacked = computed(() => {
-    return !!flowIsHijackedPromise.value
+    return flowIsHijackedPromise.length !== 0
   })
-  let flowHijackResolver: (() => void) | undefined
-
-  function releaseHijackFlow() {
-    if (!flowHijackResolver) return
-    flowHijackResolver()
-    flowIsHijackedPromise.value = undefined
-    flowHijackResolver = undefined
-  }
 
   function hijackFlow() {
-    flowIsHijackedPromise.value = new Promise<void>((resolve) => {
-      flowHijackResolver = resolve;
+    let resolver: () => void = () => { }
+    const promise = new Promise<void>((resolve) => {
+      resolver = () => {
+        resolve;
+        flowIsHijackedPromise.shift()
+      }
     });
+    flowIsHijackedPromise.push(promise)
 
-    return flowIsHijackedPromise.value
-  }
-
-  const flowInPromise: Ref<Promise<void> | undefined> = shallowRef()
-  function startFlowIn(): undefined | (() => void) {
-    let resolver: ((() => void) | undefined) = undefined
-
-    flowInPromise.value = new Promise<void>((resolve) => {
-      resolver = resolve;
-    });
     return resolver
   }
 
+  const flowInPromise: Array<Promise<void>> = shallowReactive([])
+  function startFlowIn() {
+    let resolver: () => void = () => { }
+
+    flowInPromise.push(new Promise<void>((resolve) => {
+      resolver = () => {
+        flowInPromise.shift()
+        resolve();
+      }
+    }));
+
+    return resolver
+  }
+
+  watch(currentRoute, (newVal, oldVal) => {
+    routeTo.value = newVal
+    routeFrom.value = oldVal
+  })
+
   return {
-    currentRoute,
-    routeTo,
-    routeFrom,
+    currentRoute: currentRoute,
+    routeTo: shallowReadonly(routeTo),
+    routeFrom: shallowReadonly(routeFrom),
+
     crossfadeMode,
 
-    flowIsHijackedPromise,
-    flowIsHijacked,
+    flowIsHijackedPromise: shallowReadonly(flowIsHijackedPromise),
+    flowIsHijacked: shallowReadonly(flowIsHijacked),
     hijackFlow,
-    releaseHijackFlow,
 
-    flowInPromise,
+    flowInPromise: shallowReadonly(flowInPromise),
     startFlowIn,
   }
 });

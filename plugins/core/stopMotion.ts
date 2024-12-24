@@ -239,7 +239,7 @@ class Ticker implements TickerI {
     prog: number = 0
     progE: number = 0
     updateFunc?: (e: MotionEvent) => void;
-    id: number
+    id!: number
     motionManager: MotionManager;
     on: TickerOn;
     constructor(props: StopMotionOptionPrimitive, motionManager: MotionManager) {
@@ -253,8 +253,6 @@ class Ticker implements TickerI {
         this.updateFunc = props.update
         this.on = TickerOn.stop
 
-        MotionId++
-        this.id = MotionId
 
         if (this.reverse === true) {
             const ease = this.calc
@@ -262,8 +260,14 @@ class Ticker implements TickerI {
         }
     }
     run() {
+        MotionId++
+        this.id = MotionId
+
         if (this.on !== TickerOn.play) this.motionManager.add(this)
         this.on = TickerOn.play
+
+        // trigger right away the update function. Can be usefull when you sync position of elements
+        this.update({ progress: 0, easeProgress: 0 })
     }
     stop() {
         if (this.on === TickerOn.play) {
@@ -283,8 +287,6 @@ class Ticker implements TickerI {
 
     updateProps(props?: StopMotionUpdatePropsOption) {
         if (!props) return
-        MotionId++
-        this.id = MotionId
         this.d = props.d || this.d
         this.delay = props.delay || this.delay
         this.ease = props.e || this.ease
@@ -397,7 +399,7 @@ class TickerDOMAnimation extends Ticker implements TickerI {
     override updateProps(arg?: StopMotionUpdatePropsOption) {
         for (const [el, props] of this.el) {
             const id = this.motionManager.motionWeakMapAnimation.get(el)
-            !!id && this.motionManager.remove(+id)
+            id !== undefined && this.motionManager.remove(id)
         }
 
         super.updateProps(arg)
