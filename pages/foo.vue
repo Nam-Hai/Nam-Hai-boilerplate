@@ -1,9 +1,7 @@
 <template>
     <main ref="main">
         <h1>foo</h1>
-        <FooUnique />
         <p>
-            foo <br>
             {{ lorem }}
         </p>
     </main>

@@ -1,6 +1,7 @@
 import { useLayout } from "~/layouts/default.vue"
 import { usePageFlow } from "~/lib/waterflow/composables/usePageFlow"
 
+const borderFromPx = 8
 export const useDefaultFlowIn = (axis: "x" | "y" = "y") => {
     const { vh, vw, scale } = useScreen()
     const lenis = useLenis()
@@ -15,13 +16,14 @@ export const useDefaultFlowIn = (axis: "x" | "y" = "y") => {
         const padding = 60 * scale.value
         const wh = axis === "y" ? "width" : "height"
         const scaleXFrom = (bounds[wh] - padding) / bounds[wh]
-        props.main.value.style.transformOrigin = axis === "y" ? `center top` : `left center`
+        props.main.value.style.transformOrigin = `center top`
+        props.main.value.style.borderRadius = `${borderFromPx}px`
 
         tl.from({
             el: props.main.value,
             p: {
                 s: [scaleXFrom, scaleXFrom],
-                [axis]: axis === "y" ? [vh.value, padding * scaleXFrom / 2, "px"] : [vw.value, padding * scaleXFrom / 2, "px"]
+                y: [vh.value, padding * scaleXFrom / 2, "px"]
             },
             d: 750,
             e: "io2",
@@ -30,13 +32,18 @@ export const useDefaultFlowIn = (axis: "x" | "y" = "y") => {
             el: props.main.value,
             p: {
                 s: [scaleXFrom, 1],
-                [axis]: [padding * scaleXFrom / 2, 0, "px"],
+                y: [padding * scaleXFrom / 2, 0, "px"],
             },
             d: 750,
             delay: 750,
+            update(e) {
+                if (!props.main.value) return
+                props.main.value.style.borderRadius = `${N.Lerp(borderFromPx, 0, e.easeProgress)}px`
+            },
             e: "io2",
         })
         tl.play().then(() => {
+
             resolve()
         })
     }
@@ -53,13 +60,16 @@ export const useDefaultFlowOut = (axis: "x" | "y" = "y") => {
             return
         }
         const bounds = props.main.value.getBoundingClientRect()
-        const padding = 200
+        const padding = 130
         const s = (bounds.width - padding * scale.value) / bounds.width
         const tl = useFilm({ watchCleanup: false })
-        props.main.value.style.transformOrigin = `center ${vh.value / 2 + lenis.animatedScroll}px`
+        // props.main.value.style.transformOrigin = `center ${vh.value / 2 + lenis.animatedScroll}px`
+        props.main.value.style.transformOrigin = `center top`
 
         const computedStyle = getComputedStyle(props.main.value)
+        const borderRadiusFrom = +computedStyle.borderRadius.replaceAll("px", "")
         const transformMatrix = computedStyle.transform.slice(7, -1).replaceAll(",", "").split(" ")
+
         const { fromX, fromY, fromScale } = (() => {
             if (transformMatrix.length > 1) {
                 return {
@@ -74,12 +84,16 @@ export const useDefaultFlowOut = (axis: "x" | "y" = "y") => {
                 fromScale: 1
             }
         })()
+
         tl.from({
             el: props.main.value,
             p: {
                 s: [fromScale, s],
-                x: [fromX, 0, "px"],
-                y: [fromY, 0, "px"],
+                y: [fromY, padding * s / 2, "px"],
+            },
+            update(e) {
+                if (!props.main.value) return
+                props.main.value.style.borderRadius = `${N.Lerp(borderRadiusFrom, 8, e.easeProgress)}px`
             },
             d: 500,
             e: "o2"
@@ -103,7 +117,6 @@ export const useDefaultFlow = (main: Ref<HTMLElement | null>, options?: { blocki
         ]),
         flowInMap: new Map([
             ["default", useDefaultFlowIn()],
-            ["any => foo", useDefaultFlowIn("x")],
         ]),
         blocking: options?.blocking
     })

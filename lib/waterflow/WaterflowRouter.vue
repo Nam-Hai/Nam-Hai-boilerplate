@@ -22,12 +22,11 @@ router.beforeEach((to, _from, next) => {
 
 watch(currentRoute, async (to, from) => {
     if (!pageRef.value) return
-    currentRoute.value = to
+    // currentRoute.value = to
 
     const resolver = hijackFlow()
 
     const nextComponent = await getComponent(to)!
-    console.log(nextComponent);
     pages.push({
         component: nextComponent,
         id: ++idGen
@@ -39,7 +38,6 @@ watch(currentRoute, async (to, from) => {
     const flowInPromises = [...flowInPromise.map(el => el.promise)]
     const currentFlowIn = flowInPromise[0]
     if (currentFlowIn.blocking) {
-        console.log("blocking time");
         // for blocking transition
         const _page = pageRef.value[pageRef.value?.length - 1]
         _page.style.opacity = "0"
@@ -58,7 +56,6 @@ watch(currentRoute, async (to, from) => {
     resolver()
 
     pages.shift()
-    // next()
 })
 
 async function getComponent(route: RouteLocationNormalized) {
