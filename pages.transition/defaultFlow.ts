@@ -2,7 +2,7 @@ import { useLayout } from "~/layouts/default.vue"
 import { usePageFlow } from "~/lib/waterflow/composables/usePageFlow"
 
 export const useDefaultFlowIn = (axis: "x" | "y" = "y") => {
-    const { vh, scale } = useScreen()
+    const { vh, vw, scale } = useScreen()
     const lenis = useLenis()
 
     return (props: { main: Ref<HTMLElement | null> }, resolve: () => void) => {
@@ -13,14 +13,15 @@ export const useDefaultFlowIn = (axis: "x" | "y" = "y") => {
         const tl = useFilm({ watchCleanup: true })
         const bounds = props.main.value.getBoundingClientRect()
         const padding = 60 * scale.value
-        const scaleXFrom = (bounds.width - padding) / bounds.width
-        props.main.value.style.transformOrigin = `center top`
+        const wh = axis === "y" ? "width" : "height"
+        const scaleXFrom = (bounds[wh] - padding) / bounds[wh]
+        props.main.value.style.transformOrigin = axis === "y" ? `center top` : `left center`
 
         tl.from({
             el: props.main.value,
             p: {
                 s: [scaleXFrom, scaleXFrom],
-                y: [vh.value, padding * scaleXFrom / 2, "px"]
+                [axis]: axis === "y" ? [vh.value, padding * scaleXFrom / 2, "px"] : [vw.value, padding * scaleXFrom / 2, "px"]
             },
             d: 750,
             e: "io2",
@@ -29,7 +30,7 @@ export const useDefaultFlowIn = (axis: "x" | "y" = "y") => {
             el: props.main.value,
             p: {
                 s: [scaleXFrom, 1],
-                y: [padding * scaleXFrom / 2, 0, "px"],
+                [axis]: [padding * scaleXFrom / 2, 0, "px"],
             },
             d: 750,
             delay: 750,
@@ -83,18 +84,9 @@ export const useDefaultFlowOut = (axis: "x" | "y" = "y") => {
             d: 500,
             e: "o2"
         })
-        // tl.from({
-        //     el: props.main.value,
-        //     p: {
-        //         o: [1, 0]
-        //     },
-        //     d: 1000,
-        //     e: "o2",
-        // })
         N.Class.add(props.main.value, "hide")
 
         tl.play().then(() => {
-            // overlay.value && (overlay.value.style.opacity = "0")
             resolve()
         })
     }
@@ -111,6 +103,7 @@ export const useDefaultFlow = (main: Ref<HTMLElement | null>, options?: { blocki
         ]),
         flowInMap: new Map([
             ["default", useDefaultFlowIn()],
+            ["any => foo", useDefaultFlowIn("x")],
         ]),
         blocking: options?.blocking
     })
