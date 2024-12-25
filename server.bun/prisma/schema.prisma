@@ -14,8 +14,9 @@ datasource db {
 }
 
 model Category {
-  id    Int    @id @default(autoincrement())
+  id    Int      @id @default(autoincrement())
   name  String
+  date  DateTime @default(now())
   posts Post[]
 }
 
