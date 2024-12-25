@@ -1,26 +1,8 @@
 import { apiInfo } from "./createServerApi";
-import path from "path";
-import { watch } from "fs";
 import { z } from "zod";
 
 const compiler = async () => {
-
-    const root = Bun.main.substring(0, Bun.main.length - path.basename(Bun.main).length)
-    watch(
-        root,
-        { recursive: true },
-        (event, filename) => {
-            if (filename?.includes("utils")) return
-            console.log(filename);
-            if (filename === "api/index.ts") compileType()
-        },
-    );
-
-
     async function compileType() {
-        const file = Bun.file("./api/index.ts");
-        // const text = await file.text();
-
         let string = ""
         apiInfo.forEach(({ path, outputType, inputType }) => {
             string += `"${path}": {
@@ -28,7 +10,7 @@ const compiler = async () => {
             payload: ${checkObject(outputType)},
         },\n`
         })
-        Bun.write("./utils/types.ts", `export type APIRoutes = {
+        const a = await Bun.write("./utils/types.ts", `export type APIRoutes = {
             ${string}
 }`)
     }

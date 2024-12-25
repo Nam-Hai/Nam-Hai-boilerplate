@@ -3,7 +3,7 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "server": "bun ./server.ts"
+    "server": "bun --hot ./server.ts"
   },
   "devDependencies": {
     "@types/bun": "latest"
