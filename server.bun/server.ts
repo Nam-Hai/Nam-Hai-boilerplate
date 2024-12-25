@@ -1,10 +1,15 @@
 import { routeServerApiMap } from "./utils/createServerApi";
 import { server } from "./config";
 import { compiler } from "./utils/compiler";
-import { getFoo } from "./api";
+import { readdirSync } from "fs";
+import { join } from "path";
 
-// dont comment this line, it break stuff pls because of treeshacking
-console.log(getFoo, routeServerApiMap.get("/foo/"));
+// Dynamically import all route files
+const routesDir = join(import.meta.dir, "api");
+const files = readdirSync(routesDir).filter((file) => file.endsWith(".ts"));
+for (const file of files) {
+    await import(join(routesDir, file));
+}
 
 Bun.serve({
     port: server.port,
@@ -22,4 +27,5 @@ Bun.serve({
 
 console.log(`server at ${server.url}`)
 
+// compile APIRoutes Type in ./utils/types.ts
 compiler()

@@ -2,10 +2,10 @@ import { server } from "../config"
 import { z } from "zod"
 import { getRuntimeType } from "./compiler"
 
-export const routeServerApiMap = new Map<string, ReturnType<typeof createServerApi>>()
 
 export const apiInfo: { path: string, inputType: any, outputType: any }[] = []
 
+export const routeServerApiMap = new Map<string, ReturnType<typeof createServerApi>>()
 export const createServerApi = <T extends Object, P extends Object>(path: string, payload: ((data: P) => Promise<T>),
     inputSchema: z.Schema<P>,
     outputSchema: z.Schema<T>

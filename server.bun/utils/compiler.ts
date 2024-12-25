@@ -1,22 +1,19 @@
 import { apiInfo } from "./createServerApi";
+import prettier from "prettier"
 import { z } from "zod";
 
 const compiler = async () => {
-    async function compileType() {
-        let string = ""
-        apiInfo.forEach(({ path, outputType, inputType }) => {
-            string += `"${path}": {
+    let string = "export type APIRoutes = {"
+    apiInfo.forEach(({ path, outputType, inputType }, index, array) => {
+        string += `"${path}": {
             query: ${checkObject(inputType)}
             payload: ${checkObject(outputType)},
-        },\n`
-        })
-        const a = await Bun.write("./utils/types.ts", `export type APIRoutes = {
-            ${string}
-}`)
-    }
+        },${index !== array.length - 1 ? "\n" : ""}`
+    })
+    string += "}"
 
-    compileType()
-
+    const formatted = await prettier.format(string, { parser: "typescript" });
+    await Bun.write("./utils/types.ts", formatted)
 }
 
 function checkObject(object: Record<any, any>): string {
@@ -33,7 +30,7 @@ function checkObject(object: Record<any, any>): string {
 }
 function objectToString(object: Record<any, any>) {
     return `{
-    ${(() => {
+        ${(() => {
             let string = ""
             Object.entries(object).forEach(([key, value]) => {
                 string += `${key}: ${value},\n`
