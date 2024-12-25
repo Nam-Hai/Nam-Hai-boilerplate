@@ -8,7 +8,7 @@ const compiler = async () => {
         string += `"${path}": {
             query: ${checkObject(inputType)}
             payload: ${checkObject(outputType)},
-        },${index !== array.length - 1 ? "\n" : ""}`
+        },`
     })
     string += "}"
 
@@ -40,6 +40,7 @@ function objectToString(object: Record<any, any>) {
 }`
 }
 
+// deep type infer of a z.ZodObject
 export function getRuntimeType(schema: z.ZodTypeAny): any {
     if (schema instanceof z.ZodObject) {
         return Object.keys(schema.shape).reduce((acc, key) => {

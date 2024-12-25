@@ -7,8 +7,8 @@ export const apiInfo: { path: string, inputType: any, outputType: any }[] = []
 
 export const routeServerApiMap = new Map<string, ReturnType<typeof createServerApi>>()
 export const createServerApi = <T extends Object, P extends Object>(path: string, payload: ((data: P) => Promise<T>),
-    inputSchema: z.Schema<P>,
-    outputSchema: z.Schema<T>
+    querySchema: z.Schema<P>,
+    payloadSchema: z.Schema<T>
 ) => {
     const url = new URL(path, `${server.url}:${server.port}`)
 
@@ -24,11 +24,11 @@ export const createServerApi = <T extends Object, P extends Object>(path: string
             if (isRequestPayload(payload)) {
                 if (!req) throw "Request object is missing"
                 const json = await req.json()
-                inputSchema.parse(json)
+                querySchema.parse(json)
 
                 const output = await payload(json)
 
-                outputSchema.parse(output)
+                payloadSchema.parse(output)
                 return Response.json(output)
             } else {
                 return Response.json(await (payload as () => Promise<T>)())
@@ -37,8 +37,8 @@ export const createServerApi = <T extends Object, P extends Object>(path: string
 
     apiInfo.push({
         path,
-        inputType: getRuntimeType(inputSchema as any as z.AnyZodObject),
-        outputType: getRuntimeType(outputSchema as any as z.AnyZodObject)
+        inputType: getRuntimeType(querySchema as any as z.AnyZodObject),
+        outputType: getRuntimeType(payloadSchema as any as z.AnyZodObject)
     })
     routeServerApiMap.set(path, serverAPI)
 
