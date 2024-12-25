@@ -14,3 +14,17 @@ cd ./server.bun
 bun i
 bun run server.ts
 ```
+
+TODO :
+
+- Base
+  - Maybe switch on an actualy animation lib : gsap/animejs
+  - Refining the Resize engine
+  - plugging effectScope() where needed in my composables
+  - Rework my core.scss
+- WebGLRenderer
+  - Router Component
+  - Refining the overall DX
+  - Refining PostProcessing Pipeline
+- Bun Backend
+  - add queryParams to routes // no idea

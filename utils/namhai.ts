@@ -57,6 +57,7 @@ const Arr = {
 const T = (el: HTMLElement, x: number, y: number, unit: string = "%") => {
   el.style.transform = "translate3d(" + x + unit + "," + y + unit + ",0)"
 }
+
 const Bind = (context: any, methodArray: string[]) => {
   for (const methodString of methodArray) {
     context[methodString] = context[methodString].bind(context)
@@ -64,14 +65,11 @@ const Bind = (context: any, methodArray: string[]) => {
 }
 
 const DOM = {
-  ga: (context: Element, attribute: string) => context.getAttribute(attribute),
-  sa: (context: Element, attribute: string, value: string) => context.setAttribute(attribute, value),
-  T: T
+  getA: (context: Element, attribute: string) => context.getAttribute(attribute),
+  setA: (context: Element, attribute: string, value: string) => context.setAttribute(attribute, value),
 }
-const PD = (event: Event) => {
-  event.cancelable && event.preventDefault()
-}
-const ZL = (t: number) => 9 < t ? '' + t : '0' + t
+
+const Digit = (t: number) => 9 < t ? '' + t : '0' + t
 
 const Class = {
   add: (el: Element, name: string) => {
@@ -82,24 +80,6 @@ const Class = {
   },
   toggle: (el: Element, name: string, force?: boolean) => {
     el.classList.toggle(name, force)
-  }
-}
-export class OrderedMap<K extends number, V> extends Map<number, V> {
-  orderedKeys: K[];
-  constructor() {
-    super()
-
-    this.orderedKeys = []
-  }
-
-  override set(key: K, value: V) {
-    if (!this.has(key)) {
-      this.orderedKeys.push(key)
-      this.orderedKeys.sort((a, b) => { return a - b })
-    }
-    super.set(key, value)
-
-    return this
   }
 }
 
@@ -132,15 +112,6 @@ function binarySearch(arr: { id: number }[], n: number): { index: number, miss: 
 
 const mod = (n: number, m: number) => (n % m + m) % m;
 
-function lazy<T>(getter: () => T): { value: T } {
-  return {
-    get value() {
-      const value = getter()
-      Object.assign(this, "value", value)
-      return value
-    }
-  }
-}
 
 export const N = {
   Lerp,
@@ -154,11 +125,10 @@ export const N = {
   random,
   Rand,
   Arr,
-  lazy,
   Bind,
   DOM,
-  PD,
-  ZL,
+  T,
+  Digit,
   mod,
   Ease,
   Ease4,
