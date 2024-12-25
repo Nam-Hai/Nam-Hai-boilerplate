@@ -2,12 +2,7 @@
 
 Everything you'll ever need to build powerfull website.
 
-Nuxt + WebGL + [Waterflow](https://github.com/Nam-Hai/Waterflow) + Animation engine + Bun backend
-
-# TODO
-
-- bugs with the animation engine
-- Page transition API
+Nuxt + CustomRenderer for OGL in Vue Component + [Waterflow](https://github.com/Nam-Hai/Waterflow) + Frame engine + Bun/Prisma backend
 
 ```
 bun i
@@ -16,5 +11,6 @@ bun --bun run dev
 
 ```
 cd ./server.bun
+bun i
 bun run server.ts
 ```
