@@ -1,9 +1,10 @@
-import { apiRoutes, routeServerApiMap } from ".";
-import { fetchFoo } from "./api";
+import { routeServerApiMap } from "./utils/createServerApi";
 import { server } from "./config";
+import { compiler } from "./utils/compiler";
+import { getFoo } from "./api";
 
-// dont comment this line, it break stuff pls
-console.log(fetchFoo, routeServerApiMap);
+// dont comment this line, it break stuff pls because of treeshacking
+console.log(getFoo, routeServerApiMap.get("/foo/"));
 
 Bun.serve({
     port: server.port,
@@ -19,8 +20,6 @@ Bun.serve({
     },
 });
 
-
-Bun.write("./types.d.ts", `declare type APIRoutes = ${apiRoutes.map(el => `"${el}"`).join(" | ")}`)
 console.log(`server at ${server.url}`)
 
-Bun.write("./fetch.ts", ``)
+compiler()

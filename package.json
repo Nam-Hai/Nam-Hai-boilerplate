@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "1.0.2",
-    "@types/bun": "^1.1.14",
+    "@types/bun": "latest",
     "@types/node": "^20.17.10",
     "eslint": "^8.57.1",
     "nuxt": "^3.14.1592",
@@ -21,10 +21,13 @@
     "sass": "^1.83.0"
   },
   "dependencies": {
+    "@pinia/nuxt": "^0.7.0",
+    "@prisma/nuxt": "^0.1.3",
     "lenis": "^1.1.18",
     "ogl": "1.0.3",
     "vue-demi": "^0.14.10",
-    "@pinia/nuxt": "^0.7.0"
+    "@prisma/client": "6.1.0",
+    "prisma": "^6.1.0"
   },
   "overrides": {
     "vue": "latest"

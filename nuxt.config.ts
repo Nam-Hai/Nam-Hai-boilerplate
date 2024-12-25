@@ -15,7 +15,10 @@ export default defineNuxtConfig({
         host: "0.0.0.0",
     },
     css: ["@/styles/core.scss"],
-    modules: ["@pinia/nuxt"],
+    modules: [
+        "@pinia/nuxt", 
+        // "@prisma/nuxt"
+    ],
     app: {
         layoutTransition: false,
         head: {
@@ -78,4 +81,5 @@ export default defineNuxtConfig({
         "/api/getSlugs": { cors: true, prerender: true },
         // "/api/**": { prerender: true },
     },
+
 });
