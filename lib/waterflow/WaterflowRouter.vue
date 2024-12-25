@@ -37,7 +37,7 @@ watch(currentRoute, async (to, from) => {
 
     const flowInPromises = [...flowInPromise.map(el => el.promise)]
     const currentFlowIn = flowInPromise[0]
-    if (currentFlowIn.blocking) {
+    if (currentFlowIn && currentFlowIn.blocking) {
         // for blocking transition
         const _page = pageRef.value[pageRef.value?.length - 1]
         _page.style.opacity = "0"
