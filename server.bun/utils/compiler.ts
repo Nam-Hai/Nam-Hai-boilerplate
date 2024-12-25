@@ -22,8 +22,11 @@ const compiler = async () => {
         // const text = await file.text();
 
         let string = ""
-        apiInfo.forEach(({ path, outputType }) => {
-            string += `"${path}": ${checkObject(outputType)},\n`
+        apiInfo.forEach(({ path, outputType, inputType }) => {
+            string += `"${path}": {
+            query: ${checkObject(inputType)}
+            payload: ${checkObject(outputType)},
+        },\n`
         })
         Bun.write("./utils/types.ts", `export type APIRoutes = {
             ${string}

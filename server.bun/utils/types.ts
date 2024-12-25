@@ -1,35 +1,78 @@
 export type APIRoutes = {
-    "/foo/": {
+            "/api/foo/": {
+            query: {
+    
+}
+            payload: {
+    
+},
+        },
+"/api/createCategory": {
+            query: {
+    name: string,
 
-    },
-    "/createCategory": {
-        name: string,
+}
+            payload: {
+    id: number,
+name: string,
 
-    },
-    "/getCategories": {
-        categories: {
-            id: number,
-            name: string,
+},
+        },
+"/api/deleteCategory": {
+            query: {
+    id: number,
 
-        }[],
+}
+            payload: {
+    id: number,
+name: string,
 
-    },
-    "/createPost": {
-        id: number,
-        title: string,
-        content: string,
-        categoryId: number,
+},
+        },
+"/api/getCategories": {
+            query: {
+    
+}
+            payload: {
+    categories: {
+    id: number,
+name: string,
 
-    },
-    "/getPosts": {
-        posts: {
-            id: number,
-            title: string,
-            content: string,
-            categoryId: number,
+}[],
 
-        }[],
+},
+        },
+"/api/createPost": {
+            query: {
+    id: number,
+title: string,
+content: string,
+categoryId: number,
 
-    },
+}
+            payload: {
+    id: number,
+title: string,
+content: string,
+categoryId: number,
+
+},
+        },
+"/api/getPosts": {
+            query: {
+    categoryId: number,
+
+}
+            payload: {
+    posts: {
+    id: number,
+title: string,
+content: string,
+categoryId: number,
+
+}[],
+
+},
+        },
 
 }

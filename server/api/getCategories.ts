@@ -1,5 +1,5 @@
+import { fetchToServer } from "~/utils/frontApi"
+
 export default defineEventHandler(async (event) => {
-    const query = getQuery(event)
-    // const response = getAllCategoriesNuxt(query)
-    return {}
+    return await fetchToServer("/api/getCategories", {})
 })

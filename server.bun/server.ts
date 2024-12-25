@@ -10,7 +10,7 @@ Bun.serve({
     port: server.port,
     async fetch(req) {
         const url = new URL(req.url);
-        console.log("server url : ", url.pathname, routeServerApiMap);
+        console.log("server url : ", url.pathname, req);
 
         if (routeServerApiMap.has(url.pathname)) {
             return await routeServerApiMap.get(url.pathname)!(req)

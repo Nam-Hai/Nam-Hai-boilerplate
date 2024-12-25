@@ -5,11 +5,11 @@ import { z } from "zod"
 import { CategorySchema, PostSchema } from "../prisma/generated/zod"
 
 
-export const getFoo = createServerApi("/foo/", async ({ }) => {
+export const getFoo = createServerApi("/api/foo/", async ({ }) => {
     return {}
 }, z.object({}), z.object({}))
 
-export const createCategory = createServerApi("/createCategory", async (query: { name: string }) => {
+createServerApi("/api/createCategory", async (query: { name: string }) => {
     const prisma = usePrisma()
 
     return await prisma.category.create({
@@ -17,9 +17,20 @@ export const createCategory = createServerApi("/createCategory", async (query: {
             name: query.name,
         }
     })
-}, z.object({ name: z.string() }), z.object({ name: z.string() }))
+}, z.object({ name: z.string() }), CategorySchema)
 
-export const getAllCategories = createServerApi("/getCategories", async () => {
+createServerApi("/api/deleteCategory", async (query: { id: number }) => {
+    const prisma = usePrisma()
+
+    const deletedReturn = await prisma.category.delete({
+        where: {
+            id: query.id
+        }
+    })
+    return deletedReturn
+}, z.object({ id: z.number() }), CategorySchema)
+
+createServerApi("/api/getCategories", async () => {
     const prisma = usePrisma()
 
     return {
@@ -27,7 +38,7 @@ export const getAllCategories = createServerApi("/getCategories", async () => {
     }
 }, z.object({}), z.object({ categories: z.array(CategorySchema) }))
 
-export const createPost = createServerApi("/createPost", async (query: { title: string, content: string, categoryId: number }) => {
+createServerApi("/api/createPost", async (query: { title: string, content: string, categoryId: number }) => {
     const prisma = usePrisma()
 
     return await prisma.post.create({
@@ -39,7 +50,7 @@ export const createPost = createServerApi("/createPost", async (query: { title: 
     })
 }, PostSchema, PostSchema)
 
-export const getPosts = createServerApi("/getPosts", async (query: { categoryId: number }) => {
+createServerApi("/api/getPosts", async (query: { categoryId: number }) => {
     const prisma = usePrisma()
 
     const payload = await prisma.category.findFirst({
