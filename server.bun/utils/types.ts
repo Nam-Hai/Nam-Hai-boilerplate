@@ -8,52 +8,55 @@ export type APIRoutes = {
       name: string;
     };
     payload: {
-      id: number;
+      id: string;
       name: string;
+      date: Date;
     };
   };
   "/api/deleteCategory": {
     query: {
-      id: number;
+      id: string;
     };
     payload: {
-      id: number;
+      id: string;
       name: string;
+      date: Date;
     };
   };
   "/api/getCategories": {
     query: {};
     payload: {
       categories: {
-        id: number;
+        id: string;
         name: string;
+        date: Date;
       }[];
     };
   };
   "/api/createPost": {
     query: {
-      id: number;
+      id: string;
       title: string;
       content: string;
-      categoryId: number;
+      categoryId: string;
     };
     payload: {
-      id: number;
+      id: string;
       title: string;
       content: string;
-      categoryId: number;
+      categoryId: string;
     };
   };
   "/api/getPosts": {
     query: {
-      categoryId: number;
+      categoryId: string;
     };
     payload: {
       posts: {
-        id: number;
+        id: string;
         title: string;
         content: string;
-        categoryId: number;
+        categoryId: string;
       }[];
     };
   };

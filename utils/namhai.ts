@@ -109,6 +109,9 @@ function binarySearch(arr: { id: number }[], n: number): { index: number, miss: 
   }
 }
 
+function isKeyOf<Key extends PropertyKey>(object: Record<Key, any>, key: PropertyKey): key is Key {
+  return key in object;
+}
 
 const mod = (n: number, m: number) => (n % m + m) % m;
 
@@ -123,6 +126,7 @@ export const N = {
   Round,
   binarySearch,
   random,
+  isKeyOf,
   Rand,
   Arr,
   Bind,

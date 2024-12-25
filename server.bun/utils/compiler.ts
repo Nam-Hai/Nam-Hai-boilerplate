@@ -40,6 +40,19 @@ function objectToString(object: Record<any, any>) {
 }`
 }
 
+// Could just use .toLowerCase I guess but hey
+const JavaScriptWrapperObjects = {
+    "String": "string", "Number": "string", "Boolean": "boolean", "Symbol": "symbol", "BigInt": "bigint", "Object": "object", "Function": "function"
+}
+function isKeyOf<Key extends PropertyKey>(object: Record<Key, any>, key: PropertyKey): key is Key {
+    return key in object;
+}
+
+function toPrimitive(type: string) {
+    if (isKeyOf(JavaScriptWrapperObjects, type)) return JavaScriptWrapperObjects[type]
+    return type
+}
+
 // deep type infer of a z.ZodObject
 export function getRuntimeType(schema: z.ZodTypeAny): any {
     if (schema instanceof z.ZodObject) {
@@ -57,7 +70,8 @@ export function getRuntimeType(schema: z.ZodTypeAny): any {
     } else if (schema instanceof z.ZodUnion) {
         return schema._def.options.map(getRuntimeType).join(" | ");
     } else {
-        return schema._def.typeName.replaceAll("Zod", "").toLowerCase();
+        const type = schema._def.typeName.replaceAll("Zod", "");
+        return toPrimitive(type)
     }
 }
 
