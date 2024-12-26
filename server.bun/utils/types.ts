@@ -60,4 +60,8 @@ export type APIRoutes = {
       }[];
     };
   };
+  "/api/test": {
+    query: {};
+    payload: string[];
+  };
 };

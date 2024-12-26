@@ -66,3 +66,7 @@ createServerApi("/api/getPosts", async (query: { categoryId: number }) => {
         posts: payload?.posts || []
     }
 }, PostSchema.pick({ categoryId: true }), z.object({ posts: z.array(PostSchema) }))
+
+createServerApi("/api/test", async ({ }) => {
+    return [2, 3, 4]
+}, z.object({}), z.array(z.number()))

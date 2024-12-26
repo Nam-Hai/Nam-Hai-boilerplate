@@ -1,13 +1,17 @@
+import vueLenisPlugin from "lenis/vue";
 import { apiInfo } from "./createServerApi";
 import prettier from "prettier"
 import { z } from "zod";
 
 const compiler = async () => {
     let string = "export type APIRoutes = {"
-    apiInfo.forEach(({ path, outputType, inputType }, index, array) => {
+    apiInfo.forEach(({ path, payloadSchema, querySchema }, index, array) => {
+        const queryRuntime = getRuntimeType(querySchema)
+        const payloadRuntime = getRuntimeType(payloadSchema)
+        console.log(payloadRuntime);
         string += `"${path}": {
-            query: ${checkObject(inputType)}
-            payload: ${checkObject(outputType)},
+            query: ${computeTypeString(queryRuntime)}
+            payload: ${computeTypeString(payloadRuntime)},
         },`
     })
     string += "}"
@@ -16,7 +20,8 @@ const compiler = async () => {
     await Bun.write("./utils/types.ts", formatted)
 }
 
-function checkObject(object: Record<any, any>): string {
+function computeTypeString(object: Record<any, any> | string): string {
+    if (typeof object === "string") return object
     let end = ""
     if (object.isArray) {
         delete object.isArray
@@ -24,10 +29,12 @@ function checkObject(object: Record<any, any>): string {
     }
 
     Object.entries(object).forEach(([key, value]) => {
-        if (typeof value === "object") object[key] = checkObject(value)
+        if (typeof value === "object") object[key] = computeTypeString(value)
     })
+
     return `${objectToString(object)}${end}`
 }
+
 function objectToString(object: Record<any, any>) {
     return `{
         ${(() => {
@@ -54,15 +61,16 @@ function toPrimitive(type: string) {
 }
 
 // deep type infer of a z.ZodObject
-export function getRuntimeType(schema: z.ZodTypeAny): any {
+function getRuntimeType(schema: z.ZodTypeAny): Record<string, any> | string {
     if (schema instanceof z.ZodObject) {
         return Object.keys(schema.shape).reduce((acc, key) => {
             const field = schema.shape[key];
             acc[key] = getRuntimeType(field);
             return acc;
-        }, {} as Record<string, string>)
+        }, {} as Record<string, any>)
     } else if (schema instanceof z.ZodArray) {
         const elementType = getRuntimeType(schema._def.type);
+        if (typeof elementType === "string") return `${elementType}[]`
         elementType.isArray = true
         return elementType
     } else if (schema instanceof z.ZodLiteral) {

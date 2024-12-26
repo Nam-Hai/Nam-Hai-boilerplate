@@ -1,14 +1,13 @@
 import { server } from "../config"
 import { z } from "zod"
-import { getRuntimeType } from "./compiler"
 
 
-export const apiInfo: { path: string, inputType: any, outputType: any }[] = []
+export const apiInfo: { path: string, querySchema: z.ZodType, payloadSchema: z.ZodType }[] = []
 
 export const routeServerApiMap = new Map<string, ReturnType<typeof createServerApi>>()
 export const createServerApi = <T extends Object, P extends Object>(path: string, payload: ((data: P) => Promise<T>),
-    querySchema: z.Schema<P>,
-    payloadSchema: z.Schema<T>
+    querySchema: z.ZodType<P>,
+    payloadSchema: z.ZodType<T>
 ) => {
     const url = new URL(path, `${server.url}:${server.port}`)
 
@@ -37,8 +36,8 @@ export const createServerApi = <T extends Object, P extends Object>(path: string
 
     apiInfo.push({
         path,
-        inputType: getRuntimeType(querySchema as any as z.AnyZodObject),
-        outputType: getRuntimeType(payloadSchema as any as z.AnyZodObject)
+        querySchema: querySchema,
+        payloadSchema: payloadSchema
     })
     routeServerApiMap.set(path, serverAPI)
 
