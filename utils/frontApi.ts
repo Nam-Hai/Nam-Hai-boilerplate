@@ -1,5 +1,4 @@
 import type { APIRoutes } from "../server.bun/utils/types";
-import type { NitroFetchOptions, NitroFetchRequest } from 'nitropack'
 import { server } from "../server.bun/config"
 
 export async function fetchToServer<Path extends keyof APIRoutes, Query extends APIRoutes[Path]["query"], Payload extends APIRoutes[Path]["payload"]>(path: Path, body: Query) {

@@ -8,17 +8,17 @@ export type APIRoutes = {
       name: string;
     };
     payload: {
-      id: string;
+      id: number;
       name: string;
       date: Date;
     };
   };
   "/api/deleteCategory": {
     query: {
-      id: string;
+      id: number;
     };
     payload: {
-      id: string;
+      id: number;
       name: string;
       date: Date;
     };
@@ -27,7 +27,7 @@ export type APIRoutes = {
     query: {};
     payload: {
       categories: {
-        id: string;
+        id: number;
         name: string;
         date: Date;
       }[];
@@ -35,33 +35,33 @@ export type APIRoutes = {
   };
   "/api/createPost": {
     query: {
-      id: string;
+      id: number;
       title: string;
       content: string;
-      categoryId: string;
+      categoryId: number;
     };
     payload: {
-      id: string;
+      id: number;
       title: string;
       content: string;
-      categoryId: string;
+      categoryId: number;
     };
   };
   "/api/getPosts": {
     query: {
-      categoryId: string;
+      categoryId: number;
     };
     payload: {
       posts: {
-        id: string;
+        id: number;
         title: string;
         content: string;
-        categoryId: string;
+        categoryId: number;
       }[];
     };
   };
   "/api/test": {
     query: {};
-    payload: string[];
+    payload: number[];
   };
 };

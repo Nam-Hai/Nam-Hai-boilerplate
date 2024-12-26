@@ -8,7 +8,6 @@ const compiler = async () => {
     apiInfo.forEach(({ path, payloadSchema, querySchema }, index, array) => {
         const queryRuntime = getRuntimeType(querySchema)
         const payloadRuntime = getRuntimeType(payloadSchema)
-        console.log(payloadRuntime);
         string += `"${path}": {
             query: ${computeTypeString(queryRuntime)}
             payload: ${computeTypeString(payloadRuntime)},
@@ -49,7 +48,7 @@ function objectToString(object: Record<any, any>) {
 
 // Could just use .toLowerCase I guess but hey
 const JavaScriptWrapperObjects = {
-    "String": "string", "Number": "string", "Boolean": "boolean", "Symbol": "symbol", "BigInt": "bigint", "Object": "object", "Function": "function"
+    "String": "string", "Number": "number", "Boolean": "boolean", "Symbol": "symbol", "BigInt": "bigint", "Object": "object", "Function": "function"
 }
 function isKeyOf<Key extends PropertyKey>(object: Record<Key, any>, key: PropertyKey): key is Key {
     return key in object;
