@@ -6,7 +6,7 @@ Nuxt + CustomRenderer for OGL in Vue Component + [Waterflow](https://github.com/
 
 ```
 bun i
-bun --bun run dev
+bun run dev
 ```
 
 ```

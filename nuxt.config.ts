@@ -16,8 +16,7 @@ export default defineNuxtConfig({
     },
     css: ["@/styles/core.scss"],
     modules: [
-        "@pinia/nuxt", 
-        // "@prisma/nuxt"
+        "@pinia/nuxt",
     ],
     app: {
         layoutTransition: false,

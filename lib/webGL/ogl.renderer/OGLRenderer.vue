@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Transform } from 'ogl';
-import { createRenderer, Fragment, type App } from 'vue-demi';
+import { createRenderer, Fragment, type App } from 'vue';
 import { provideOGL, type OGLContext } from './useOGL';
 import { nodeOps } from './CustomRenderer';
 import { provideFlowProvider, useFlowProvider } from '~/lib/waterflow/FlowProvider';
