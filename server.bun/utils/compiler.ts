@@ -1,7 +1,7 @@
 import vueLenisPlugin from "lenis/vue";
 import { apiInfo } from "./createServerApi";
 import prettier from "prettier"
-import { z } from "zod";
+import { z, ZodIntersection } from "zod";
 
 const compiler = async () => {
     let string = "export type APIRoutes = {"
@@ -19,50 +19,56 @@ const compiler = async () => {
     await Bun.write("./utils/types.ts", formatted)
 }
 
-const OPTIONAL_PREFIX = "_IS_OPTIONAL_"
+const IS_OPTIONAL = "_IS_OPTIONAL_"
 const IS_ARRAY = "_isArray_"
+const IS_TUPLE = "_isTuple_"
+const IS_UNION = "_isUnion_"
+const IS_INTERSECTION = "_isIntersection_"
 function computeTypeString(object: Record<any, any> | string): string {
     if (typeof object === "string") {
         return object
     }
-    let end = ""
+    if (object[IS_TUPLE]) {
+        delete object[IS_TUPLE]
+        return tupleToString(object as any[])
+    }
+    let isArray = ""
     if (object[IS_ARRAY]) {
         delete object[IS_ARRAY]
-        end = "[]"
+        isArray = "[]"
     }
 
     Object.entries(object).forEach(([key, value]) => {
-        if (value[OPTIONAL_PREFIX]) {
+        if (value[IS_OPTIONAL]) {
             delete object[key]
             key += "?"
-            delete value[OPTIONAL_PREFIX]
+            delete value[IS_OPTIONAL]
         }
         if (typeof value === "object") object[key] = computeTypeString(value)
     })
-    console.log(object);
 
-    return `${objectToString(object)}${end}`
+    return `${objectToString(object)}${isArray}`
+}
+
+function tupleToString(tuple: any[]) {
+    return `[${tuple.map(computeTypeString).join(",")}]`
 }
 
 function objectToString(object: Record<any, any>) {
-    return `{
-        ${(() => {
-            let string = ""
-            Object.entries(object).forEach(([key, value]) => {
-                if (typeof value === "string" && value.slice(0, OPTIONAL_PREFIX.length) === OPTIONAL_PREFIX) {
-                    key += "?"
-                    value = value.slice(OPTIONAL_PREFIX.length)
-                }
-                string += `${key}: ${value},\n`
-            })
-            return string
-        })()}
-}`
+    let string = ""
+    Object.entries(object).forEach(([key, value]) => {
+        if (typeof value === "string" && value.slice(0, IS_OPTIONAL.length) === IS_OPTIONAL) {
+            key += "?"
+            value = value.slice(IS_OPTIONAL.length)
+        }
+        string += `${key}: ${value},\n`
+    })
+    return `{${string}}`
 }
 
 // Could just use .toLowerCase I guess but hey
 const JavaScriptWrapperObjects = {
-    "String": "string", "Number": "number", "Boolean": "boolean", "Symbol": "symbol", "BigInt": "bigint", "Object": "object", "Function": "function"
+    "String": "string", "Number": "number", "Boolean": "boolean", "Symbol": "symbol", "BigInt": "bigint", "Object": "object", "Function": "function", "NaN": "typeof NaN"
 }
 function isKeyOf<Key extends PropertyKey>(object: Record<Key, any>, key: PropertyKey): key is Key {
     return key in object;
@@ -87,17 +93,37 @@ function getRuntimeType(schema: z.ZodTypeAny): Record<string, any> | string {
         elementType[IS_ARRAY] = true
         return elementType
     } else if (schema instanceof z.ZodLiteral) {
-        // Attention
-        return `literal(${JSON.stringify(schema._def.value)})`;
+        return `${JSON.stringify(schema._def.value)}`;
+
+    } else if (schema instanceof z.ZodTuple) {
+        const runtimeType = schema._def.items.map(getRuntimeType)
+        runtimeType[IS_TUPLE] = true
+        return runtimeType
     } else if (schema instanceof z.ZodUnion) {
+        throw "no UnionType in endpoint"
+        //     const type = schema._def.options.map(getRuntimeType);
+        //     type[IS_UNION] = true
+        //     return type
+    } else if (schema instanceof z.ZodIntersection) {
+        throw "no Intersection in endpoint"
         // Attention
-        return schema._def.options.map(getRuntimeType).join(" | ");
+        // const type = schema._def.options.map(getRuntimeType);
+        // const s = schema as ZodIntersection<z.ZodTypeAny, z.ZodTypeAny>
+        // let left = getRuntimeType(s._def.left), right = getRuntimeType(s._def.right)
+        // function toObject(obj: Record<string, any> | string): Record<string, any> {
+        //     return typeof obj === "string" ? [obj] : obj
+        // }
+        // const record: Record<string, any> = [...Object.values(toObject(left)), ...Object.values(toObject(right))]
+        // record[IS_INTERSECTION] = true
+        // console.log(record);
+        // return record
+
     } else if (schema instanceof z.ZodOptional) {
         const runtimeType = getRuntimeType(schema._def.innerType)
         if (typeof runtimeType === "string") {
-            return OPTIONAL_PREFIX + toPrimitive(runtimeType)
+            return IS_OPTIONAL + toPrimitive(runtimeType)
         } else {
-            runtimeType[OPTIONAL_PREFIX] = true
+            runtimeType[IS_OPTIONAL] = true
             return runtimeType
         }
     } else {

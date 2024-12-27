@@ -4,53 +4,23 @@ export type APIRoutes = {
     payload: {};
   };
   "/api/createCategory": {
-    query: {
-      name: string;
-    };
-    payload: {
-      id: number;
-      name: string;
-      date: Date;
-    };
+    query: { name: string };
+    payload: { id: number; name: string; date: Date };
   };
   "/api/deleteCategory": {
-    query: {
-      id: number;
-    };
-    payload: {
-      id: number;
-      name: string;
-      date: Date;
-    };
+    query: { id: number };
+    payload: { id: number; name: string; date: Date };
   };
   "/api/getCategories": {
     query: {};
-    payload: {
-      categories: {
-        id: number;
-        name: string;
-        date: Date;
-      }[];
-    };
+    payload: { categories: { id: number; name: string; date: Date }[] };
   };
   "/api/createPost": {
-    query: {
-      id: number;
-      title: string;
-      content: string;
-      categoryId: number;
-    };
-    payload: {
-      id: number;
-      title: string;
-      content: string;
-      categoryId: number;
-    };
+    query: { id: number; title: string; content: string; categoryId: number };
+    payload: { id: number; title: string; content: string; categoryId: number };
   };
   "/api/getPosts": {
-    query: {
-      categoryId: number;
-    };
+    query: { categoryId: number };
     payload: {
       posts: {
         id: number;
@@ -64,8 +34,10 @@ export type APIRoutes = {
     query: {
       choco?: {
         test?: number;
-        yo?: Date;
-      };
+        yo?: typeof NaN;
+        tup: [string, number, { cho: number[] }];
+        lit: "test";
+      }[];
     };
     payload: number;
   };
