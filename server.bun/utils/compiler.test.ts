@@ -134,8 +134,8 @@ describe("Array : ", () => {
     })
 
 
-    // it("compile array and nullable", async () => {
-    //     const typeString = "type A = " + computeTypeString(getRuntimeType(z.object({ foo: z.array(z.number().nullable().optional()).nullable().optional() })))
-    //     expect(await format(typeString)).toBe(await format("type A = { foo?: (number | null | undefined)[] | null }"));
-    // })
+    it("compile array and nullable", async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.object({ foo: z.array(z.number().nullable().optional()).nullable().optional() })))
+        expect(await format(typeString)).toBe(await format("type A = { foo?: ((number | null) | undefined)[] | null }"));
+    })
 })
