@@ -69,7 +69,10 @@ createServerApi("/api/getPosts", async (query) => {
 
 createServerApi("/api/test", async (query) => {
     return 2
-}, z.object({ 
-    obj: z.object({ foo: z.number(), bar: z.boolean() }), 
-    choco: z.array(z.object({ test: z.union([z.boolean(), z.array(z.number().nullable()), z.number().nullable()]), yo: z.null(), tup: z.array(z.tuple([z.string(), z.number(), z.object({ cho: z.array(z.number()).nullable() }).nullable()]).nullable()).nullable().optional(), lit: z.literal("test") })).optional() }), z.number())
+}, z.object({
+    prom: z.promise(z.string()),
+    promObj: z.promise(z.object({ name: z.string() })),
+    obj: z.record(z.string(), z.object({ name: z.string() })),
+    choco: z.array(z.object({ test: z.union([z.boolean(), z.array(z.number().nullable()), z.number().nullable()]), yo: z.null(), tup: z.array(z.tuple([z.string(), z.number(), z.object({ cho: z.array(z.number()).nullable() }).nullable()]).nullable()).nullable().optional(), lit: z.literal("test") })).optional()
+}), z.number())
 // }, z.object({ choco: z.object({ test: z.number().or(z.object({ inner: z.string() })).optional(), yo: z.nan().optional(), lit: z.literal("test").or(z.literal("yo")) }).optional(), andTest: z.intersection(z.number(), z.string()) }), z.number())

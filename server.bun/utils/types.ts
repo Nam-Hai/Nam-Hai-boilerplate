@@ -32,12 +32,16 @@ export type APIRoutes = {
   };
   "/api/test": {
     query: {
-      obj: { foo: number; bar: boolean };
+      prom: Promise<string>;
+      promObj: Promise<{ name: string }>;
+      obj: Record<string, { name: string }>;
       choco?: {
         test: boolean | (number | null)[] | (number | null);
         yo: null;
         lit: "test";
-        tup?: ([string, number, { cho: number[] } | null] | null)[] | null;
+        tup?:
+          | ([string, number, { cho: number[] | null } | null] | null)[]
+          | null;
       }[];
     };
     payload: number;

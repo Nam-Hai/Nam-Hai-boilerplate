@@ -25,7 +25,9 @@ const IS_NULLABLE = "_IS_NULLABLE_"
 const IS_ARRAY = "_isArray_"
 const IS_TUPLE = "_isTuple_"
 const IS_UNION = "_isUnion_"
+const IS_RECORD = "_isRecord_"
 const IS_INTERSECTION = "_isIntersection_"
+const IS_PROMISE = "_isPromise_"
 function computeTypeString(object: Record<any, any> | string): string {
     if (typeof object === "string") {
         return object
@@ -35,15 +37,28 @@ function computeTypeString(object: Record<any, any> | string): string {
         return computeTypeString(object) + "[]"
     }
 
+    if (isKeyOf(object, IS_PROMISE)) {
+        object = object[IS_PROMISE]
+        return `Promise<${computeTypeString(object)}>`
+    }
 
     if (isKeyOf(object, IS_UNION)) {
         object = object[IS_UNION] as Record<any, any>
         return `(${object.map(computeTypeString).join(" | ")})`
     }
 
+    if (isKeyOf(object, IS_INTERSECTION)) {
+        object = object[IS_INTERSECTION] as { left: any, right: any }
+        return `(${computeTypeString(object.left)} & ${computeTypeString(object.right)})`
+    }
+
     if (object[IS_TUPLE]) {
         object = object[IS_TUPLE]
         return tupleToString(object as any[])
+    }
+    if (object[IS_RECORD]) {
+        object = object[IS_RECORD] as { key: any, value: any }
+        return `Record<${computeTypeString(object.key)}, ${computeTypeString(object.value)}>`
     }
 
     if (object[IS_NULLABLE]) {
@@ -92,7 +107,7 @@ function objectToString(object: Record<any, any>) {
 }
 
 const JavaScriptWrapperObjects = {
-    "String": "string", "Number": "number", "Boolean": "boolean", "Symbol": "symbol", "BigInt": "bigint", "Object": "object", "Function": "function", "NaN": "typeof NaN", "Null": "null", "Undefined": "undefined"
+    "String": "string", "Number": "number", "Boolean": "boolean", "Symbol": "symbol", "BigInt": "bigint", "Object": "object", "Function": "function", "NaN": "typeof NaN", "Null": "null", "Undefined": "undefined", "Any": "any", "Unknown": "unknown", "Never": "never", "Void": "void"
 }
 function isKeyOf<Key extends PropertyKey>(object: Record<Key, any>, key: PropertyKey): key is Key {
     return typeof object === "object" && key in object;
@@ -105,49 +120,35 @@ function toPrimitive(type: string) {
 
 // deep type infer of a z.ZodObject
 function getRuntimeType(schema: z.ZodTypeAny): Record<string, any> | string {
-    if (schema instanceof z.ZodObject) {
-        return Object.keys(schema.shape).reduce((acc, key) => {
-            const field = schema.shape[key];
-            acc[key] = getRuntimeType(field);
-            return acc;
-        }, {} as Record<string, any>)
-    } else if (schema instanceof z.ZodArray) {
-        const elementType = getRuntimeType(schema._def.type);
-        return { [IS_ARRAY]: elementType }
-    } else if (schema instanceof z.ZodLiteral) {
-        return `${JSON.stringify(schema._def.value)}`;
+    switch (true) {
+        case schema instanceof z.ZodObject:
+            return Object.keys(schema.shape).reduce((acc, key) => {
+                const field = schema.shape[key];
+                acc[key] = getRuntimeType(field);
+                return acc;
+            }, {} as Record<string, any>)
+        case schema instanceof z.ZodArray:
+            const elementType = getRuntimeType(schema._def.type);
+            return { [IS_ARRAY]: elementType }
+        case (schema instanceof z.ZodTuple):
+            return { [IS_TUPLE]: schema._def.items.map(getRuntimeType) }
+        case (schema instanceof z.ZodPromise):
+            return { [IS_PROMISE]: getRuntimeType(schema._def.type) }
+        case (schema instanceof z.ZodUnion):
+            return { [IS_UNION]: schema._def.options.map(getRuntimeType) }
+        case (schema instanceof z.ZodIntersection):
+            return { [IS_INTERSECTION]: { left: getRuntimeType(schema._def.left), right: getRuntimeType(schema._def.right) } }
+        case (schema instanceof z.ZodRecord):
+            return { [IS_RECORD]: { key: getRuntimeType(schema._def.keyType), value: getRuntimeType(schema._def.valueType) } }
+        case (schema instanceof z.ZodNullable):
+            return { [IS_NULLABLE]: getRuntimeType(schema._def.innerType) }
+        case (schema instanceof z.ZodOptional):
+            return { [IS_OPTIONAL]: getRuntimeType(schema._def.innerType) }
+        case (schema instanceof z.ZodLiteral):
+            return `${JSON.stringify(schema._def.value)}`;
+        default:
+            return toPrimitive(schema._def.typeName.replaceAll("Zod", ""))
 
-    } else if (schema instanceof z.ZodTuple) {
-        const runtimeType = schema._def.items.map(getRuntimeType)
-        return { [IS_TUPLE]: runtimeType }
-    } else if (schema instanceof z.ZodUnion) {
-        // throw "no UnionType in endpoint"
-        const type = schema._def.options.map(getRuntimeType);
-        return {
-            [IS_UNION]: type
-        }
-    } else if (schema instanceof z.ZodIntersection) {
-        throw "no Intersection in endpoint"
-        // Attention
-        // const type = schema._def.options.map(getRuntimeType);
-        // const s = schema as ZodIntersection<z.ZodTypeAny, z.ZodTypeAny>
-        // let left = getRuntimeType(s._def.left), right = getRuntimeType(s._def.right)
-        // function toObject(obj: Record<string, any> | string): Record<string, any> {
-        //     return typeof obj === "string" ? [obj] : obj
-        // }
-        // const record: Record<string, any> = [...Object.values(toObject(left)), ...Object.values(toObject(right))]
-        // record[IS_INTERSECTION] = true
-        // console.log(record);
-        // return record
-    } else if (schema instanceof z.ZodNullable) {
-        const runtimeType = getRuntimeType(schema._def.innerType)
-        return { [IS_NULLABLE]: runtimeType }
-    } else if (schema instanceof z.ZodOptional) {
-        const runtimeType = getRuntimeType(schema._def.innerType)
-        return { [IS_OPTIONAL]: runtimeType }
-    } else {
-        const type = schema._def.typeName.replaceAll("Zod", "");
-        return toPrimitive(type)
     }
 }
 
