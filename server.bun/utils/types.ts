@@ -32,11 +32,12 @@ export type APIRoutes = {
   };
   "/api/test": {
     query: {
+      obj: { foo: number; bar: boolean };
       choco?: {
-        test?: number;
-        yo?: typeof NaN;
-        tup: [string, number, { cho: number[] }];
+        test: boolean | (number | null)[] | (number | null);
+        yo: null;
         lit: "test";
+        tup?: ([string, number, { cho: number[] } | null] | null)[] | null;
       }[];
     };
     payload: number;

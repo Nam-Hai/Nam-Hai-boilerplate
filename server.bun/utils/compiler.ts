@@ -1,7 +1,7 @@
 import vueLenisPlugin from "lenis/vue";
 import { apiInfo } from "./createServerApi";
 import prettier from "prettier"
-import { z, ZodIntersection } from "zod";
+import { object, z, ZodIntersection } from "zod";
 
 const compiler = async () => {
     let string = "export type APIRoutes = {"
@@ -15,11 +15,13 @@ const compiler = async () => {
     })
     string += "}"
 
+
     const formatted = await prettier.format(string, { parser: "typescript" });
     await Bun.write("./utils/types.ts", formatted)
 }
 
 const IS_OPTIONAL = "_IS_OPTIONAL_"
+const IS_NULLABLE = "_IS_NULLABLE_"
 const IS_ARRAY = "_isArray_"
 const IS_TUPLE = "_isTuple_"
 const IS_UNION = "_isUnion_"
@@ -28,26 +30,49 @@ function computeTypeString(object: Record<any, any> | string): string {
     if (typeof object === "string") {
         return object
     }
-    if (object[IS_TUPLE]) {
-        delete object[IS_TUPLE]
-        return tupleToString(object as any[])
-    }
-    let isArray = ""
-    if (object[IS_ARRAY]) {
-        delete object[IS_ARRAY]
-        isArray = "[]"
+    if (isKeyOf(object, IS_ARRAY)) {
+        object = object[IS_ARRAY] as Record<any, any> | string
+        // if (typeof object === "string") {
+        //     return object + isArray
+        // }
+        return computeTypeString(object) + "[]"
     }
 
+
+    if (isKeyOf(object, IS_UNION)) {
+        object = object[IS_UNION] as Record<any, any>
+
+        return `(${object.map(computeTypeString).join(" | ")})`
+    }
+
+    if (object[IS_TUPLE]) {
+        object = object[IS_TUPLE]
+        return tupleToString(object as any[])
+    }
+
+    if (object[IS_NULLABLE]) {
+        object = object[IS_NULLABLE] as Record<any, any> | string
+        if (typeof object === "string") return `(${object} | null)`
+        return `(${computeTypeString(object)} | null)`
+    }
     Object.entries(object).forEach(([key, value]) => {
-        if (value[IS_OPTIONAL]) {
+        const isNullable = isKeyOf(value, IS_NULLABLE)
+        if (isNullable) {
+            // make sure .optional().nullable() ~~ .nullable().optional()
             delete object[key]
+            value = value[IS_NULLABLE]
+        }
+        if (isKeyOf(value, IS_OPTIONAL)) {
+            delete object[key]
+            value = value[IS_OPTIONAL]
             key += "?"
-            delete value[IS_OPTIONAL]
+            object[key] = computeTypeString(value) + (isNullable ? " | null" : "")
         }
         if (typeof value === "object") object[key] = computeTypeString(value)
     })
 
-    return `${objectToString(object)}${isArray}`
+
+    return `${objectToString(object)}`
 }
 
 function tupleToString(tuple: any[]) {
@@ -57,21 +82,16 @@ function tupleToString(tuple: any[]) {
 function objectToString(object: Record<any, any>) {
     let string = ""
     Object.entries(object).forEach(([key, value]) => {
-        if (typeof value === "string" && value.slice(0, IS_OPTIONAL.length) === IS_OPTIONAL) {
-            key += "?"
-            value = value.slice(IS_OPTIONAL.length)
-        }
         string += `${key}: ${value},\n`
     })
     return `{${string}}`
 }
 
-// Could just use .toLowerCase I guess but hey
 const JavaScriptWrapperObjects = {
-    "String": "string", "Number": "number", "Boolean": "boolean", "Symbol": "symbol", "BigInt": "bigint", "Object": "object", "Function": "function", "NaN": "typeof NaN"
+    "String": "string", "Number": "number", "Boolean": "boolean", "Symbol": "symbol", "BigInt": "bigint", "Object": "object", "Function": "function", "NaN": "typeof NaN", "Null": "null", "Undefined": "undefined"
 }
 function isKeyOf<Key extends PropertyKey>(object: Record<Key, any>, key: PropertyKey): key is Key {
-    return key in object;
+    return typeof object === "object" && key in object;
 }
 
 function toPrimitive(type: string) {
@@ -89,21 +109,19 @@ function getRuntimeType(schema: z.ZodTypeAny): Record<string, any> | string {
         }, {} as Record<string, any>)
     } else if (schema instanceof z.ZodArray) {
         const elementType = getRuntimeType(schema._def.type);
-        if (typeof elementType === "string") return `${elementType}[]`
-        elementType[IS_ARRAY] = true
-        return elementType
+        return { [IS_ARRAY]: elementType }
     } else if (schema instanceof z.ZodLiteral) {
         return `${JSON.stringify(schema._def.value)}`;
 
     } else if (schema instanceof z.ZodTuple) {
         const runtimeType = schema._def.items.map(getRuntimeType)
-        runtimeType[IS_TUPLE] = true
-        return runtimeType
+        return { [IS_TUPLE]: runtimeType }
     } else if (schema instanceof z.ZodUnion) {
-        throw "no UnionType in endpoint"
-        //     const type = schema._def.options.map(getRuntimeType);
-        //     type[IS_UNION] = true
-        //     return type
+        // throw "no UnionType in endpoint"
+        const type = schema._def.options.map(getRuntimeType);
+        return {
+            [IS_UNION]: type
+        }
     } else if (schema instanceof z.ZodIntersection) {
         throw "no Intersection in endpoint"
         // Attention
@@ -117,15 +135,12 @@ function getRuntimeType(schema: z.ZodTypeAny): Record<string, any> | string {
         // record[IS_INTERSECTION] = true
         // console.log(record);
         // return record
-
+    } else if (schema instanceof z.ZodNullable) {
+        const runtimeType = getRuntimeType(schema._def.innerType)
+        return { [IS_NULLABLE]: runtimeType }
     } else if (schema instanceof z.ZodOptional) {
         const runtimeType = getRuntimeType(schema._def.innerType)
-        if (typeof runtimeType === "string") {
-            return IS_OPTIONAL + toPrimitive(runtimeType)
-        } else {
-            runtimeType[IS_OPTIONAL] = true
-            return runtimeType
-        }
+        return { [IS_OPTIONAL]: runtimeType }
     } else {
         const type = schema._def.typeName.replaceAll("Zod", "");
         return toPrimitive(type)
@@ -133,3 +148,4 @@ function getRuntimeType(schema: z.ZodTypeAny): Record<string, any> | string {
 }
 
 export { compiler }
+export { getRuntimeType, computeTypeString };
