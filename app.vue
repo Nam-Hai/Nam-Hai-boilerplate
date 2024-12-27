@@ -16,5 +16,4 @@ provideFlowProvider({ route })
 provideScreen({})
 const lenis = useLenis()
 
-
 </script>

@@ -45,6 +45,9 @@ const deleteCategory = async (category: Category) => {
     if (miss) return
     categories.splice(index, 1)
 }
+
+onMounted(() => {
+})
 </script>
 
 <style scoped lang="scss">

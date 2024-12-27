@@ -9,6 +9,5 @@ export default defineEventHandler(async (event) => {
     schema.parse(body)
 
     type queryType = z.infer<typeof schema>
-
     return await fetchToServer("/api/deleteCategory", body as queryType)
 })

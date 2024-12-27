@@ -9,7 +9,7 @@ export const getFoo = createServerApi("/api/foo/", async ({ }) => {
     return {}
 }, z.object({}), z.object({}))
 
-createServerApi("/api/createCategory", async (query: { name: string }) => {
+createServerApi("/api/createCategory", async (query) => {
     const prisma = usePrisma()
 
     return await prisma.category.create({
@@ -19,7 +19,7 @@ createServerApi("/api/createCategory", async (query: { name: string }) => {
     })
 }, z.object({ name: z.string() }), CategorySchema)
 
-createServerApi("/api/deleteCategory", async (query: { id: number }) => {
+createServerApi("/api/deleteCategory", async (query) => {
     const prisma = usePrisma()
 
     const deletedReturn = await prisma.category.delete({
@@ -38,7 +38,7 @@ createServerApi("/api/getCategories", async () => {
     }
 }, z.object({}), z.object({ categories: z.array(CategorySchema) }))
 
-createServerApi("/api/createPost", async (query: { title: string, content: string, categoryId: number }) => {
+createServerApi("/api/createPost", async (query) => {
     const prisma = usePrisma()
 
     return await prisma.post.create({
@@ -50,7 +50,7 @@ createServerApi("/api/createPost", async (query: { title: string, content: strin
     })
 }, PostSchema, PostSchema)
 
-createServerApi("/api/getPosts", async (query: { categoryId: number }) => {
+createServerApi("/api/getPosts", async (query) => {
     const prisma = usePrisma()
 
     const payload = await prisma.category.findFirst({
@@ -67,6 +67,6 @@ createServerApi("/api/getPosts", async (query: { categoryId: number }) => {
     }
 }, PostSchema.pick({ categoryId: true }), z.object({ posts: z.array(PostSchema) }))
 
-createServerApi("/api/test", async ({ }) => {
-    return [2, 3, 4]
-}, z.object({}), z.array(z.number()))
+createServerApi("/api/test", async (query) => {
+    return 2
+}, z.object({ choco: z.object({ test: z.number().optional(), yo: z.date().optional() }).optional() }), z.number())

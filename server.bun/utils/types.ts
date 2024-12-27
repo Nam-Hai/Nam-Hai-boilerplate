@@ -61,7 +61,12 @@ export type APIRoutes = {
     };
   };
   "/api/test": {
-    query: {};
-    payload: number[];
+    query: {
+      choco?: {
+        test?: number;
+        yo?: Date;
+      };
+    };
+    payload: number;
   };
 };

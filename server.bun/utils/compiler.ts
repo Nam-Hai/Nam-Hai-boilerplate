@@ -19,17 +19,27 @@ const compiler = async () => {
     await Bun.write("./utils/types.ts", formatted)
 }
 
+const OPTIONAL_PREFIX = "_IS_OPTIONAL_"
+const IS_ARRAY = "_isArray_"
 function computeTypeString(object: Record<any, any> | string): string {
-    if (typeof object === "string") return object
+    if (typeof object === "string") {
+        return object
+    }
     let end = ""
-    if (object.isArray) {
-        delete object.isArray
+    if (object[IS_ARRAY]) {
+        delete object[IS_ARRAY]
         end = "[]"
     }
 
     Object.entries(object).forEach(([key, value]) => {
+        if (value[OPTIONAL_PREFIX]) {
+            delete object[key]
+            key += "?"
+            delete value[OPTIONAL_PREFIX]
+        }
         if (typeof value === "object") object[key] = computeTypeString(value)
     })
+    console.log(object);
 
     return `${objectToString(object)}${end}`
 }
@@ -39,6 +49,10 @@ function objectToString(object: Record<any, any>) {
         ${(() => {
             let string = ""
             Object.entries(object).forEach(([key, value]) => {
+                if (typeof value === "string" && value.slice(0, OPTIONAL_PREFIX.length) === OPTIONAL_PREFIX) {
+                    key += "?"
+                    value = value.slice(OPTIONAL_PREFIX.length)
+                }
                 string += `${key}: ${value},\n`
             })
             return string
@@ -70,12 +84,22 @@ function getRuntimeType(schema: z.ZodTypeAny): Record<string, any> | string {
     } else if (schema instanceof z.ZodArray) {
         const elementType = getRuntimeType(schema._def.type);
         if (typeof elementType === "string") return `${elementType}[]`
-        elementType.isArray = true
+        elementType[IS_ARRAY] = true
         return elementType
     } else if (schema instanceof z.ZodLiteral) {
+        // Attention
         return `literal(${JSON.stringify(schema._def.value)})`;
     } else if (schema instanceof z.ZodUnion) {
+        // Attention
         return schema._def.options.map(getRuntimeType).join(" | ");
+    } else if (schema instanceof z.ZodOptional) {
+        const runtimeType = getRuntimeType(schema._def.innerType)
+        if (typeof runtimeType === "string") {
+            return OPTIONAL_PREFIX + toPrimitive(runtimeType)
+        } else {
+            runtimeType[OPTIONAL_PREFIX] = true
+            return runtimeType
+        }
     } else {
         const type = schema._def.typeName.replaceAll("Zod", "");
         return toPrimitive(type)
