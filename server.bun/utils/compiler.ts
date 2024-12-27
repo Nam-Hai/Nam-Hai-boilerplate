@@ -32,16 +32,12 @@ function computeTypeString(object: Record<any, any> | string): string {
     }
     if (isKeyOf(object, IS_ARRAY)) {
         object = object[IS_ARRAY] as Record<any, any> | string
-        // if (typeof object === "string") {
-        //     return object + isArray
-        // }
         return computeTypeString(object) + "[]"
     }
 
 
     if (isKeyOf(object, IS_UNION)) {
         object = object[IS_UNION] as Record<any, any>
-
         return `(${object.map(computeTypeString).join(" | ")})`
     }
 
@@ -54,6 +50,11 @@ function computeTypeString(object: Record<any, any> | string): string {
         object = object[IS_NULLABLE] as Record<any, any> | string
         if (typeof object === "string") return `(${object} | null)`
         return `(${computeTypeString(object)} | null)`
+    }
+    if (object[IS_OPTIONAL]) {
+        object = object[IS_OPTIONAL] as Record<any, any> | string
+        if (typeof object === "string") return `(${object} | undefined)`
+        return `(${computeTypeString(object)} | undefined)`
     }
     Object.entries(object).forEach(([key, value]) => {
         const isNullable = isKeyOf(value, IS_NULLABLE)
@@ -68,7 +69,10 @@ function computeTypeString(object: Record<any, any> | string): string {
             key += "?"
             object[key] = computeTypeString(value) + (isNullable ? " | null" : "")
         }
-        if (typeof value === "object") object[key] = computeTypeString(value)
+        if (isKeyOf(value, IS_ARRAY)) {
+            object[key] = computeTypeString(value[IS_ARRAY]) + "[]" + (isNullable ? " | null" : "")
+        }
+        object[key] = computeTypeString(value) + (isNullable ? " | null" : "")
     })
 
 

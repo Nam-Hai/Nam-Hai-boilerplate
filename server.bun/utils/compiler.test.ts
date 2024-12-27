@@ -28,7 +28,32 @@ describe("Primitives : ", () => {
     Object.keys(primitiveToZod).forEach((element) => {
         compilePrimitive(element as keyof typeof primitiveToZod)
     });
+
 });
+describe("Optional : ", () => {
+
+    it(`compile optional`, async () => {
+        const schema = z.optional(z.string())
+        const typeString = "type A = " + computeTypeString(getRuntimeType(schema))
+        expect(await format(typeString)).toBe(await format("type A = (string | undefined)"));
+    });
+    it(`compile optional`, async () => {
+        const schema = z.optional(z.null().or(z.number()))
+        const typeString = "type A = " + computeTypeString(getRuntimeType(schema))
+        expect(await format(typeString)).toBe(await format("type A = ((null | number) | undefined)"));
+    });
+
+    it(`compile optional`, async () => {
+        const schema = z.object({ foo: z.string().optional() })
+        const typeString = "type A = " + computeTypeString(getRuntimeType(schema))
+        expect(await format(typeString)).toBe(await format("type A = {foo?: string}"));
+    });
+    it(`compile optional`, async () => {
+        const schema = z.optional(z.array(z.object({ foo: z.string().optional() })))
+        const typeString = "type A = " + computeTypeString(getRuntimeType(schema))
+        expect(await format(typeString)).toBe(await format("type A = ({foo?: string}[] | undefined)"));
+    });
+})
 
 describe("Object : ", () => {
     it(`compile empty object`, async () => {
@@ -44,6 +69,12 @@ describe("Object : ", () => {
         const typeString = "type A = " + computeTypeString(getRuntimeType(z.object({ foo: z.number().optional(), bar: z.string(), fizz: z.boolean().optional() })))
         expect(await format(typeString)).toBe(await format("type A = {bar: string, foo?:number,  fizz?: boolean}"));
     });
+
+    it(`compile basic object nullable`, async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.object({ foo: z.number().nullable(), bar: z.string() })))
+        expect(await format(typeString)).toBe(await format("type A = { bar: string, foo: number | null}"));
+    })
+
     it(`compile basic object optionnal, nullable`, async () => {
         const typeString = "type A = " + computeTypeString(getRuntimeType(z.object({ foo: z.number().nullable().optional(), bar: z.undefined(), fizz: z.boolean().optional() })))
         expect(await format(typeString)).toBe(await format("type A = { bar: undefined, foo?:number | null, fizz?: boolean}"));
@@ -80,6 +111,12 @@ describe("Array : ", () => {
         const typeString = "type A = " + computeTypeString(getRuntimeType(z.array(z.number().or(z.boolean()))))
         expect(await format(typeString)).toBe(await format("type A = (number | boolean)[]"));
     })
+
+    it("compile basic array optional", async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.object({ foo: z.array(z.number()).optional() })))
+        expect(await format(typeString)).toBe(await format("type A = {foo?: number[]}"));
+    })
+
     it("compile union in Array", async () => {
         const typeString = "type A = " + computeTypeString(getRuntimeType(z.array(z.union([z.number(), z.boolean(), z.nan(), z.null()]))))
         expect(await format(typeString)).toBe(await format("type A = (number | boolean | typeof NaN | null)[]"));
@@ -88,6 +125,17 @@ describe("Array : ", () => {
 
     it("compile array and nullable", async () => {
         const typeString = "type A = " + computeTypeString(getRuntimeType(z.object({ foo: z.array(z.number()).nullable() })))
-        expect(await format(typeString)).toBe(await format("type A = { foo: number[] } | null"));
+        expect(await format(typeString)).toBe(await format("type A = { foo: number[] | null }"));
     })
+
+    it("compile array and nullable", async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.object({ foo: z.array(z.number()).nullable().optional() })))
+        expect(await format(typeString)).toBe(await format("type A = { foo?: number[] | null }"));
+    })
+
+
+    // it("compile array and nullable", async () => {
+    //     const typeString = "type A = " + computeTypeString(getRuntimeType(z.object({ foo: z.array(z.number().nullable().optional()).nullable().optional() })))
+    //     expect(await format(typeString)).toBe(await format("type A = { foo?: (number | null | undefined)[] | null }"));
+    // })
 })
