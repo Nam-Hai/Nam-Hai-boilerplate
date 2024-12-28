@@ -220,3 +220,32 @@ describe("Function : ", () => {
         expect(await format(typeString)).toBe(await format("type A = ((...args: [string, string, {foo?: string, bar?: boolean} | undefined])=> void)"));
     })
 })
+
+
+describe("Map & Set : ", () => {
+    it("compile basic Set", async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.set(z.string())))
+        expect(await format(typeString)).toBe(await format("type A = Set<string>"));
+    })
+    it("compile basic Set", async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.set(z.array(z.string()))))
+        expect(await format(typeString)).toBe(await format("type A = Set<string[]>"));
+    })
+    it("compile basic Set", async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.set(z.array(z.string()).or(z.string()))))
+        expect(await format(typeString)).toBe(await format("type A = Set<string[] | string>"));
+    })
+
+    it("compile basic Map", async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.map(z.number(), z.string())))
+        expect(await format(typeString)).toBe(await format("type A = Map<number, string>"));
+    })
+    it("compile basic Map", async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.map(z.string(), z.array(z.string()))))
+        expect(await format(typeString)).toBe(await format("type A = Map<string, string[]>"));
+    })
+    it("compile basic Map", async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.map(z.tuple([z.string(), z.number(), z.boolean()]), z.array(z.string()).or(z.string()))))
+        expect(await format(typeString)).toBe(await format("type A = Map<[string, number, boolean], string[] | string>"));
+    })
+})
