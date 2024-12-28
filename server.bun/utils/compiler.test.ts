@@ -181,3 +181,42 @@ describe("Promise : ", () => {
         expect(await format(typeString)).toBe(await format("type A = Promise<{name?: string | null}>"));
     })
 })
+
+describe("Function : ", () => {
+    it("compile basic function", async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.function()))
+        expect(await format(typeString)).toBe(await format("type A = (() => unknown)"));
+    })
+
+    it("compile basic function", async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.function().args().returns(z.void())))
+        expect(await format(typeString)).toBe(await format("type A = (() => void)"));
+    })
+
+    it("compile basic function", async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.function().args(z.number()).returns(z.void())))
+        expect(await format(typeString)).toBe(await format("type A = ((arg: number) => void)"));
+    })
+
+    it("compile basic function", async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.function().args(z.string(), z.number()).returns(z.void())))
+        expect(await format(typeString)).toBe(await format("type A = ((...args: [string, number]) => void)"));
+    })
+
+    it("compile basic function", async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.function().args(z.string(), z.number(), z.object({ name: z.number() })).returns(z.object({ foo: z.boolean().nullish() }))))
+
+        expect(await format(typeString)).toBe(await format("type A = ((...args: [string, number, {name: number}]) => {foo?: boolean | null})"));
+    })
+
+    it("compile function, callback", async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.function().args(z.function()).returns(z.function().args(z.string()).returns(z.object({ foo: z.boolean() })))))
+        expect(await format(typeString)).toBe(await format("type A = ((arg: (() => unknown)) => ((arg: string) => {foo: boolean}))"));
+    })
+
+    it("compile function, callback", async () => {
+        const typeString = "type A = " + computeTypeString(getRuntimeType(z.function().args(z.string(), z.string(), z.object({ foo: z.string().optional(), bar: z.boolean().optional() }).optional()).returns(z.void())))
+
+        expect(await format(typeString)).toBe(await format("type A = ((...args: [string, string, {foo?: string, bar?: boolean} | undefined])=> void)"));
+    })
+})

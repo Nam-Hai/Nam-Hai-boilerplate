@@ -70,6 +70,12 @@ createServerApi("/api/getPosts", async (query) => {
 createServerApi("/api/test", async (query) => {
     return 2
 }, z.object({
+    // inst: z.instanceof(Test),
+    map: z.map(z.string(), z.object({ foo: z.boolean() })),
+    set: z.set(z.object({ name: z.string(), foo: z.boolean() })),
+    num: z.number(),
+    tup: z.tuple([z.string(), z.number()]),
+    str: z.string().nullish(),
     prom: z.promise(z.string()),
     promObj: z.promise(z.object({ name: z.string() })),
     obj: z.record(z.string(), z.object({ name: z.string() })),
