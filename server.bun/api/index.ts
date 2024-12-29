@@ -71,6 +71,7 @@ createServerApi("/api/test", async (query) => {
     return 2
 }, z.object({
     // inst: z.instanceof(Test),
+    // stringlit: z.custom<`${number}px`>(() => true),
     map: z.map(z.string(), z.object({ foo: z.boolean() })),
     set: z.set(z.object({ name: z.string(), foo: z.boolean() })),
     num: z.number(),

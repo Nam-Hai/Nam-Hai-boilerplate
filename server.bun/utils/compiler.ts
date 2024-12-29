@@ -12,8 +12,8 @@ const compiler = async () => {
             payload: ${computeTypeString(payloadRuntime)},
         },`
     })
-    string += "}"
 
+    string += "}"
 
     const formatted = await prettier.format(string, { parser: "typescript" });
     await Bun.write("./utils/types.ts", formatted)
@@ -22,6 +22,7 @@ const compiler = async () => {
 function isKeyOf<Key extends PropertyKey>(object: Record<Key, any>, key: PropertyKey): key is Key {
     return typeof object === "object" && key in object;
 }
+
 const IS_OPTIONAL = "_IS_OPTIONAL_"
 const IS_NULLABLE = "_IS_NULLABLE_"
 const IS_ARRAY = "_isArray_"
@@ -34,7 +35,8 @@ const IS_FUNCTION = "_isFunction_"
 const IS_MAP = "_isMap_"
 const IS_SET = "_isSet_"
 const IS_INSTANCE_OF = "_IS_INSTANCE_OF_"
-function computeTypeString(object: Record<any, any> | string): string {
+
+export function computeTypeString(object: Record<any, any> | string): string {
     if (typeof object === "string") {
         return object
     }
@@ -64,31 +66,31 @@ function computeTypeString(object: Record<any, any> | string): string {
         const argsString = object.args[IS_TUPLE].length > 1 ? `...args: ${args}` : object.args[IS_TUPLE].length == 1 ? `arg: ${args.slice(1, -1)}` : ""
         return `((${argsString}) => ${ret})`
     }
-    if (object[IS_TUPLE]) {
+    if (isKeyOf(object, IS_TUPLE)) {
         object = object[IS_TUPLE]
 
-        return tupleToString(object as any[])
+        return `[${Object.values(object).map(computeTypeString).join(",")}]`
     }
 
-    if (object[IS_RECORD]) {
+    if (isKeyOf(object, IS_RECORD)) {
         object = object[IS_RECORD] as { key: any, value: any }
         return `Record <${computeTypeString(object.key)}, ${computeTypeString(object.value)}> `
     }
-    if (object[IS_MAP]) {
+    if (isKeyOf(object, IS_MAP)) {
         object = object[IS_MAP] as { key: any, value: any }
         return `Map<${computeTypeString(object.key)}, ${computeTypeString(object.value)}> `
     }
-    if (object[IS_SET]) {
+    if (isKeyOf(object, IS_SET)) {
         object = object[IS_SET] as any
         return `Set<${computeTypeString(object)}> `
     }
 
-    if (object[IS_NULLABLE]) {
+    if (isKeyOf(object, IS_NULLABLE)) {
         object = object[IS_NULLABLE] as Record<any, any> | string
         if (typeof object === "string") return `(${object} | null)`
         return `(${computeTypeString(object)} | null)`
     }
-    if (object[IS_OPTIONAL]) {
+    if (isKeyOf(object, IS_OPTIONAL)) {
         object = object[IS_OPTIONAL] as Record<any, any> | string
         if (typeof object === "string") return `(${object} | undefined)`
         return `(${computeTypeString(object)} | undefined)`
@@ -116,9 +118,6 @@ function computeTypeString(object: Record<any, any> | string): string {
     return `${objectToString(object)} `
 }
 
-function tupleToString(tuple: any[]) {
-    return `[${tuple.map(computeTypeString).join(",")}]`
-}
 
 function objectToString(object: Record<any, any>) {
     let string = ""
@@ -138,7 +137,7 @@ function toPrimitive(type: string) {
 }
 
 // deep type infer of a z.ZodObject
-function getRuntimeType(schema: z.ZodTypeAny): Record<string, any> | string {
+export function getRuntimeType(schema: z.ZodTypeAny): Record<string, any> | string {
     switch (true) {
         case schema instanceof z.ZodObject:
             return Object.keys(schema.shape).reduce((acc, key) => {
@@ -168,7 +167,7 @@ function getRuntimeType(schema: z.ZodTypeAny): Record<string, any> | string {
         case (schema instanceof z.ZodSet):
             return { [IS_SET]: getRuntimeType(schema._def.valueType) }
         case (schema instanceof z.ZodEffects):
-            throw "Does not handle z.instanceOf"
+            throw "Does not handle z.instanceOf or z.custom string literals (schema instanceof z.ZodEffects)"
         case (schema instanceof z.ZodFunction):
             return {
                 [IS_FUNCTION]: { args: getRuntimeType(schema._def.args), return: getRuntimeType(schema._def.returns) }
@@ -182,4 +181,3 @@ function getRuntimeType(schema: z.ZodTypeAny): Record<string, any> | string {
 }
 
 export { compiler }
-export { getRuntimeType, computeTypeString };

@@ -1,5 +1,6 @@
 import type { APIRoutes } from "../server.bun/utils/types";
 import { server } from "../server.bun/config"
+import { apiInfo } from "~/server.bun/utils/createServerApi";
 
 export async function fetchToServer<Path extends keyof APIRoutes, Query extends APIRoutes[Path]["query"], Payload extends APIRoutes[Path]["payload"]>(path: Path, body: Query) {
     const url = new URL(path, `${server.url}:${server.port}`)
