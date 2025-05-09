@@ -57,11 +57,8 @@ onMounted(async () => {
 
     const vd = new WebGLVideoDecoder(gl, buffer)
 
-    await vd.decoder.flush()
+    // await vd.decoder.flush()
 
-    program.uniforms.tMap.value = vd.textures[200]
-    console.log(vd.textures)
-    let i = 0
 
     // useFrame(() => {
     //     program.uniforms.tMap.value = vd.textures[i]
@@ -70,11 +67,18 @@ onMounted(async () => {
     // })
 
 
+    console.log(vd.textures)
+    watch(vd.textures, (val) => {
+        console.log(vd.textures)
+        program.uniforms.tMap.value = val[0]
+    }, { once: true })
     const lenis = useLenis()
     console.log(lenis)
     lenis.on("scroll", (e) => {
         program.uniforms.tMap.value = vd.textures[Math.floor(e.animatedScroll / e.dimensions.scrollHeight * vd.textures.length)]
     })
+    await vd.decoder.flush()
+    console.log("FLUSHED")
 })
 </script>
 

@@ -1,6 +1,7 @@
 import { Texture, type OGLRenderingContext } from "ogl";
 import { useOGL } from "~/lib/webGL/ogl.renderer/useOGL";
 import JsWebm from "jswebm/src/JsWebm"
+import type { ShallowReactive, ShallowRef } from "vue";
 
 
 export class WebGLVideoDecoder {
@@ -8,7 +9,7 @@ export class WebGLVideoDecoder {
     decoder: VideoDecoder;
     gl: OGLRenderingContext;
     videoPackes: { data: ArrayBuffer; isKeyFrame?: boolean; keyframeTimestamp: number; timestamp: number; }[];
-    textures: Texture[];
+    textures: ShallowReactive<Texture[]>;
 
 
     constructor(gl: OGLRenderingContext, buffer: ArrayBuffer) {
@@ -51,7 +52,7 @@ export class WebGLVideoDecoder {
         this.feedDecoder()
 
 
-        this.textures = []
+        this.textures = shallowReactive([])
     }
 
     async handleFrame(videoFrame: VideoFrame) {
