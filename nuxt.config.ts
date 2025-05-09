@@ -1,23 +1,21 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
+const IS_DEV = !IS_PRODUCTION;
+
 export default defineNuxtConfig({
     compatibilityDate: "2024-11-23",
     ssr: true,
     pages: true,
     devtools: { enabled: true },
-    // nitro: {
-    // static: true,
-    // prerender: {
-    //     routes: []
-    // }
-    // },
     devServer: {
         host: "0.0.0.0",
     },
     css: ["@/styles/core.scss"],
-    modules: [
-        "@pinia/nuxt",
-    ],
+    modules: ['@pinia/nuxt'],
+    pinia: {
+        storesDirs: ['./stores/**'],
+    },
     app: {
         layoutTransition: false,
         head: {
@@ -67,6 +65,18 @@ export default defineNuxtConfig({
             },
         },
     },
+
+    runtimeConfig: {
+        privateKey: "123",
+        public: {
+            storefrontAPI: process.env.STOREFRONT_PUBLIC_ACCESS_TOKEN
+            // apiBase: "/api",
+            // hostUrl:
+            //     process.env.HOST_URL ||
+
+            // "https://www.rejouice.com",
+        },
+    },
     vue: {
         runtimeCompiler: true,
     },
@@ -81,4 +91,10 @@ export default defineNuxtConfig({
         // "/api/**": { prerender: true },
     },
 
+    plugins: [
+        '~/plugins/01.namhai.client.ts',
+        '~/plugins/02.stopMotion.client.ts',
+        '~/plugins/03.lenis.client.ts',
+        '~/plugins/10.directives.client.ts'
+    ],
 });

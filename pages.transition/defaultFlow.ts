@@ -1,4 +1,3 @@
-import { useLayout } from "~/layouts/default.vue"
 import { usePageFlow } from "~/lib/waterflow/composables/usePageFlow"
 
 const borderFromPx = 8
@@ -50,7 +49,6 @@ export const useDefaultFlowIn = (axis: "x" | "y" = "y") => {
 }
 
 export const useDefaultFlowOut = (axis: "x" | "y" = "y") => {
-    const { overlay } = useLayout()
     const { vh, scale } = useScreen()
     const lenis = useLenis()
 

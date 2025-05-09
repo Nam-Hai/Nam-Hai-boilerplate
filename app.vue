@@ -1,6 +1,5 @@
-<template>
+<template lang="html">
   <NuxtLayout>
-    <!-- <NuxtPage /> -->
 
 
     <WaterflowRouter :scroll-top-api="() => lenis.scrollTo('top', { immediate: true })" />
@@ -14,6 +13,6 @@ import { provideFlowProvider } from './lib/waterflow/FlowProvider';
 const route = useRoute()
 provideFlowProvider({ route })
 provideScreen({})
-const lenis = useLenis()
 
+const lenis = useLenis()
 </script>

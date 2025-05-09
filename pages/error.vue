@@ -23,7 +23,7 @@ const handleError = () => clearError({ redirect: '/' })
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .error-page {
     padding-top: 10rem;
     display: flex;

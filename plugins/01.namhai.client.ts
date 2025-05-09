@@ -14,7 +14,7 @@ export default defineNuxtPlugin({
     return {
       provide: {
         frameFactory,
-        resizeFactory
+        resizeFactory,
       }
     }
 

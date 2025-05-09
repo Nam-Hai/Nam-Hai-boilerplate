@@ -1,33 +1,37 @@
 import type { EffectScope } from "vue"
-import { FramePriority, type FrameEvent } from "~/plugins/core/frame"
+import { Delay, Frame, FramePriority, Timer, type FrameEvent } from "~/plugins/core/frame"
 import type { ResizeEvent } from "~/plugins/core/resize"
-import type { StopMotionOption } from "~/plugins/core/stopMotion"
+import { Film, Motion, type StopMotionOption } from "~/plugins/core/stopMotion"
 
 export function getFilm() {
     const { $motionFactory } = useNuxtApp()
+    if (!$motionFactory) return {} as Film
     return $motionFactory.Film()
 }
 
 
 export function getMotion(arg: StopMotionOption) {
     const { $motionFactory } = useNuxtApp()
+    if (!$motionFactory) return {} as Motion
     return $motionFactory.Motion(arg)
 }
 
 
 export function getTimer(callback: () => void, throttle: number) {
     const { $frameFactory } = useNuxtApp()
+    if (!$frameFactory) return {} as Timer
     return $frameFactory.Timer({ callback, throttle: throttle })
 }
 
 export function getDelay(callback: () => void, delay: number) {
     const { $frameFactory } = useNuxtApp()
-
+    if (!$frameFactory) return {} as Delay
     return $frameFactory.Delay({ callback, delay })
 }
 
 export function getFrame(callback: (arg: FrameEvent) => void, priority: FramePriority = FramePriority.MAIN) {
     const { $frameFactory } = useNuxtApp()
+    if (!$frameFactory) return {} as Frame
     return $frameFactory.Frame({ callback, priority })
 }
 
@@ -102,7 +106,7 @@ export function useDelay(callback: () => void, delay: number, detached = false) 
 
 
 export const useFrame = (cb: (e: FrameEvent) => void, priority: FramePriority = FramePriority.MAIN) => {
-    const raf = getFrame(cb, priority)
+    const raf = getFrame(cb, priority)!
     useCleanScope(() => {
         raf.run()
 
