@@ -82,13 +82,17 @@ onMounted(() => {
 </script>
 
 <template>
-    <canvas ref="canvasRef" />
+    <div class="canvas__wrapper">
+        <canvas ref="canvasRef" />
+    </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .canvas__wrapper {
     position: fixed;
     inset: 0;
+
+    z-index: 2000;
 }
 
 canvas {

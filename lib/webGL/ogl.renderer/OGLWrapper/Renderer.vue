@@ -18,10 +18,10 @@ gl.clearColor(0, 0, 0, 0)
 
 // const post = new Post(gl,)
 useFrame(() => {
-    // renderer.render({
-    //     scene: sceneRef.value,
-    //     camera: camera
-    // })
+    renderer.render({
+        scene: sceneRef.value,
+        camera: camera
+    })
 })
 
 useResize(({ vh, vw }) => {
@@ -35,6 +35,7 @@ useResize(({ vh, vw }) => {
 
     const z = vh / (2 * Math.tan(fov / 2));
     camera.position.z = z
+
     camera.perspective({ near: 0.1 * z / 5, far: 100 * z / 5 })
 })
 

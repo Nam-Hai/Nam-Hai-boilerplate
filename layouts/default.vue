@@ -1,7 +1,11 @@
 <template>
-  <Menu />
-  <div class="page__wrapper">
-    <slot />
+  <div class="layout">
+
+    <Menu />
+    <div class="page__wrapper">
+      <slot />
+    </div>
+    <WebGLScene />
   </div>
 </template>
 

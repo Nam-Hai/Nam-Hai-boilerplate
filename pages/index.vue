@@ -1,7 +1,6 @@
 <template>
     <main ref="mainRef">
         <h1>Index</h1>
-        test : {{ $test }}
         <p>
             hey this is my boilerplate™<br>
             {{ lorem }}
@@ -17,9 +16,10 @@ import { useDefaultFlow } from '~/pages.transition/defaultFlow';
 const main = useTemplateRef("mainRef")
 useDefaultFlow(main)
 
-useFrame(() => {
-    console.log("test");
-})
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+main {
+    height: 900vh;
+}
+</style>

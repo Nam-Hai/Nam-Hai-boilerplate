@@ -4,6 +4,7 @@ import { basicVer } from '~/lib/webGL/ogl.renderer/scene/shaders/BasicVer';
 import { getUId } from '~/lib/webGL/ogl.renderer/scene/utils/WebGL.utils';
 import { useOGL } from '~/lib/webGL/ogl.renderer/useOGL';
 import { basicFrag } from '~/lib/webGL/ogl.renderer/scene/shaders/BasicFrag';
+import { WebGLVideoDecoder } from './VideoDecoder';
 
 const { coord = { x: 0, y: 0 } } = defineProps<{ coord?: { x: number, y: number } }>()
 
@@ -34,7 +35,7 @@ const program = new Program(gl, {
 
 
 const meshRef = useTemplateRef<Mesh>("meshRef")
-const scale = new Vec3(1, 1, 1)
+const scale = new Vec3(1000, 1000, 1)
 onMounted(() => {
     console.log(meshRef.value);
 });
@@ -42,7 +43,6 @@ const pos = new Vec3(0, 0, 0)
 useFrame(({ elapsed }) => {
     uTime.value = elapsed / 2000
     // pos.set(Math.sin(elapsed / 1000), 0, 0)
-    // console.log(pos);
     // meshRef.value?.rotation.set(elapsed / 1000, 0, 0)
 })
 
@@ -51,6 +51,31 @@ useResize(({ vh, vw }) => {
     scale.set(vw, vh, 1)
 })
 
+onMounted(async () => {
+    const response = await fetch('test.webm'); // Could be .mp4, .webm, etc.
+    const buffer = await response.arrayBuffer();
+
+    const vd = new WebGLVideoDecoder(gl, buffer)
+
+    await vd.decoder.flush()
+
+    program.uniforms.tMap.value = vd.textures[200]
+    console.log(vd.textures)
+    let i = 0
+
+    // useFrame(() => {
+    //     program.uniforms.tMap.value = vd.textures[i]
+    //     i++
+    //     if (i === vd.textures.length) i = 0
+    // })
+
+
+    const lenis = useLenis()
+    console.log(lenis)
+    lenis.on("scroll", (e) => {
+        program.uniforms.tMap.value = vd.textures[Math.floor(e.animatedScroll / e.dimensions.scrollHeight * vd.textures.length)]
+    })
+})
 </script>
 
 <template>

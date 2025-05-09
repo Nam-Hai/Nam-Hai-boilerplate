@@ -9,7 +9,10 @@ export default defineNuxtConfig({
     pages: true,
     devtools: { enabled: true },
     devServer: {
-        host: "0.0.0.0",
+        https: {
+            key: "./certs/localhost-key.pem",
+            cert: "./certs/localhost.pem",
+        },
     },
     css: ["@/styles/core.scss"],
     modules: ['@pinia/nuxt'],
